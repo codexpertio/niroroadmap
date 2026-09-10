@@ -1,5 +1,5 @@
-const easyroadmap_modal = ( show = true ) => {
-	const modal         = document.getElementById( 'easyroadmap-modal' );
+const niroroadmap_modal = ( show = true ) => {
+	const modal         = document.getElementById( 'niroroadmap-modal' );
 	if ( show ) {
 		modal.style.display = '';
 	} else {

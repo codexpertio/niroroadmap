@@ -1,9 +1,9 @@
 <?php
-namespace EasyRoadmap\Model;
+namespace NiroRoadmap\Model;
 
 defined( 'ABSPATH' ) || exit;
 
-use EasyRoadmap\Helper\Utility;
+use NiroRoadmap\Helper\Utility;
 
 class Roadmap {
 
@@ -11,7 +11,7 @@ class Roadmap {
         $tasks  = array();
 		$stages = get_terms(
 			array(
-				'taxonomy'   => 'task_stage',
+				'taxonomy'   => 'niroroadmap_status',
 				'hide_empty' => false,
 				'orderby'    => 'id',
 				'order'      => 'ASC',
@@ -25,14 +25,14 @@ class Roadmap {
 			$tax_query = array();
 
 			$tax_query[] = array(
-				'taxonomy' => 'task_stage',
+				'taxonomy' => 'niroroadmap_status',
 				'field'    => 'slug',
 				'terms'    => $stage->slug,
 			);
 
 			if ( ! is_null( $product ) ) {
 				$tax_query[] = array(
-					'taxonomy' => 'task_product',
+					'taxonomy' => 'niroroadmap_product',
 					'field'    => 'term_id',
 					'terms'    => $product,
 				);
@@ -40,7 +40,7 @@ class Roadmap {
 
 			$tasks[ $stage->slug ]['tasks'] = Utility::get_posts(
 				array(
-					'post_type'      => 'task',
+					'post_type'      => 'niroroadmap_item',
 					'tax_query'      => $tax_query,
 					'posts_per_page' => -1,
 					'orderby'        => 'menu_order',
@@ -49,7 +49,7 @@ class Roadmap {
 			);
 		}
 
-		$show_links = apply_filters( 'easyroadmap_show_stage_links', false );
+		$show_links = apply_filters( 'niroroadmap_show_stage_links', false );
 
 		return Utility::get_template( 'shortcodes/roadmap.php', array( 
 			'tasks' => $tasks,

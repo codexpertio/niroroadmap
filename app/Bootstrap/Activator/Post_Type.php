@@ -1,5 +1,5 @@
 <?php
-namespace EasyRoadmap\Bootstrap\Activator;
+namespace NiroRoadmap\Bootstrap\Activator;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -7,20 +7,20 @@ class Post_Type {
 
 	public function register() {
 		$labels = array(
-			'name'               => _x( 'Tasks', 'post type general name', 'easyroadmap' ),
-			'singular_name'      => _x( 'Task', 'post type singular name', 'easyroadmap' ),
-			'menu_name'          => _x( 'EasyRoadmap', 'admin menu', 'easyroadmap' ),
-			'name_admin_bar'     => _x( 'Task', 'add new on admin bar', 'easyroadmap' ),
-			'add_new'            => _x( 'Add New', 'task', 'easyroadmap' ),
-			'add_new_item'       => __( 'Add New', 'easyroadmap' ),
-			'new_item'           => __( 'New Task', 'easyroadmap' ),
-			'edit_item'          => __( 'Edit Task', 'easyroadmap' ),
-			'view_item'          => __( 'View Task', 'easyroadmap' ),
-			'all_items'          => __( 'Tasks', 'easyroadmap' ),
-			'search_items'       => __( 'Search Tasks', 'easyroadmap' ),
-			'parent_item_colon'  => __( 'Parent Tasks:', 'easyroadmap' ),
-			'not_found'          => __( 'No tasks found.', 'easyroadmap' ),
-			'not_found_in_trash' => __( 'No tasks found in Trash.', 'easyroadmap' ),
+			'name'               => _x( 'Items', 'post type general name', 'niroroadmap' ),
+			'singular_name'      => _x( 'Item', 'post type singular name', 'niroroadmap' ),
+			'menu_name'          => _x( 'NiroRoadmap', 'admin menu', 'niroroadmap' ),
+			'name_admin_bar'     => _x( 'Item', 'add new on admin bar', 'niroroadmap' ),
+			'add_new'            => _x( 'Add New', 'item', 'niroroadmap' ),
+			'add_new_item'       => __( 'Add New', 'niroroadmap' ),
+			'new_item'           => __( 'New Item', 'niroroadmap' ),
+			'edit_item'          => __( 'Edit Item', 'niroroadmap' ),
+			'view_item'          => __( 'View Item', 'niroroadmap' ),
+			'all_items'          => __( 'Items', 'niroroadmap' ),
+			'search_items'       => __( 'Search Items', 'niroroadmap' ),
+			'parent_item_colon'  => __( 'Parent Items:', 'niroroadmap' ),
+			'not_found'          => __( 'No items found.', 'niroroadmap' ),
+			'not_found_in_trash' => __( 'No items found in Trash.', 'niroroadmap' ),
 		);
 
 		$args = array(
@@ -40,6 +40,6 @@ class Post_Type {
 			'show_in_rest'       => true, // needed for block editor
 		);
 
-		register_post_type( 'task', $args );
+		register_post_type( 'niroroadmap_item', $args );
 	}
 }

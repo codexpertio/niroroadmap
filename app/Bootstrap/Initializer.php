@@ -1,5 +1,5 @@
 <?php
-namespace EasyRoadmap\Bootstrap;
+namespace NiroRoadmap\Bootstrap;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -21,11 +21,11 @@ class Initializer {
 	 */
 	private function load_admin_controllers() {
 		if ( is_admin() ) {
-			$controller_dir = EASYROADMAP_PLUGIN_DIR . 'app/Controller/Admin/';
+			$controller_dir = NIROROADMAP_PLUGIN_DIR . 'app/Controller/Admin/';
 
 			foreach ( glob( $controller_dir . '*.php' ) as $file ) {
 				$class_name = basename( $file, '.php' );
-				$controller = "\\EasyRoadmap\\Controller\\Admin\\{$class_name}";
+				$controller = "\\NiroRoadmap\\Controller\\Admin\\{$class_name}";
 
 				if ( class_exists( $controller ) ) {
 					new $controller();
@@ -39,11 +39,11 @@ class Initializer {
 	 */
 	private function load_public_controllers() {
 		if ( ! is_admin() ) {
-			$controller_dir = EASYROADMAP_PLUGIN_DIR . 'app/Controller/Public/';
+			$controller_dir = NIROROADMAP_PLUGIN_DIR . 'app/Controller/Public/';
 
 			foreach ( glob( $controller_dir . '*.php' ) as $file ) {
 				$class_name = basename( $file, '.php' );
-				$controller = "\\EasyRoadmap\\Controller\\Public\\{$class_name}";
+				$controller = "\\NiroRoadmap\\Controller\\Public\\{$class_name}";
 
 				if ( class_exists( $controller ) ) {
 					new $controller();
@@ -56,11 +56,11 @@ class Initializer {
 	 * Initialize controllers that operate on both admin and public.
 	 */
 	private function load_common_controllers() {
-		$controller_dir = EASYROADMAP_PLUGIN_DIR . 'app/Controller/Common/';
+		$controller_dir = NIROROADMAP_PLUGIN_DIR . 'app/Controller/Common/';
 
 		foreach ( glob( $controller_dir . '*.php' ) as $file ) {
 			$class_name = basename( $file, '.php' );
-			$controller = "\\EasyRoadmap\\Controller\\Common\\{$class_name}";
+			$controller = "\\NiroRoadmap\\Controller\\Common\\{$class_name}";
 
 			if ( class_exists( $controller ) ) {
 				new $controller();

@@ -1,66 +1,66 @@
-#easyroadmap-settings-body {
+#niroroadmap-settings-body {
 	display: grid;
 	gap: 30px;
 	grid-template-columns: 1fr 3fr;
 	max-width: 900px;
 }
-#easyroadmap-settings-header {
+#niroroadmap-settings-header {
 	margin-bottom: 20px;
 	border-bottom: 1px solid #ddd;
 	padding: 10px 0;
 }
-#easyroadmap-settings-menus-list > li {
+#niroroadmap-settings-menus-list > li {
 	padding: 10px 0;
 	border-bottom: 1px solid #ddd;
 	margin: 0;
 }
-#easyroadmap-settings-menus-list > li.active {
+#niroroadmap-settings-menus-list > li.active {
 	font-weight: bold;
 }
-#easyroadmap-settings-submenus-list {
+#niroroadmap-settings-submenus-list {
 	display: flex;
 }
-.easyroadmap-settings-section {
+.niroroadmap-settings-section {
 	border: 1px solid #ddd;
 	padding: 10px;
 	border-radius: 6px;
 	margin-bottom: 10px;
 }
-#easyroadmap-settings-header > h2 {
+#niroroadmap-settings-header > h2 {
 	font-size: 24px;
 }
-#easyroadmap-settings-content-label > h3 {
+#niroroadmap-settings-content-label > h3 {
 	font-size: 20px;
 }
-#easyroadmap-settings-submenus-list > li {
+#niroroadmap-settings-submenus-list > li {
 	border-right: 1px solid #ddd;
 	padding: 0 10px;
 }
-#easyroadmap-settings-submenus-list > li:first-child {
+#niroroadmap-settings-submenus-list > li:first-child {
 	padding-left: 0px;
 }
-#easyroadmap-settings-submenus-list > li:last-child {
+#niroroadmap-settings-submenus-list > li:last-child {
 	border-right: 0px;
 }
-#easyroadmap-settings-submenus-list > li > a {
+#niroroadmap-settings-submenus-list > li > a {
 	text-decoration: none;
 }
-#easyroadmap-settings-submenus-list > li.active > a {
+#niroroadmap-settings-submenus-list > li.active > a {
 	font-weight: bold;
 }
-#easyroadmap-settings-content-header {
+#niroroadmap-settings-content-header {
 	display: flex;
 	justify-content: space-between;
 	margin-bottom: 20px;
 }
-.easyroadmap-settings-section-heading {
+.niroroadmap-settings-section-heading {
 	font-size: 16px;
 }
-.easyroadmap-field-wrapper {
+.niroroadmap-field-wrapper {
 	padding: 10px 0;
 	border-top: 1px solid #ddd;
 }
-.easyroadmap-field-wrapper label {
+.niroroadmap-field-wrapper label {
 	display: inline-block;
 	width: 100px;
 }

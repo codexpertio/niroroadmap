@@ -1,5 +1,5 @@
 <?php
-namespace EasyRoadmap\Trait;
+namespace NiroRoadmap\Trait;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * This trait provides methods for registering and enqueuing scripts and styles in the WordPress plugin.
  *
- * @package EasyRoadmap
+ * @package NiroRoadmap
  */
 trait Asset {
 
@@ -18,11 +18,11 @@ trait Asset {
 	 * @param string $handle    Script handle.
 	 * @param string $src       Script source URL.
 	 * @param array  $deps      Script dependencies.
-	 * @param string $ver       Script version, defaults to the constant EASYROADMAP_VERSION.
+	 * @param string $ver       Script version, defaults to the constant NIROROADMAP_VERSION.
 	 * @param bool   $in_footer Whether to enqueue the script in the footer.
 	 */
 	public function register_script( $handle, $src, $deps = array(), $ver = null, $in_footer = true ) {
-		wp_register_script( $handle, $src, $deps, $ver ?: EASYROADMAP_VERSION, $in_footer );
+		wp_register_script( $handle, $src, $deps, $ver ?: NIROROADMAP_VERSION, $in_footer );
 	}
 
 	/**
@@ -31,7 +31,7 @@ trait Asset {
 	 * @param string $handle    Script handle.
 	 * @param string $src       Script source URL.
 	 * @param array  $deps      Script dependencies.
-	 * @param string $ver       Script version, defaults to the constant EASYROADMAP_VERSION.
+	 * @param string $ver       Script version, defaults to the constant NIROROADMAP_VERSION.
 	 * @param bool   $in_footer Whether to enqueue the script in the footer.
 	 */
 	public function enqueue_script( $handle, $src, $deps = array(), $ver = null, $in_footer = true ) {
@@ -59,11 +59,11 @@ trait Asset {
 	 * @param string $handle Style handle.
 	 * @param string $src    Style source URL.
 	 * @param array  $deps   Style dependencies.
-	 * @param string $ver    Style version, defaults to the constant EASYROADMAP_VERSION.
+	 * @param string $ver    Style version, defaults to the constant NIROROADMAP_VERSION.
 	 * @param string $media  Media for which this stylesheet has been defined.
 	 */
 	public function register_style( $handle, $src, $deps = array(), $ver = null, $media = 'all' ) {
-		wp_register_style( $handle, $src, $deps, $ver ?: EASYROADMAP_VERSION, $media );
+		wp_register_style( $handle, $src, $deps, $ver ?: NIROROADMAP_VERSION, $media );
 	}
 
 	/**
@@ -72,7 +72,7 @@ trait Asset {
 	 * @param string $handle Style handle.
 	 * @param string $src    Style source URL.
 	 * @param array  $deps   Style dependencies.
-	 * @param string $ver    Style version, defaults to the constant EASYROADMAP_VERSION.
+	 * @param string $ver    Style version, defaults to the constant NIROROADMAP_VERSION.
 	 * @param string $media  Media for which this stylesheet has been defined.
 	 */
 	public function enqueue_style( $handle, $src, $deps = array(), $ver = null, $media = 'all' ) {

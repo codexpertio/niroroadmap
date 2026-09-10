@@ -1,9 +1,9 @@
 <?php
-namespace EasyRoadmap\Bootstrap;
+namespace NiroRoadmap\Bootstrap;
 
 defined( 'ABSPATH' ) || exit;
 
-use EasyRoadmap\Trait\Hook;
+use NiroRoadmap\Trait\Hook;
 
 class Activator {
 
@@ -20,7 +20,7 @@ class Activator {
 		$activator->register_taxonomies();
 
 		// Set a flag that indicates the plugin has been activated
-		update_option( 'easyroadmap_activated', true );
+		update_option( 'niroroadmap_activated', true );
 	}
 
 	public function set_cron() {

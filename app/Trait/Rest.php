@@ -1,5 +1,5 @@
 <?php
-namespace EasyRoadmap\Trait;
+namespace NiroRoadmap\Trait;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -8,12 +8,12 @@ defined( 'ABSPATH' ) || exit;
  *
  * This trait provides methods to register REST API routes and handle JSON responses in the WordPress plugin.
  *
- * @package EasyRoadmap
+ * @package NiroRoadmap
  */
 trait Rest {
 
 	// Namespace for the REST API routes specific to this plugin.
-	public $namespace = 'easyroadmap/v1';
+	public $namespace = 'niroroadmap/v1';
 
 	/**
 	 * Registers a new REST API route.

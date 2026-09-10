@@ -1,10 +1,10 @@
 <?php
-namespace EasyRoadmap\Controller\Public;
+namespace NiroRoadmap\Controller\Public;
 
 defined( 'ABSPATH' ) || exit;
 
-use EasyRoadmap\Trait\Hook;
-use EasyRoadmap\Trait\Asset;
+use NiroRoadmap\Trait\Hook;
+use NiroRoadmap\Trait\Asset;
 
 class Front {
 
@@ -30,16 +30,16 @@ class Front {
 	public function add_assets() {
 
 		$this->enqueue_style(
-			'easyroadmap-public',
-			EASYROADMAP_ASSETS_URL . 'public/css/style.css'
+			'niroroadmap-public',
+			NIROROADMAP_ASSETS_URL . 'public/css/style.css'
 		);
 
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'jquery-ui-sortable' );
 
 		$this->enqueue_script(
-			'easyroadmap-public',
-			EASYROADMAP_ASSETS_URL . 'public/js/script.js'
+			'niroroadmap-public',
+			NIROROADMAP_ASSETS_URL . 'public/js/script.js'
 		);
 	}
 }

@@ -1,7 +1,7 @@
 <?php
-namespace EasyRoadmap\Helper\Field;
+namespace NiroRoadmap\Helper\Field;
 
-use EasyRoadmap\Abstract\Field;
+use NiroRoadmap\Abstract\Field;
 
 defined( 'ABSPATH' ) || exit;
 

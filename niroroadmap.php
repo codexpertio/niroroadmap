@@ -1,39 +1,39 @@
 <?php
 /**
- * Plugin Name: EasyRoadmap
+ * Plugin Name: NiroRoadmap
  * Plugin URI: https://easysuite.io
  * Author: EasyCommerce
- * Author URI: https://easysuite.io/easyroadmap
+ * Author URI: https://easysuite.io/niroroadmap
  * Description: Build and share your product roadmap with a visual, drag-and-drop Kanban board.
  * Version: 0.9.1
  * Requires at least: 6.0
  * Tested up to: 6.8
  * Requires PHP: 7.4
- * Text Domain: easyroadmap
+ * Text Domain: niroroadmap
  * Domain Path: /languages
  * License:     GPLv2 or later
  * License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  *
- * EasyRoadmap is free software: you can redistribute it and/or modify
+ * NiroRoadmap is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  *
- * EasyRoadmap is distributed in the hope that it will be useful,
+ * NiroRoadmap is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  */
 
-namespace EasyRoadmap;
+namespace NiroRoadmap;
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'EASYROADMAP_FILE', __FILE__ );
-define( 'EASYROADMAP_VERSION', '0.9.1' );
-define( 'EASYROADMAP_PLUGIN_DIR', plugin_dir_path( EASYROADMAP_FILE ) );
-define( 'EASYROADMAP_PLUGIN_URL', plugin_dir_url( EASYROADMAP_FILE ) );
-define( 'EASYROADMAP_ASSETS_URL', EASYROADMAP_PLUGIN_URL . 'assets/' );
+define( 'NIROROADMAP_FILE', __FILE__ );
+define( 'NIROROADMAP_VERSION', '0.9.1' );
+define( 'NIROROADMAP_PLUGIN_DIR', plugin_dir_path( NIROROADMAP_FILE ) );
+define( 'NIROROADMAP_PLUGIN_URL', plugin_dir_url( NIROROADMAP_FILE ) );
+define( 'NIROROADMAP_ASSETS_URL', NIROROADMAP_PLUGIN_URL . 'assets/' );
 
 require_once 'vendor/autoload.php';
 
@@ -43,8 +43,8 @@ require_once 'vendor/autoload.php';
  * It installs necessary database tables, sets initial seeds,
  * and checks database versions.
  */
-register_activation_hook( EASYROADMAP_FILE, __NAMESPACE__ . '\\easyroadmap_install' );
-function easyroadmap_install() {
+register_activation_hook( NIROROADMAP_FILE, __NAMESPACE__ . '\\niroroadmap_install' );
+function niroroadmap_install() {
 	Bootstrap\Installer::install();
 }
 
@@ -54,8 +54,8 @@ function easyroadmap_install() {
  * It uninstalls necessary database tables, sets initial seeds,
  * and checks database versions.
  */
-register_deactivation_hook( EASYROADMAP_FILE, __NAMESPACE__ . '\\easyroadmap_uninstall' );
-function easyroadmap_uninstall() {
+register_deactivation_hook( NIROROADMAP_FILE, __NAMESPACE__ . '\\niroroadmap_uninstall' );
+function niroroadmap_uninstall() {
 	Bootstrap\Uninstaller::uninstall();
 }
 
@@ -65,8 +65,8 @@ function easyroadmap_uninstall() {
  * It sets up cron jobs, registers custom user roles, and performs other
  * necessary activation tasks.
  */
-add_action( 'plugins_loaded', __NAMESPACE__ . '\\easyroadmap_activate' );
-function easyroadmap_activate() {
+add_action( 'plugins_loaded', __NAMESPACE__ . '\\niroroadmap_activate' );
+function niroroadmap_activate() {
 	Bootstrap\Activator::activate();
 }
 
@@ -75,7 +75,7 @@ function easyroadmap_activate() {
  * This action is triggered when all active plugins are fully loaded.
  * It sets the plugin's runtime environment and initializes hooks.
  */
-add_action( 'plugins_loaded', __NAMESPACE__ . '\\easyroadmap_initialize' );
-function easyroadmap_initialize() {
+add_action( 'plugins_loaded', __NAMESPACE__ . '\\niroroadmap_initialize' );
+function niroroadmap_initialize() {
 	Bootstrap\Initializer::initialize();
 }

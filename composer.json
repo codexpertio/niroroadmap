@@ -1,11 +1,11 @@
 {
-    "name": "easyroadmap/easyroadmap",
+    "name": "niroroadmap/niroroadmap",
     "description": "Ecommerce with WordPress made easy.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "autoload": {
         "psr-4": {
-            "EasyRoadmap\\": "app/"
+            "NiroRoadmap\\": "app/"
         },
         "files": ["app/Helper/functions.php", "app/Config/autoload.php"]
     },

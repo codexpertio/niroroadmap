@@ -1,9 +1,9 @@
 <?php
-namespace EasyRoadmap\Bootstrap;
+namespace NiroRoadmap\Bootstrap;
 
 defined( 'ABSPATH' ) || exit;
 
-use EasyRoadmap\Model\Database;
+use NiroRoadmap\Model\Database;
 
 class Installer {
 
@@ -24,14 +24,14 @@ class Installer {
 	 * @return bool
 	 */
 	protected function is_database_up_to_date() {
-		$installed_ver = get_option( 'easyroadmap_db_version' );
-		return version_compare( $installed_ver, EASYROADMAP_VERSION, '=' );
+		$installed_ver = get_option( 'niroroadmap_db_version' );
+		return version_compare( $installed_ver, NIROROADMAP_VERSION, '=' );
 	}
 
 	/**
 	 * Update or add the database version to the options table.
 	 */
 	protected function update_db_version() {
-		update_option( 'easyroadmap_db_version', EASYROADMAP_VERSION );
+		update_option( 'niroroadmap_db_version', NIROROADMAP_VERSION );
 	}
 }

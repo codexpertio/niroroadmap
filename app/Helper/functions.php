@@ -1,5 +1,5 @@
 <?php
-use EasyRoadmap\Helper\Utility;
+use NiroRoadmap\Helper\Utility;
 
 /**
  * Returns the home URL of the WordPress site.
@@ -9,40 +9,40 @@ use EasyRoadmap\Helper\Utility;
  *
  * @return string Home URL with optional path appended.
  */
-function easyroadmap_home_url( $path = '', $blog_id = null ) {
+function niroroadmap_home_url( $path = '', $blog_id = null ) {
 	return get_home_url( $blog_id, $path );
 }
 
-function easyroadmap_settings_menus() {
+function niroroadmap_settings_menus() {
 
 	$pages = Utility::get_posts( array( 'post_type' => 'page' ) );
 
 	return apply_filters(
-		'easyroadmap_settings_menus',
+		'niroroadmap_settings_menus',
 		array(
 			'general' => array(
-				'label'    => __( 'General', 'easyroadmap' ),
-				'desc'     => __( 'General settings', 'easyroadmap' ),
+				'label'    => __( 'General', 'niroroadmap' ),
+				'desc'     => __( 'General settings', 'niroroadmap' ),
 				'icon'     => '',
 				'submenus' => array(
 					'pages' => array(
-						'label'    => __( 'Pages', 'easyroadmap' ),
-						'desc'     => __( 'Page Settings', 'easyroadmap' ),
+						'label'    => __( 'Pages', 'niroroadmap' ),
+						'desc'     => __( 'Page Settings', 'niroroadmap' ),
 						'sections' => array(
 							'main_pages' => array(
-								'label'  => __( 'Main Pages', 'easyroadmap' ),
-								'desc'   => __( 'Main Pages Settings', 'easyroadmap' ),
+								'label'  => __( 'Main Pages', 'niroroadmap' ),
+								'desc'   => __( 'Main Pages Settings', 'niroroadmap' ),
 								'fields' => array(
 									array(
 										'id'      => 'homepage',
 										'type'    => 'select',
-										'label'   => __( 'Homepage', 'easyroadmap' ),
+										'label'   => __( 'Homepage', 'niroroadmap' ),
 										'options' => $pages,
 									),
 									array(
 										'id'      => 'landing_page',
 										'type'    => 'select',
-										'label'   => __( 'Landing Page', 'easyroadmap' ),
+										'label'   => __( 'Landing Page', 'niroroadmap' ),
 										'options' => $pages,
 									),
 								),
@@ -52,80 +52,80 @@ function easyroadmap_settings_menus() {
 				),
 			),
 			'email'   => array(
-				'label'    => __( 'Email', 'easyroadmap' ),
-				'desc'     => __( 'Email settings', 'easyroadmap' ),
+				'label'    => __( 'Email', 'niroroadmap' ),
+				'desc'     => __( 'Email settings', 'niroroadmap' ),
 				'icon'     => '',
 				'submenus' => array(
 					'new_ticket'    => array(
-						'label'    => __( 'New Ticket', 'easyroadmap' ),
-						'desc'     => __( 'New Ticket Notification', 'easyroadmap' ),
+						'label'    => __( 'New Ticket', 'niroroadmap' ),
+						'desc'     => __( 'New Ticket Notification', 'niroroadmap' ),
 						'sections' => array(
 							'agent_email'  => array(
-								'label'  => __( 'Agent Email', 'easyroadmap' ),
-								'desc'   => __( 'Email to an Agent', 'easyroadmap' ),
+								'label'  => __( 'Agent Email', 'niroroadmap' ),
+								'desc'   => __( 'Email to an Agent', 'niroroadmap' ),
 								'fields' => array(
 									array(
 										'id'    => 'agent_header',
 										'type'  => 'text',
-										'label' => __( 'Header', 'easyroadmap' ),
+										'label' => __( 'Header', 'niroroadmap' ),
 									),
 									array(
 										'id'    => 'agent_subject',
 										'type'  => 'text',
-										'label' => __( 'Subject', 'easyroadmap' ),
+										'label' => __( 'Subject', 'niroroadmap' ),
 									),
 									array(
 										'id'    => 'agent_body',
 										'type'  => 'wysiwyg',
-										'label' => __( 'Body', 'easyroadmap' ),
+										'label' => __( 'Body', 'niroroadmap' ),
 									),
 								),
 							),
 							'client_email' => array(
-								'label'  => __( 'Client Email', 'easyroadmap' ),
-								'desc'   => __( 'Email to a Client', 'easyroadmap' ),
+								'label'  => __( 'Client Email', 'niroroadmap' ),
+								'desc'   => __( 'Email to a Client', 'niroroadmap' ),
 								'fields' => array(
 									array(
 										'id'    => 'client_header',
 										'type'  => 'text',
-										'label' => __( 'Header', 'easyroadmap' ),
+										'label' => __( 'Header', 'niroroadmap' ),
 									),
 									array(
 										'id'    => 'client_subject',
 										'type'  => 'text',
-										'label' => __( 'Subject', 'easyroadmap' ),
+										'label' => __( 'Subject', 'niroroadmap' ),
 									),
 									array(
 										'id'    => 'client_body',
 										'type'  => 'wysiwyg',
-										'label' => __( 'Body', 'easyroadmap' ),
+										'label' => __( 'Body', 'niroroadmap' ),
 									),
 								),
 							),
 						),
 					),
 					'agent_replied' => array(
-						'label'    => __( 'Agent Reply', 'easyroadmap' ),
-						'desc'     => __( 'Agent Reply Notification', 'easyroadmap' ),
+						'label'    => __( 'Agent Reply', 'niroroadmap' ),
+						'desc'     => __( 'Agent Reply Notification', 'niroroadmap' ),
 						'sections' => array(
 							'agent_email_reply' => array(
-								'label'  => __( 'Agent Reply Email', 'easyroadmap' ),
-								'desc'   => __( 'Email to a Client', 'easyroadmap' ),
+								'label'  => __( 'Agent Reply Email', 'niroroadmap' ),
+								'desc'   => __( 'Email to a Client', 'niroroadmap' ),
 								'fields' => array(
 									array(
 										'id'    => 'client_header',
 										'type'  => 'text',
-										'label' => __( 'Header', 'easyroadmap' ),
+										'label' => __( 'Header', 'niroroadmap' ),
 									),
 									array(
 										'id'    => 'client_subject',
 										'type'  => 'text',
-										'label' => __( 'Subject', 'easyroadmap' ),
+										'label' => __( 'Subject', 'niroroadmap' ),
 									),
 									array(
 										'id'    => 'client_body',
 										'type'  => 'wysiwyg',
-										'label' => __( 'Body', 'easyroadmap' ),
+										'label' => __( 'Body', 'niroroadmap' ),
 									),
 								),
 							),
@@ -137,7 +137,7 @@ function easyroadmap_settings_menus() {
 	);
 }
 
-function easyroadmap_get_field_factory( $type ) {
+function niroroadmap_get_field_factory( $type ) {
 
 	if ( $type == 'switch' ) {
 		$type = 'switcher';
@@ -145,14 +145,14 @@ function easyroadmap_get_field_factory( $type ) {
 		$type = 'WYSIWYG';
 	}
 
-	return '\\EasyRoadmap\\Helper\\Field\\' . ucfirst( $type );
+	return '\\NiroRoadmap\\Helper\\Field\\' . ucfirst( $type );
 }
 
-function easyroadmap_product_post_type() {
-	return 'task';
+function niroroadmap_product_post_type() {
+	return 'niroroadmap_item';
 }
 
-function easyroadmap_get_random_color() {
+function niroroadmap_get_random_color() {
 	$colors = array( '#FF9999', '#FFCC99', '#FFCC66', '#FFD700', '#FF9966', '#FF6666', '#FF9966', '#FFB266', '#FFDAB9', '#FF8C66', '#FFC1A1', '#FFE5B4', '#B3E5FC', '#81D4FA', '#4FC3F7', '#4DB6AC', '#81C784', '#AED581', '#DCE775', '#FFE082', '#FF8A65', '#F48FB1', '#E57373', '#BA68C8', '#9575CD', '#7986CB' );
 
 	return $colors[ array_rand( $colors ) ];

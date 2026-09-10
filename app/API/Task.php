@@ -1,9 +1,9 @@
 <?php
-namespace EasyRoadmap\API;
+namespace NiroRoadmap\API;
 
 defined( 'ABSPATH' ) || exit;
 
-use EasyRoadmap\Trait\Rest;
+use NiroRoadmap\Trait\Rest;
 
 class Task {
 
@@ -19,9 +19,9 @@ class Task {
 		$task  = $request->get_param( 'id' );
 		$stage = $request->get_param( 'stage' );
 
-		wp_set_post_terms( $task, array( $stage ), 'task_stage' );
+		wp_set_post_terms( $task, array( $stage ), 'niroroadmap_status' );
 
-		$this->response_success( array( 'message' => __( 'Task moved', 'easyroadmap' ) ) );
+		$this->response_success( array( 'message' => __( 'Task moved', 'niroroadmap' ) ) );
 	}
 
 	/**
@@ -33,7 +33,7 @@ class Task {
 
 		$this->response_success(
 			array(
-				'message' => __( 'Task found', 'easyroadmap' ),
+				'message' => __( 'Task found', 'niroroadmap' ),
 				'task'    => array(
 					'title'       => $task->post_title,
 					'description' => wpautop( $task->post_content ),
@@ -55,7 +55,7 @@ class Task {
 
 		$this->response_success(
 			array(
-				'message' => __( 'Vote submitted', 'easyroadmap' ),
+				'message' => __( 'Vote submitted', 'niroroadmap' ),
 				'votes'   => $new_vote,
 			)
 		);
@@ -82,6 +82,6 @@ class Task {
 			);
 		}
 
-		$this->response_success( array( 'message' => __( 'Task order changed', 'easyroadmap' ) ) );
+		$this->response_success( array( 'message' => __( 'Task order changed', 'niroroadmap' ) ) );
 	}
 }

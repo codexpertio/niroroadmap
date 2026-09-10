@@ -1,4 +1,4 @@
-**EasyRoadmap** 🚀
+**NiroRoadmap** 🚀
 ==================
 
 **A powerful WordPress plugin to create and manage product roadmaps with a Kanban-style interface.**
@@ -9,7 +9,7 @@
 ---------------
 
 -   **Custom Post Type (`task`)** for roadmap items.
--   **Custom Taxonomies (`task_stage`, `task_product`)** for categorization.
+-   **Custom Taxonomies (`niroroadmap_status`, `niroroadmap_product`)** for categorization.
 -   **Drag-and-Drop Sorting** for tasks and roadmap stages.
 -   **REST API Support** to interact with roadmap data.
 -   **Kanban Board UI** for a visual workflow.
@@ -24,7 +24,7 @@
 
 ### **From WordPress Plugin Upload:**
 
-1.  Download the latest `.zip` file from [Releases](https://github.com/easycommercedev/easyroadmap/releases).
+1.  Download the latest `.zip` file from [Releases](https://github.com/easycommercedev/niroroadmap/releases).
 2.  Go to **WordPress Dashboard > Plugins > Add New**.
 3.  Click **Upload Plugin**, select the `.zip` file, and click **Install Now**.
 4.  Click **Activate Plugin**.
@@ -34,12 +34,12 @@
 1.  Clone the repository:
 
     ```
-    git clone https://github.com/easycommercedev/easyroadmap.git
+    git clone https://github.com/easycommercedev/niroroadmap.git
     composer update --no-dev
 
     ```
 
-2.  Upload the `easyroadmap` folder to `wp-content/plugins/`.
+2.  Upload the `niroroadmap` folder to `wp-content/plugins/`.
 3.  Activate the plugin via **WordPress Dashboard > Plugins**.
 
 * * * * *
@@ -49,7 +49,7 @@
 
 ### **1️⃣ Add Roadmap Tasks**
 
--   Navigate to **EasyRoadmap** in the WordPress admin menu.
+-   Navigate to **NiroRoadmap** in the WordPress admin menu.
 -   Click **"Add New"** to create a roadmap task.
 -   Assign a **stage** (e.g., "In Progress", "Completed") and a **Product** (if applicable).
 
@@ -73,7 +73,7 @@
 
 ### **3️⃣ Drag-and-Drop Sorting (Admin & Frontend)**
 
--   **Reorder Stages in Admin:** The roadmap stages (`task_stage`) can be sorted via drag-and-drop in the WordPress admin taxonomy list.
+-   **Reorder Stages in Admin:** The roadmap stages (`niroroadmap_status`) can be sorted via drag-and-drop in the WordPress admin taxonomy list.
 -   **Drag-and-Drop Tasks in Kanban:** You can **drag tasks between columns** to update their status dynamically.
 
 * * * * *
@@ -86,7 +86,7 @@
 -   **Move a task to a different stage:**
 
     ```
-    POST /wp-json/easyroadmap/v1/tasks/{id}/move
+    POST /wp-json/niroroadmap/v1/tasks/{id}/move
 
     ```
 
@@ -95,14 +95,14 @@
 -   **Get a task's details:**
 
     ```
-    GET /wp-json/easyroadmap/v1/tasks/{id}
+    GET /wp-json/niroroadmap/v1/tasks/{id}
 
     ```
 
 -   **Vote on a task (Upvote or Downvote):**
 
     ```
-    POST /wp-json/easyroadmap/v1/tasks/{id}/vote
+    POST /wp-json/niroroadmap/v1/tasks/{id}/vote
 
     ```
 
@@ -111,7 +111,7 @@
 -   **Sort tasks within a stage:**
 
     ```
-    POST /wp-json/easyroadmap/v1/tasks/order
+    POST /wp-json/niroroadmap/v1/tasks/order
 
     ```
 
@@ -122,7 +122,7 @@
 -   **Sort roadmap stages:**
 
     ```
-    POST /wp-json/easyroadmap/v1/stages/order
+    POST /wp-json/niroroadmap/v1/stages/order
 
     ```
 
@@ -133,14 +133,14 @@
 -   **Get a WordPress option:**
 
     ```
-    GET /wp-json/easyroadmap/v1/option?key=option_name
+    GET /wp-json/niroroadmap/v1/option?key=option_name
 
     ```
 
 -   **Update an option:**
 
     ```
-    POST /wp-json/easyroadmap/v1/option
+    POST /wp-json/niroroadmap/v1/option
 
     ```
 
@@ -149,7 +149,7 @@
 -   **Delete an option:**
 
     ```
-    DELETE /wp-json/easyroadmap/v1/option?key=option_name
+    DELETE /wp-json/niroroadmap/v1/option?key=option_name
 
     ```
 
@@ -165,7 +165,7 @@ Contributions are welcome! If you find a bug or have a feature request, feel fre
 1.  Clone the repository:
 
     ```
-    git clone https://github.com/easycommercedev/easyroadmap.git
+    git clone https://github.com/easycommercedev/niroroadmap.git
 
     ```
 
@@ -183,7 +183,7 @@ Contributions are welcome! If you find a bug or have a feature request, feel fre
 **📜 License**
 --------------
 
-EasyRoadmap is licensed under the **GNU General Public License v3.0**.
+NiroRoadmap is licensed under the **GNU General Public License v3.0**.
 
 * * * * *
 
@@ -197,4 +197,4 @@ Need help? Contact us at **<hi@easycommerce.dev>** or open an issue on GitHub.
 ### **💡 Built with ❤️ by [EasyCommerce](https://easycommerce.dev/)**
 
 🔗 **Website:** [https://easycommerce.dev](https://easycommerce.dev/)\
-🔗 **GitHub:** <https://github.com/easycommercedev/easyroadmap>
+🔗 **GitHub:** <https://github.com/easycommercedev/niroroadmap>

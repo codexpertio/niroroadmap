@@ -1,11 +1,11 @@
 <?php
-namespace EasyRoadmap\Controller\Admin;
+namespace NiroRoadmap\Controller\Admin;
 
 defined( 'ABSPATH' ) || exit;
 
-use EasyRoadmap\Trait\Hook;
-use EasyRoadmap\Trait\Asset;
-use EasyRoadmap\Helper\Utility;
+use NiroRoadmap\Trait\Hook;
+use NiroRoadmap\Trait\Asset;
+use NiroRoadmap\Helper\Utility;
 
 class Menu {
 
@@ -22,40 +22,40 @@ class Menu {
 	public function add_assets() {
 		global $current_screen;
 
-		if ( strpos( $current_screen->base, 'easyroadmap' ) !== false ) {
+		if ( strpos( $current_screen->base, 'niroroadmap' ) !== false ) {
 
 			$this->enqueue_script(
-				'easyroadmap_main-menu',
-				EASYROADMAP_PLUGIN_URL . 'spa/build/admin.bundle.js',
-				array( 'wp-element', 'easyroadmap_common' )
+				'niroroadmap_main-menu',
+				NIROROADMAP_PLUGIN_URL . 'spa/build/admin.bundle.js',
+				array( 'wp-element', 'niroroadmap_common' )
 			);
 		}
 
-		if ( strpos( $current_screen->base, 'easyroadmap' ) !== false ) {
+		if ( strpos( $current_screen->base, 'niroroadmap' ) !== false ) {
 
 			$this->enqueue_style(
-				'easyroadmap_settings',
-				EASYROADMAP_ASSETS_URL . 'admin/css/settings.css'
+				'niroroadmap_settings',
+				NIROROADMAP_ASSETS_URL . 'admin/css/settings.css'
 			);
 
 			$this->enqueue_script(
-				'easyroadmap_settings',
-				EASYROADMAP_ASSETS_URL . 'admin/js/settings.js'
+				'niroroadmap_settings',
+				NIROROADMAP_ASSETS_URL . 'admin/js/settings.js'
 			);
 		}
 
 		if ( true ) {
 
 			$this->enqueue_style(
-				'easyroadmap',
-				EASYROADMAP_ASSETS_URL . 'admin/css/style.css'
+				'niroroadmap',
+				NIROROADMAP_ASSETS_URL . 'admin/css/style.css'
 			);
 
 			wp_enqueue_script( 'jquery-ui-sortable' );
 
 			$this->enqueue_script(
-				'easyroadmap-sorter',
-				EASYROADMAP_ASSETS_URL . 'admin/js/sorter.js'
+				'niroroadmap-sorter',
+				NIROROADMAP_ASSETS_URL . 'admin/js/sorter.js'
 			);
 		}
 	}

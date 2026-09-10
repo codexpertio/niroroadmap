@@ -19,10 +19,10 @@ jQuery(
 					// AJAX call to update the task's new column
 					$.ajax(
 						{
-							url: `${EASYROADMAP.api_base}/tasks/${taskId}/move`,
+							url: `${NIROROADMAP.api_base}/tasks/${taskId}/move`,
 							method: "POST",
 							headers: {
-								'X-WP-Nonce': EASYROADMAP.nonce,
+								'X-WP-Nonce': NIROROADMAP.nonce,
 							},
 							data: {
 								stage: columnId,
@@ -38,10 +38,10 @@ jQuery(
 
 					$.ajax(
 						{
-							url: `${EASYROADMAP.api_base}/tasks/order`,
+							url: `${NIROROADMAP.api_base}/tasks/order`,
 							method: "POST",
 							headers: {
-								'X-WP-Nonce': EASYROADMAP.nonce,
+								'X-WP-Nonce': NIROROADMAP.nonce,
 							},
 							data: {
 								order: $( this ).sortable( 'toArray', {attribute: 'id'} )
@@ -71,10 +71,10 @@ jQuery(
 				// Fetch task details via AJAX
 				$.ajax(
 					{
-						url: `${EASYROADMAP.api_base}/tasks/${taskId}`,
+						url: `${NIROROADMAP.api_base}/tasks/${taskId}`,
 						method: "GET",
 						headers: {
-							'X-WP-Nonce': EASYROADMAP.nonce,
+							'X-WP-Nonce': NIROROADMAP.nonce,
 						},
 						success: function (response) {
 							$( "#er-modal-title" ).text( response.data.task.title );
@@ -99,10 +99,10 @@ jQuery(
 				const type    = voteBtn.data( "type" );
 				$.ajax(
 					{
-						url: `${EASYROADMAP.api_base}/tasks/${taskId}/vote`,
+						url: `${NIROROADMAP.api_base}/tasks/${taskId}/vote`,
 						method: "POST",
 						headers: {
-							'X-WP-Nonce': EASYROADMAP.nonce,
+							'X-WP-Nonce': NIROROADMAP.nonce,
 						},
 						data: {
 							type: type,

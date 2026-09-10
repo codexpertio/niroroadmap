@@ -1,9 +1,9 @@
 <?php
-namespace EasyRoadmap\API;
+namespace NiroRoadmap\API;
 
 defined( 'ABSPATH' ) || exit;
 
-use EasyRoadmap\Trait\Rest;
+use NiroRoadmap\Trait\Rest;
 
 class Option {
 
@@ -20,7 +20,7 @@ class Option {
 		$key = $request->get_param( 'key' );
 
 		if ( empty( $key ) ) {
-			return $this->response_error( __( 'Option key is required.', 'easyroadmap' ) );
+			return $this->response_error( __( 'Option key is required.', 'niroroadmap' ) );
 		}
 
 		$value = get_option( $key );
@@ -39,16 +39,16 @@ class Option {
 		$value = $request->get_param( 'value' );
 
 		if ( empty( $key ) || empty( $value ) ) {
-			return $this->response_error( __( 'Option key and value are required.', 'easyroadmap' ) );
+			return $this->response_error( __( 'Option key and value are required.', 'niroroadmap' ) );
 		}
 
 		$updated = update_option( $key, $value );
 
 		if ( ! $updated ) {
-			return $this->response_success( __( 'Option not updated.', 'easyroadmap' ) );
+			return $this->response_success( __( 'Option not updated.', 'niroroadmap' ) );
 		}
 
-		return $this->response_success( __( 'Option updated successfully.', 'easyroadmap' ) );
+		return $this->response_success( __( 'Option updated successfully.', 'niroroadmap' ) );
 	}
 
 	/**
@@ -61,15 +61,15 @@ class Option {
 		$key = $request->get_param( 'key' );
 
 		if ( empty( $key ) ) {
-			return $this->response_error( __( 'Option key is required.', 'easyroadmap' ) );
+			return $this->response_error( __( 'Option key is required.', 'niroroadmap' ) );
 		}
 
 		$deleted = delete_option( $key );
 
 		if ( ! $deleted ) {
-			return $this->response_error( __( 'Failed to delete option.', 'easyroadmap' ) );
+			return $this->response_error( __( 'Failed to delete option.', 'niroroadmap' ) );
 		}
 
-		return $this->response_success( __( 'Option deleted successfully.', 'easyroadmap' ) );
+		return $this->response_success( __( 'Option deleted successfully.', 'niroroadmap' ) );
 	}
 }

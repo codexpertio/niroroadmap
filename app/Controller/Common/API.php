@@ -1,15 +1,15 @@
 <?php
-namespace EasyRoadmap\Controller\Common;
+namespace NiroRoadmap\Controller\Common;
 
 defined( 'ABSPATH' ) || exit;
 
 use WP_REST_Server;
-use EasyRoadmap\API\Option;
-use EasyRoadmap\API\Task;
-use EasyRoadmap\API\Stage;
-use EasyRoadmap\Trait\Hook;
-use EasyRoadmap\Trait\Auth;
-use EasyRoadmap\Trait\Rest;
+use NiroRoadmap\API\Option;
+use NiroRoadmap\API\Task;
+use NiroRoadmap\API\Stage;
+use NiroRoadmap\Trait\Hook;
+use NiroRoadmap\Trait\Auth;
+use NiroRoadmap\Trait\Rest;
 
 class API {
 
@@ -37,11 +37,11 @@ class API {
 				'callback'            => array( new Task(), 'move' ),
 				'args'                => array(
 					'id'    => array(
-						'description' => __( 'The `task` ID', 'easyroadmap' ),
+						'description' => __( 'The `task` ID', 'niroroadmap' ),
 						'required'    => true,
 					),
 					'stage' => array(
-						'description' => __( 'The `stage` ID', 'easyroadmap' ),
+						'description' => __( 'The `stage` ID', 'niroroadmap' ),
 						'required'    => true,
 					),
 				),
@@ -57,7 +57,7 @@ class API {
 				'callback'            => array( new Task(), 'get' ),
 				'args'                => array(
 					'id' => array(
-						'description' => __( 'The `task` ID', 'easyroadmap' ),
+						'description' => __( 'The `task` ID', 'niroroadmap' ),
 						'required'    => true,
 					),
 				),
@@ -73,11 +73,11 @@ class API {
 				'callback'            => array( new Task(), 'vote' ),
 				'args'                => array(
 					'id'   => array(
-						'description' => __( 'The `task` ID', 'easyroadmap' ),
+						'description' => __( 'The `task` ID', 'niroroadmap' ),
 						'required'    => true,
 					),
 					'type' => array(
-						'description' => __( 'The vote type- upvote or downvote', 'easyroadmap' ),
+						'description' => __( 'The vote type- upvote or downvote', 'niroroadmap' ),
 						'required'    => true,
 					),
 				),
@@ -93,7 +93,7 @@ class API {
 				'callback'            => array( new Task(), 'order' ),
 				'args'                => array(
 					'order' => array(
-						'description' => __( 'The order', 'easyroadmap' ),
+						'description' => __( 'The order', 'niroroadmap' ),
 						'required'    => true,
 					),
 				),
@@ -112,7 +112,7 @@ class API {
 				'callback'            => array( new Stage(), 'order' ),
 				'args'                => array(
 					'order' => array(
-						'description' => __( 'The order', 'easyroadmap' ),
+						'description' => __( 'The order', 'niroroadmap' ),
 						'required'    => true,
 					),
 				),
@@ -131,7 +131,7 @@ class API {
 				'callback'            => array( new Option(), 'get' ),
 				'args'                => array(
 					'key' => array(
-						'description' => __( 'The option `key` name', 'easyroadmap' ),
+						'description' => __( 'The option `key` name', 'niroroadmap' ),
 						'required'    => true,
 					),
 				),
@@ -147,11 +147,11 @@ class API {
 				'callback'            => array( new Option(), 'update' ),
 				'args'                => array(
 					'key'   => array(
-						'description' => __( 'The option `key` name', 'easyroadmap' ),
+						'description' => __( 'The option `key` name', 'niroroadmap' ),
 						'required'    => true,
 					),
 					'value' => array(
-						'description' => __( 'The option `value`', 'easyroadmap' ),
+						'description' => __( 'The option `value`', 'niroroadmap' ),
 						'required'    => true,
 					),
 				),
@@ -167,7 +167,7 @@ class API {
 				'callback'            => array( new Option(), 'delete' ),
 				'args'                => array(
 					'key' => array(
-						'description' => __( 'The option `key` name', 'easyroadmap' ),
+						'description' => __( 'The option `key` name', 'niroroadmap' ),
 						'required'    => true,
 					),
 				),

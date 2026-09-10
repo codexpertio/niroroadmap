@@ -42,14 +42,14 @@ jobs:
             --exclude="postcss.config.js" \
             --exclude="*.sh" \
             --exclude="svn*" \
-            ./ release/easyroadmap/
+            ./ release/niroroadmap/
           cd release
-          zip -r easyroadmap.${VERSION}.zip easyroadmap
+          zip -r niroroadmap.${VERSION}.zip niroroadmap
 
       # Step 5: Upload ZIP to GitHub Release
       - name: Upload ZIP to GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          files: release/easyroadmap.${{ env.VERSION }}.zip
+          files: release/niroroadmap.${{ env.VERSION }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

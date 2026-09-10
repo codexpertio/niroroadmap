@@ -1,4 +1,4 @@
-name: Deploy EasyRoadmap to WordPress SVN
+name: Deploy NiroRoadmap to WordPress SVN
 
 on:
   push:
@@ -31,7 +31,7 @@ jobs:
       # Step 5: Checkout WordPress SVN Repository
       - name: Checkout WordPress SVN Repo
         run: |
-          svn checkout --depth=immediates "https://plugins.svn.wordpress.org/easyroadmap/" svn
+          svn checkout --depth=immediates "https://plugins.svn.wordpress.org/niroroadmap/" svn
           cd svn
           svn update --set-depth=infinity trunk assets tags
 
@@ -70,7 +70,7 @@ jobs:
           cd svn
           svn add --force trunk assets
           svn status | grep '^!' | awk '{print $2}' | xargs -r svn delete
-          svn commit -m "Deploy EasyRoadmap version ${VERSION}" \
+          svn commit -m "Deploy NiroRoadmap version ${VERSION}" \
             --username "${{ secrets.SVN_USERNAME }}" \
             --password "${{ secrets.SVN_PASSWORD }}" \
             --no-auth-cache --non-interactive
@@ -80,7 +80,7 @@ jobs:
         run: |
           cd svn
           svn copy trunk tags/${VERSION}
-          svn commit -m "Tagging EasyRoadmap version ${VERSION}" \
+          svn commit -m "Tagging NiroRoadmap version ${VERSION}" \
             --username "${{ secrets.SVN_USERNAME }}" \
             --password "${{ secrets.SVN_PASSWORD }}" \
             --no-auth-cache --non-interactive

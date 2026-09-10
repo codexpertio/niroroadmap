@@ -1,7 +1,7 @@
 jQuery(
 	function ($) {
 
-		$( '.taxonomy-task_stage #the-list' ).sortable(
+		$( '.taxonomy-niroroadmap_status #the-list' ).sortable(
 			{
 				cursor: 'grabbing',
 				axis: 'y',
@@ -9,10 +9,10 @@ jQuery(
 				update: function (event, ui) {
 					$.ajax(
 						{
-							url: `${EASYROADMAP.api_base}/stages/order`,
+							url: `${NIROROADMAP.api_base}/stages/order`,
 							method: "POST",
 							headers: {
-								'X-WP-Nonce': EASYROADMAP.nonce,
+								'X-WP-Nonce': NIROROADMAP.nonce,
 							},
 							data: {
 								order: $( this ).sortable( 'toArray', {attribute: 'id'} )

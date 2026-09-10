@@ -1,4 +1,4 @@
-Object.keys(EASYROADMAP_PLUGIN_ADMIN.menus).forEach(key => {
+Object.keys(NIROROADMAP_PLUGIN_ADMIN.menus).forEach(key => {
 
     document.querySelectorAll(`.toplevel_page_${key} .wp-submenu.wp-submenu-wrap > li`).forEach(function(item) {
 

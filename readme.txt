@@ -1,4 +1,4 @@
-=== EasyRoadmap - Interactive Kanban Roadmap for WordPress===
+=== NiroRoadmap - Interactive Kanban Roadmap for WordPress===
 Contributors: easysuite, easycommerce
 Tags: roadmap, kanban, product roadmap, feedback
 Requires at least: 6.0
@@ -12,9 +12,9 @@ Build and share your product roadmap with a visual, drag-and-drop Kanban board. 
 
 == Description ==
 
-**EasyRoadmap** is a modern WordPress plugin that lets you create, manage, and display product roadmaps in a clean Kanban-style layout.
+**NiroRoadmap** is a modern WordPress plugin that lets you create, manage, and display product roadmaps in a clean Kanban-style layout.
 
-Tasks are organized into stages (using the custom taxonomy `task_stage`) and can be filtered by product (using `task_product`).
+Tasks are organized into stages (using the custom taxonomy `niroroadmap_status`) and can be filtered by product (using `niroroadmap_product`).
 
 The plugin also supports task voting and exposes data via REST API, making it ideal for transparency, feedback collection, and internal planning.
 
@@ -23,8 +23,8 @@ The plugin also supports task voting and exposes data via REST API, making it id
 * **Kanban-Style Board:** Easily view and manage tasks by dragging and dropping them across stages.
 * **Custom Post Type & Taxonomies:**  
   - `task` post type for roadmap items.  
-  - `task_stage` for defining workflow columns (e.g., Planned, In Progress, Done).  
-  - `task_product` for categorizing tasks by product.
+  - `niroroadmap_status` for defining workflow columns (e.g., Planned, In Progress, Done).  
+  - `niroroadmap_product` for categorizing tasks by product.
 * **Voting System:** Enable users to upvote or downvote tasks.
 * **REST API:** Access and manipulate roadmap data programmatically.
 * **Responsive Design:** Fully optimized for both desktop and mobile views.
@@ -37,11 +37,11 @@ Embed the roadmap on any post or page with:
 `[roadmap]`
 
 Optional parameter:
-- `product` (integer): Use a term ID from the `task_product` taxonomy to filter tasks. Example: `[roadmap product="12"]`
+- `product` (integer): Use a term ID from the `niroroadmap_product` taxonomy to filter tasks. Example: `[roadmap product="12"]`
 
 = Column Color Customization =
 
-Each roadmap stage is a term in the Stages (`task_stage`) taxonomy. To set a custom color for a column:
+Each roadmap stage is a term in the Stages (`niroroadmap_status`) taxonomy. To set a custom color for a column:
 1. Navigate to **Tasks > Stages** in your WordPress admin.
 2. Edit the desired stage (e.g., "Planned", "In Progress").
 3. Pick a hex color (e.g., `#3B82F6`) using the color picker
@@ -54,28 +54,28 @@ Looking for a fast, modern, and developer-friendly eCommerce solution?
 
 [EasyCommerce](https://wordpress.org/plugins/easycommerce/) is a lightweight WordPress plugin designed to help you build and manage online stores effortlessly. It offers features like real-time analytics, abandoned cart recovery, customizable product pages, and secure payment gateways.
 
-With its intuitive interface and seamless integration, EasyCommerce is the perfect companion to EasyRoadmap, enabling you to align your product planning with your sales strategy.
+With its intuitive interface and seamless integration, EasyCommerce is the perfect companion to NiroRoadmap, enabling you to align your product planning with your sales strategy.
 
 == Installation ==
 
-1. Upload the plugin to the `/wp-content/plugins/easyroadmap` directory, or install via the WordPress dashboard.
+1. Upload the plugin to the `/wp-content/plugins/niroroadmap` directory, or install via the WordPress dashboard.
 2. Activate the plugin from the "Plugins" menu.
-3. Configure your stages and tasks via the **EasyRoadmap** admin panel.
+3. Configure your stages and tasks via the **NiroRoadmap** admin panel.
 4. Place the `[roadmap]` shortcode on any page or post to display your roadmap.
 
 == Frequently Asked Questions ==
 
 = Can I filter tasks by product? =
-Yes. Use the `product` parameter in the shortcode with a valid term ID from the `task_product` taxonomy.
+Yes. Use the `product` parameter in the shortcode with a valid term ID from the `niroroadmap_product` taxonomy.
 
 = Can users vote on tasks? =
 Yes, logged-in users can upvote or downvote tasks.
 
 = How do I customize the columns? =
-Edit the terms in the `task_stage` taxonomy to change names, order, or assign a custom color.
+Edit the terms in the `niroroadmap_status` taxonomy to change names, order, or assign a custom color.
 
 = Is the plugin developer-friendly? =
-Absolutely. EasyRoadmap offers a REST API and clean hooks for customization and extension.
+Absolutely. NiroRoadmap offers a REST API and clean hooks for customization and extension.
 
 == Screenshots ==
 
@@ -95,4 +95,4 @@ Absolutely. EasyRoadmap offers a REST API and clean hooks for customization and 
 == Upgrade Notice ==
 
 = 0.9 =
-Initial stable release of EasyRoadmap.
+Initial stable release of NiroRoadmap.

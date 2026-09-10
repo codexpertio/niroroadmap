@@ -13,7 +13,7 @@ $show_stage_links = $args['show_stage_links'] ?? false;
 			
 			<h3 class="er-text-xl er-font-bold er-mb-4">
 				<?php if( $show_stage_links ): ?>
-					<a href="<?php echo get_term_link( (int) $column['id'], 'task_stage' ); ?>"><?php echo esc_attr( $column['name'] ); ?></a>
+					<a href="<?php echo get_term_link( (int) $column['id'], 'niroroadmap_status' ); ?>"><?php echo esc_attr( $column['name'] ); ?></a>
 				<?php else: ?>
 					<?php echo esc_attr( $column['name'] ); ?>
 				<?php endif; ?>
@@ -41,11 +41,11 @@ $show_stage_links = $args['show_stage_links'] ?? false;
 
 			<div class="er-flex er-items-center er-space-x-2 er-mb-4">
 				<span id="er-upvote" data-type="upvote" class="er-vote-btn er-flex er-items-center er-space-x-2">
-					👍 <?php esc_html_e( 'Upvote', 'easyroadmap' ); ?>
+					👍 <?php esc_html_e( 'Upvote', 'niroroadmap' ); ?>
 					(<span class="er-vote-count" id="er-upvote-count">0</span>)
 				</span>
 				<span id="er-downvote" data-type="downvote" class="er-vote-btn er-flex er-items-center er-space-x-2">
-					👎 <?php esc_html_e( 'Downvote', 'easyroadmap' ); ?>
+					👎 <?php esc_html_e( 'Downvote', 'niroroadmap' ); ?>
 					(<span class="er-vote-count" id="er-downvote-count">0</span>)
 				</span>
 			</div>

@@ -1,5 +1,5 @@
 <?php
-namespace EasyRoadmap\Trait;
+namespace NiroRoadmap\Trait;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * This trait provides methods for setting, retrieving, and deleting cache values using either an external object cache or WordPress transients.
  *
- * @package EasyRoadmap
+ * @package NiroRoadmap
  */
 trait Cache {
 

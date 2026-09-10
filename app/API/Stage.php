@@ -1,10 +1,10 @@
 <?php
-namespace EasyRoadmap\API;
+namespace NiroRoadmap\API;
 
 defined( 'ABSPATH' ) || exit;
 
-use EasyRoadmap\Trait\Rest;
-use EasyRoadmap\Trait\Cleaner;
+use NiroRoadmap\Trait\Rest;
+use NiroRoadmap\Trait\Cleaner;
 
 class Stage {
 
@@ -26,6 +26,6 @@ class Stage {
 			update_term_meta( $term_id, 'menu_order', $position );
 		}
 
-		$this->response_success( array( 'message' => __( 'Stage order changed', 'easyroadmap' ) ) );
+		$this->response_success( array( 'message' => __( 'Stage order changed', 'niroroadmap' ) ) );
 	}
 }

@@ -1,8 +1,8 @@
 .fixed .column-color {
 	width: 30px;
 }
-.taxonomy-task_stage #tag-color,
-.taxonomy-task_stage .form-field #color {
+.taxonomy-niroroadmap_status #tag-color,
+.taxonomy-niroroadmap_status .form-field #color {
 	width: 100px;
 	height: 48px;
 }

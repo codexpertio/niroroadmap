@@ -1,5 +1,5 @@
 <?php
-namespace EasyRoadmap\Trait;
+namespace NiroRoadmap\Trait;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * This trait provides methods to add menu and submenu pages in the WordPress admin dashboard.
  *
- * @package EasyRoadmap
+ * @package NiroRoadmap
  */
 trait Menu {
 
@@ -25,14 +25,14 @@ trait Menu {
 	 */
 	public function add_menu( $page_title, $menu_title, $capability, $menu_slug, $callback = '', $icon_url = '', $position = null ) {
 
-		global $easyroadmap_menus;
+		global $niroroadmap_menus;
 
-		if ( ! isset( $easyroadmap_menus ) ) {
-			$easyroadmap_menus = array();
+		if ( ! isset( $niroroadmap_menus ) ) {
+			$niroroadmap_menus = array();
 		}
 
-		if ( ! isset( $easyroadmap_menus[ $menu_slug ] ) ) {
-			$easyroadmap_menus[ $menu_slug ] = array();
+		if ( ! isset( $niroroadmap_menus[ $menu_slug ] ) ) {
+			$niroroadmap_menus[ $menu_slug ] = array();
 		}
 
 		add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $callback, $icon_url, $position );
@@ -51,17 +51,17 @@ trait Menu {
 	 */
 	public function add_submenu( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback = '', $position = null ) {
 
-		global $easyroadmap_menus;
+		global $niroroadmap_menus;
 
-		if ( ! isset( $easyroadmap_menus ) ) {
-			$easyroadmap_menus = array();
+		if ( ! isset( $niroroadmap_menus ) ) {
+			$niroroadmap_menus = array();
 		}
 
-		if ( ! isset( $easyroadmap_menus[ $parent_slug ] ) ) {
-			$easyroadmap_menus[ $parent_slug ] = array();
+		if ( ! isset( $niroroadmap_menus[ $parent_slug ] ) ) {
+			$niroroadmap_menus[ $parent_slug ] = array();
 		}
 
-		$easyroadmap_menus[ $parent_slug ][] = $menu_slug;
+		$niroroadmap_menus[ $parent_slug ][] = $menu_slug;
 
 		add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback, $position );
 	}

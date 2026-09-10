@@ -1,5 +1,5 @@
 <?php
-namespace EasyRoadmap\Trait;
+namespace NiroRoadmap\Trait;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * This trait provides methods for sanitizing and escaping input and output data in the WordPress plugin.
  *
- * @package EasyRoadmap
+ * @package NiroRoadmap
  */
 trait Cleaner {
 

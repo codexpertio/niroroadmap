@@ -32,7 +32,7 @@ import './editor.scss';
 export default function Edit() {
 	return (
 		<p { ...useBlockProps() }>
-			{ __( 'Roadmap – choose a product in the settings if you want', 'easyroadmap' ) }
+			{ __( 'Roadmap – choose a product in the settings if you want', 'niroroadmap' ) }
 		</p>
 	);
 }

@@ -1,10 +1,10 @@
 <?php
-namespace EasyRoadmap\Controller\Public;
+namespace NiroRoadmap\Controller\Public;
 
 defined( 'ABSPATH' ) || exit;
 
-use EasyRoadmap\Model\Roadmap;
-use EasyRoadmap\Trait\Hook;
+use NiroRoadmap\Model\Roadmap;
+use NiroRoadmap\Trait\Hook;
 
 class Shortcode {
 

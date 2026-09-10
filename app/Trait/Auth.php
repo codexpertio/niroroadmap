@@ -1,5 +1,5 @@
 <?php
-namespace EasyRoadmap\Trait;
+namespace NiroRoadmap\Trait;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -11,7 +11,7 @@ trait Auth {
 	 * @return bool True if sandbox mode is enabled, false otherwise.
 	 */
 	protected function is_sandbox_mode() {
-		return defined( 'EASYROADMAP_SANDBOX' ) && EASYROADMAP_SANDBOX;
+		return defined( 'NIROROADMAP_SANDBOX' ) && NIROROADMAP_SANDBOX;
 	}
 
 	/**

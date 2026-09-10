@@ -1,22 +1,22 @@
 jQuery(
 	function ($) {
 
-		$( '.easyroadmap-settings-form' ).on(
+		$( '.niroroadmap-settings-form' ).on(
 			'reset',
 			function (e) {
 				e.preventDefault();
-				easyroadmap_modal();
+				niroroadmap_modal();
 
 				$.ajax(
 					{
-						url: `${EASYROADMAP_PLUGIN_ADMIN.api_base}/option`,
+						url: `${NIROROADMAP_PLUGIN_ADMIN.api_base}/option`,
 						type: 'DELETE',
 						dataType: 'JSON',
 						data: {
 							key: $( this ).data( 'option_key' )
 						},
 						headers: {
-							'X-WP-Nonce': EASYROADMAP_PLUGIN_ADMIN.nonce,
+							'X-WP-Nonce': NIROROADMAP_PLUGIN_ADMIN.nonce,
 						},
 						success: (resp) => {
 							console.log( 'Settings deleted:', resp );
@@ -24,17 +24,17 @@ jQuery(
 						},
 						error: (err) => {
 							console.error( 'Failed to delete settings', err );
-							easyroadmap_modal( false );
+							niroroadmap_modal( false );
 						},
 					}
 				);
 			}
 		);
 
-		$( '.easyroadmap-settings-form' ).submit(
+		$( '.niroroadmap-settings-form' ).submit(
 			function (e) {
 				e.preventDefault();
-				easyroadmap_modal();
+				niroroadmap_modal();
 
 				let formData = $( this ).serializeArray();
 				let data     = {};
@@ -56,7 +56,7 @@ jQuery(
 
 				$.ajax(
 					{
-						url: `${EASYROADMAP_PLUGIN_ADMIN.api_base}/option`,
+						url: `${NIROROADMAP_PLUGIN_ADMIN.api_base}/option`,
 						type: 'POST',
 						dataType: 'JSON',
 						data: {
@@ -64,15 +64,15 @@ jQuery(
 							value: data
 						},
 						headers: {
-							'X-WP-Nonce': EASYROADMAP_PLUGIN_ADMIN.nonce,
+							'X-WP-Nonce': NIROROADMAP_PLUGIN_ADMIN.nonce,
 						},
 						success: (resp) => {
 							console.log( 'Settings saved:', resp );
-							easyroadmap_modal( false );
+							niroroadmap_modal( false );
 						},
 						error: (err) => {
 							console.error( 'Failed to save settings', err );
-							easyroadmap_modal( false );
+							niroroadmap_modal( false );
 						},
 					}
 				);

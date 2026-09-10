@@ -1,9 +1,9 @@
 <?php
-namespace EasyRoadmap\Bootstrap;
+namespace NiroRoadmap\Bootstrap;
 
 defined( 'ABSPATH' ) || exit;
 
-use EasyRoadmap\Model\Database;
+use NiroRoadmap\Model\Database;
 
 class Uninstaller {
 
@@ -20,6 +20,6 @@ class Uninstaller {
 	 * Remove the database version from the options table.
 	 */
 	protected function remove_db_version() {
-		delete_option( 'easyroadmap_db_version' );
+		delete_option( 'niroroadmap_db_version' );
 	}
 }

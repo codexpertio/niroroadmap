@@ -1,5 +1,5 @@
 <?php
-namespace EasyRoadmap\Bootstrap\Activator;
+namespace NiroRoadmap\Bootstrap\Activator;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -8,21 +8,21 @@ class Taxonomy {
 	public function register() {
 
 		/**
-		 * STAGES
+		 * STATUSES
 		 */
 
 		$category_labels = array(
-			'name'              => _x( 'Stages', 'taxonomy general name', 'easyroadmap' ),
-			'singular_name'     => _x( 'Stage', 'taxonomy singular name', 'easyroadmap' ),
-			'search_items'      => __( 'Search Stages', 'easyroadmap' ),
-			'all_items'         => __( 'All Stages', 'easyroadmap' ),
-			'parent_item'       => __( 'Parent Stage', 'easyroadmap' ),
-			'parent_item_colon' => __( 'Parent Stage:', 'easyroadmap' ),
-			'edit_item'         => __( 'Edit Stage', 'easyroadmap' ),
-			'update_item'       => __( 'Update Stage', 'easyroadmap' ),
-			'add_new_item'      => __( 'Add New Stage', 'easyroadmap' ),
-			'new_item_name'     => __( 'New Stage Name', 'easyroadmap' ),
-			'menu_name'         => __( 'Stages', 'easyroadmap' ),
+			'name'              => _x( 'Statuses', 'taxonomy general name', 'niroroadmap' ),
+			'singular_name'     => _x( 'Status', 'taxonomy singular name', 'niroroadmap' ),
+			'search_items'      => __( 'Search Statuses', 'niroroadmap' ),
+			'all_items'         => __( 'All Statuses', 'niroroadmap' ),
+			'parent_item'       => __( 'Parent Status', 'niroroadmap' ),
+			'parent_item_colon' => __( 'Parent Status:', 'niroroadmap' ),
+			'edit_item'         => __( 'Edit Status', 'niroroadmap' ),
+			'update_item'       => __( 'Update Status', 'niroroadmap' ),
+			'add_new_item'      => __( 'Add New Status', 'niroroadmap' ),
+			'new_item_name'     => __( 'New Status Name', 'niroroadmap' ),
+			'menu_name'         => __( 'Statuses', 'niroroadmap' ),
 		);
 
 		$category_args = array(
@@ -35,24 +35,24 @@ class Taxonomy {
 			'show_in_rest'      => true,
 		);
 
-		register_taxonomy( 'task_stage', array( 'task' ), $category_args );
+		register_taxonomy( 'niroroadmap_status', array( 'niroroadmap_item' ), $category_args );
 
 		/**
 		 * PRODUCTS
 		 */
 
 		$brand_labels = array(
-			'name'              => _x( 'Products', 'taxonomy general name', 'easyroadmap' ),
-			'singular_name'     => _x( 'Product', 'taxonomy singular name', 'easyroadmap' ),
-			'search_items'      => __( 'Search Products', 'easyroadmap' ),
-			'all_items'         => __( 'All Products', 'easyroadmap' ),
-			'parent_item'       => __( 'Parent Product', 'easyroadmap' ),
-			'parent_item_colon' => __( 'Parent Product:', 'easyroadmap' ),
-			'edit_item'         => __( 'Edit Product', 'easyroadmap' ),
-			'update_item'       => __( 'Update Product', 'easyroadmap' ),
-			'add_new_item'      => __( 'Add New Product', 'easyroadmap' ),
-			'new_item_name'     => __( 'New Product Name', 'easyroadmap' ),
-			'menu_name'         => __( 'Products', 'easyroadmap' ),
+			'name'              => _x( 'Products', 'taxonomy general name', 'niroroadmap' ),
+			'singular_name'     => _x( 'Product', 'taxonomy singular name', 'niroroadmap' ),
+			'search_items'      => __( 'Search Products', 'niroroadmap' ),
+			'all_items'         => __( 'All Products', 'niroroadmap' ),
+			'parent_item'       => __( 'Parent Product', 'niroroadmap' ),
+			'parent_item_colon' => __( 'Parent Product:', 'niroroadmap' ),
+			'edit_item'         => __( 'Edit Product', 'niroroadmap' ),
+			'update_item'       => __( 'Update Product', 'niroroadmap' ),
+			'add_new_item'      => __( 'Add New Product', 'niroroadmap' ),
+			'new_item_name'     => __( 'New Product Name', 'niroroadmap' ),
+			'menu_name'         => __( 'Products', 'niroroadmap' ),
 		);
 
 		$brand_args = array(
@@ -65,7 +65,7 @@ class Taxonomy {
 			'show_in_rest'      => true,
 		);
 
-		register_taxonomy( 'task_product', array( 'task' ), $brand_args );
+		register_taxonomy( 'niroroadmap_product', array( 'niroroadmap_item' ), $brand_args );
 
 		/**
 		 * TAGS
@@ -100,6 +100,6 @@ class Taxonomy {
 			'show_in_rest'      => true,
 		);
 
-		register_taxonomy( 'task_tag', array( 'task' ), $tag_args );
+		register_taxonomy( 'niroroadmap_tag', array( 'niroroadmap_item' ), $tag_args );
 	}
 }

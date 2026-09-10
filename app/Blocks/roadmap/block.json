@@ -1,7 +1,7 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "easyroadmap/roadmap",
+	"name": "niroroadmap/roadmap",
 	"version": "0.1.0",
 	"title": "Roadmap",
 	"category": "widgets",
@@ -11,7 +11,7 @@
 	"supports": {
 		"html": false
 	},
-	"textdomain": "easyroadmap",
+	"textdomain": "niroroadmap",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"render": "file:./render.php"

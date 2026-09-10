@@ -1,12 +1,12 @@
 <?php
-namespace EasyRoadmap\Controller\Admin;
+namespace NiroRoadmap\Controller\Admin;
 
 defined( 'ABSPATH' ) || exit;
 
-use EasyRoadmap\Trait\Hook;
-use EasyRoadmap\Trait\Asset;
-use EasyRoadmap\Trait\Cleaner;
-use EasyRoadmap\Helper\Utility;
+use NiroRoadmap\Trait\Hook;
+use NiroRoadmap\Trait\Asset;
+use NiroRoadmap\Trait\Cleaner;
+use NiroRoadmap\Helper\Utility;
 
 class Init {
 
@@ -18,27 +18,27 @@ class Init {
 	 * Constructor to add all hooks.
 	 */
 	public function __construct() {
-		$this->action( 'task_stage_add_form_fields', array( $this, 'show_add_taxo_fields' ) );
+		$this->action( 'niroroadmap_status_add_form_fields', array( $this, 'show_add_taxo_fields' ) );
 		$this->action( 'created_term', array( $this, 'save_add_taxo_fields' ), 10, 3 );
-		$this->action( 'task_stage_edit_form', array( $this, 'show_edit_taxo_fields' ) );
-		$this->action( 'edited_task_stage', array( $this, 'save_edit_taxo_fields' ), 10, 2 );
-		$this->filter( 'manage_edit-task_stage_columns', array( $this, 'add_color_column' ) );
-		$this->filter( 'manage_task_stage_custom_column', array( $this, 'populate_color_column' ), 10, 3 );
+		$this->action( 'niroroadmap_status_edit_form', array( $this, 'show_edit_taxo_fields' ) );
+		$this->action( 'edited_niroroadmap_status', array( $this, 'save_edit_taxo_fields' ), 10, 2 );
+		$this->filter( 'manage_edit-niroroadmap_status_columns', array( $this, 'add_color_column' ) );
+		$this->filter( 'manage_niroroadmap_status_custom_column', array( $this, 'populate_color_column' ), 10, 3 );
 	}
 
 	public function show_add_taxo_fields() {
-		$color = easyroadmap_get_random_color();
+		$color = niroroadmap_get_random_color();
 		?>
 		<div class="form-field term-color-wrap">
-			<label for="tag-color"><?php esc_html_e( 'Color', 'easyroadmap' ); ?></label>
+			<label for="tag-color"><?php esc_html_e( 'Color', 'niroroadmap' ); ?></label>
 			<input name="color" id="tag-color" type="color" value="<?php echo esc_attr( $color ); ?>" size="40" aria-describedby="color-description">
-			<p id="color-description"><?php esc_html_e( 'The Kanban column color', 'easyroadmap' ); ?></p>
+			<p id="color-description"><?php esc_html_e( 'The Kanban column color', 'niroroadmap' ); ?></p>
 		</div>
 		<?php
 	}
 
 	public function save_add_taxo_fields( $term_id, $tt_id, $taxonomy ) {
-		if ( $taxonomy !== 'task_stage' ) {
+		if ( $taxonomy !== 'niroroadmap_status' ) {
 			return;
 		}
 
@@ -56,18 +56,18 @@ class Init {
 
 	public function show_edit_taxo_fields( $term ) {
 		if ( empty( $color = get_term_meta( $term->term_id, 'color', true ) ) ) {
-			$color = easyroadmap_get_random_color();
+			$color = niroroadmap_get_random_color();
 		}
 		?>
 		<table class="form-table" role="presentation">
 			<tbody>
 				<tr class="form-field form-required term-name-wrap">
 					<th scope="row">
-						<label for="color"><?php esc_html_e( 'Color', 'easyroadmap' ); ?></label>
+						<label for="color"><?php esc_html_e( 'Color', 'niroroadmap' ); ?></label>
 					</th>
 					<td>
 						<input name="color" id="color" type="color" value="<?php echo esc_attr( $color ); ?>" size="40" aria-required="true" aria-describedby="color-description">
-						<p class="description" id="color-description"><?php esc_html_e( 'The Kanban column color', 'easyroadmap' ); ?></p>
+						<p class="description" id="color-description"><?php esc_html_e( 'The Kanban column color', 'niroroadmap' ); ?></p>
 					</td>
 				</tr>
 			</tbody>

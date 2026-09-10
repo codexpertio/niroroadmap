@@ -1,5 +1,5 @@
 <?php
-namespace EasyRoadmap\Helper;
+namespace NiroRoadmap\Helper;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -57,7 +57,7 @@ class Utility {
 			$template .= '.php';
 		}
 
-		$path = EASYROADMAP_PLUGIN_DIR . 'views/' . $template;
+		$path = NIROROADMAP_PLUGIN_DIR . 'views/' . $template;
 
 		if ( file_exists( $path ) ) {
 			if ( ! empty( $args ) && is_array( $args ) ) {
@@ -90,7 +90,7 @@ class Utility {
 		$_args = wp_parse_args( $args, $defaults );
 
 		// use cache
-		if ( true === $show_cached && ( $cached_posts = wp_cache_get( "easyroadmap_{$_args['post_type']}", 'easyroadmap' ) ) ) {
+		if ( true === $show_cached && ( $cached_posts = wp_cache_get( "niroroadmap_{$_args['post_type']}", 'niroroadmap' ) ) ) {
 			$posts = $cached_posts;
 		}
 
@@ -103,18 +103,18 @@ class Utility {
 				$posts[ $post->ID ] = $post->post_title;
 			endforeach;
 
-			wp_cache_add( "easyroadmap_{$_args['post_type']}", $posts, 'easyroadmap', 3600 );
+			wp_cache_add( "niroroadmap_{$_args['post_type']}", $posts, 'niroroadmap', 3600 );
 		}
 
 		// translators: %s: Post type label.
-		$posts = $show_heading ? array( '' => sprintf( __( '- Choose a %s -', 'easyroadmap' ), $_args['post_type'] ) ) + $posts : $posts;
+		$posts = $show_heading ? array( '' => sprintf( __( '- Choose a %s -', 'niroroadmap' ), $_args['post_type'] ) ) + $posts : $posts;
 
-		return apply_filters( 'easyroadmap_get_posts', $posts, $_args );
+		return apply_filters( 'niroroadmap_get_posts', $posts, $_args );
 	}
 
 	public static function get_option( $option, $section, $field, $default = '' ) {
 
-		$key     = "easyroadmap-{$option}-{$section}";
+		$key     = "niroroadmap-{$option}-{$section}";
 		$options = get_option( $key );
 
 		if ( isset( $options[ $field ] ) ) {

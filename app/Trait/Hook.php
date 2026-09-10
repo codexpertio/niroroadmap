@@ -1,5 +1,5 @@
 <?php
-namespace EasyRoadmap\Trait;
+namespace NiroRoadmap\Trait;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * This trait provides methods to register action hooks, filter hooks, shortcodes, and AJAX actions in the WordPress plugin.
  *
- * @package EasyRoadmap
+ * @package NiroRoadmap
  */
 trait Hook {
 

@@ -1,4 +1,4 @@
-EasyRoadmap - Product roadmap made easy
+NiroRoadmap - Product roadmap made easy
 
 Copyright 2015 by the contributors
 
