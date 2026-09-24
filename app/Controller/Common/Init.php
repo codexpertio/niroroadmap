@@ -56,20 +56,29 @@ class Init {
 
 	public function order_terms( $terms, $taxonomies, $query_vars, $term_query ) {
 
-		if ( isset( $taxonomies[0] ) && 'niroroadmap_status' === $taxonomies[0] ) {
-
-			usort(
-				$terms,
-				function ( $a, $b ) {
-					$menu_order_a = (int) get_term_meta( $a->term_id, 'menu_order', true );
-					$menu_order_b = (int) get_term_meta( $b->term_id, 'menu_order', true );
-
-					return $menu_order_a <=> $menu_order_b;
-				}
-			);
-
+		if ( ! isset( $taxonomies[0] ) || 'niroroadmap_status' !== $taxonomies[0] || ! is_array( $terms ) ) {
 			return $terms;
 		}
+
+		// Only full term objects can be sorted (skip `fields` => 'ids', 'names', 'count' etc).
+		foreach ( $terms as $term ) {
+			if ( ! $term instanceof \WP_Term ) {
+				return $terms;
+			}
+		}
+
+		usort(
+			$terms,
+			function ( $a, $b ) {
+				// Stages that were never sorted go to the end, oldest first.
+				$menu_order_a = get_term_meta( $a->term_id, 'menu_order', true );
+				$menu_order_b = get_term_meta( $b->term_id, 'menu_order', true );
+				$menu_order_a = '' === $menu_order_a ? PHP_INT_MAX : (int) $menu_order_a;
+				$menu_order_b = '' === $menu_order_b ? PHP_INT_MAX : (int) $menu_order_b;
+
+				return array( $menu_order_a, $a->term_id ) <=> array( $menu_order_b, $b->term_id );
+			}
+		);
 
 		return $terms;
 	}

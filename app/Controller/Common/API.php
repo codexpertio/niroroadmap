@@ -45,7 +45,7 @@ class API {
 						'required'    => true,
 					),
 				),
-				'permission_callback' => array( $this, 'is_admin' ),
+				'permission_callback' => array( $this, 'is_editor' ),
 			)
 		);
 
@@ -79,9 +79,11 @@ class API {
 					'type' => array(
 						'description' => __( 'The vote type- upvote or downvote', 'niroroadmap' ),
 						'required'    => true,
+						'type'        => 'string',
+						'enum'        => array( 'upvote', 'downvote' ),
 					),
 				),
-				'permission_callback' => array( $this, 'is_member' ),
+				'permission_callback' => array( $this, 'is_user' ),
 			)
 		);
 
@@ -97,7 +99,7 @@ class API {
 						'required'    => true,
 					),
 				),
-				'permission_callback' => array( $this, 'is_admin' ),
+				'permission_callback' => array( $this, 'is_editor' ),
 			)
 		);
 
@@ -116,7 +118,7 @@ class API {
 						'required'    => true,
 					),
 				),
-				'permission_callback' => array( $this, 'is_admin' ),
+				'permission_callback' => array( $this, 'is_editor' ),
 			)
 		);
 

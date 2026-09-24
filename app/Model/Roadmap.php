@@ -19,8 +19,9 @@ class Roadmap {
 		);
 
 		foreach ( $stages as $stage ) {
-			$tasks[ $stage->slug ]['id']   = $stage->term_id;
-			$tasks[ $stage->slug ]['name'] = $stage->name;
+			$tasks[ $stage->slug ]['id']    = $stage->term_id;
+			$tasks[ $stage->slug ]['name']  = $stage->name;
+			$tasks[ $stage->slug ]['color'] = get_term_meta( $stage->term_id, 'color', true );
 
 			$tax_query = array();
 
@@ -38,7 +39,7 @@ class Roadmap {
 				);
 			}
 
-			$tasks[ $stage->slug ]['tasks'] = Utility::get_posts(
+			$posts = Utility::get_posts(
 				array(
 					'post_type'      => 'niroroadmap_item',
 					'tax_query'      => $tax_query,
@@ -47,6 +48,17 @@ class Roadmap {
 					'order'          => 'ASC',
 				)
 			);
+
+			$tasks[ $stage->slug ]['tasks'] = array();
+			foreach ( $posts as $task_id => $task_title ) {
+				$tags = get_the_terms( $task_id, 'niroroadmap_tag' );
+
+				$tasks[ $stage->slug ]['tasks'][ $task_id ] = array(
+					'title'   => $task_title,
+					'upvotes' => (int) get_post_meta( $task_id, 'upvote', true ),
+					'tags'    => is_array( $tags ) ? wp_list_pluck( $tags, 'name' ) : array(),
+				);
+			}
 		}
 
 		$show_links = apply_filters( 'niroroadmap_show_stage_links', false );

@@ -25,11 +25,26 @@ class Task {
 	}
 
 	/**
+	 * Only published, non-password-protected roadmap items are public.
+	 *
+	 * @param int $id
+	 * @return WP_Post
+	 */
+	private function get_public_task( $id ) {
+		$task = get_post( (int) $id );
+
+		if ( ! $task || 'niroroadmap_item' !== $task->post_type || 'publish' !== $task->post_status || '' !== $task->post_password ) {
+			$this->response_error( array( 'message' => __( 'Task not found', 'niroroadmap' ) ), 404 );
+		}
+
+		return $task;
+	}
+
+	/**
 	 * Get a task details
 	 */
 	public function get( $request ) {
-		$id   = $request->get_param( 'id' );
-		$task = get_post( $id );
+		$task = $this->get_public_task( $request->get_param( 'id' ) );
 
 		$this->response_success(
 			array(
@@ -45,7 +60,7 @@ class Task {
 	}
 
 	public function vote( $request ) {
-		$id   = $request->get_param( 'id' );
+		$id   = $this->get_public_task( $request->get_param( 'id' ) )->ID;
 		$type = $request->get_param( 'type' );
 
 		$current_vote = get_post_meta( $id, $type, true );
@@ -71,7 +86,7 @@ class Task {
 		$order = $request->get_param( 'order' );
 
 		foreach ( $order as $position => $task_id ) {
-			$task_id = (int) str_replace( 'er-task-', '', $task_id );
+			$task_id = (int) str_replace( 'nr-task-', '', $task_id );
 
 			// update_post_meta( $task_id, 'menu_order', $position );
 			wp_update_post(

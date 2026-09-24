@@ -14,7 +14,8 @@ class Shortcode {
 	 * Constructor to add all hooks.
 	 */
 	public function __construct() {
-		$this->shortcode( 'roadmap', array( $this, 'callback_roadmap' ) );
+		$this->shortcode( 'niroroadmap', array( $this, 'callback_roadmap' ) );
+		$this->shortcode( 'roadmap', array( $this, 'callback_roadmap' ) ); // back compat
 	}
 
 	public function callback_roadmap( $atts ) {

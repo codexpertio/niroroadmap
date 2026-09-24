@@ -5,9 +5,9 @@
  * Author: EasyCommerce
  * Author URI: https://easysuite.io/niroroadmap
  * Description: Build and share your product roadmap with a visual, drag-and-drop Kanban board.
- * Version: 0.9.1
+ * Version: 0.9
  * Requires at least: 6.0
- * Tested up to: 6.8
+ * Tested up to: 7.1
  * Requires PHP: 7.4
  * Text Domain: niroroadmap
  * Domain Path: /languages
@@ -30,7 +30,7 @@ namespace NiroRoadmap;
 defined( 'ABSPATH' ) || exit;
 
 define( 'NIROROADMAP_FILE', __FILE__ );
-define( 'NIROROADMAP_VERSION', '0.9.1' );
+define( 'NIROROADMAP_VERSION', '0.9' );
 define( 'NIROROADMAP_PLUGIN_DIR', plugin_dir_path( NIROROADMAP_FILE ) );
 define( 'NIROROADMAP_PLUGIN_URL', plugin_dir_url( NIROROADMAP_FILE ) );
 define( 'NIROROADMAP_ASSETS_URL', NIROROADMAP_PLUGIN_URL . 'assets/' );

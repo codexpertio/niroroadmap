@@ -51,7 +51,7 @@ trait Auth {
 	 * @return bool True if sandbox mode is enabled or the user has editor capabilities, false otherwise.
 	 */
 	public function is_editor( $request ) {
-		return $this->is_sandbox_mode() || current_user_can( 'editor' );
+		return $this->is_sandbox_mode() || current_user_can( 'edit_pages' );
 	}
 
 	/**

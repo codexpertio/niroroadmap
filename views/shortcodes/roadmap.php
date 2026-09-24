@@ -7,50 +7,78 @@ $tasks = $args['tasks'] ?? array();
 $show_stage_links = $args['show_stage_links'] ?? false;
 
 ?>
-<div class="er-flex er-justify-center er-space-x-4 er-mt-10 er-kanban-columns">
+<div class="nr-kanban-columns">
 	<?php foreach ( $tasks as $slug => $column ) : ?>
-		<div class="er-kanban-column" id="er-stage-<?php echo esc_attr( $column['id'] ); ?>" style="background: <?php echo esc_attr( get_term_meta( $column['id'], 'color', true ) ); ?>;">
-			
-			<h3 class="er-text-xl er-font-bold er-mb-4">
-				<?php if( $show_stage_links ): ?>
-					<a href="<?php echo get_term_link( (int) $column['id'], 'niroroadmap_status' ); ?>"><?php echo esc_attr( $column['name'] ); ?></a>
-				<?php else: ?>
-					<?php echo esc_attr( $column['name'] ); ?>
-				<?php endif; ?>
+		<section class="nr-kanban-column" id="nr-stage-<?php echo esc_attr( $column['id'] ); ?>" data-stage="<?php echo esc_attr( $column['id'] ); ?>" style="--nr-stage-color: <?php echo esc_attr( sanitize_hex_color( $column['color'] ) ?: '#94a3b8' ); ?>;">
 
-				<span><?php printf( '(%d)', count( $column['tasks'] ) ); ?></span>
-			</h3>
-		
-			<?php if ( ! empty( $column['tasks'] ) ) : ?>
-				<?php foreach ( $column['tasks'] as $task_id => $task_name ) : ?>
-					<div class="er-kanban-item" id="er-task-<?php echo esc_attr( $task_id ); ?>"><?php echo esc_html( $task_name ); ?></div>
+			<header class="nr-kanban-column-header">
+				<span class="nr-stage-dot" aria-hidden="true"></span>
+				<h3 class="nr-stage-name">
+					<?php if ( $show_stage_links ) : ?>
+						<a href="<?php echo esc_url( get_term_link( (int) $column['id'], 'niroroadmap_status' ) ); ?>"><?php echo esc_html( $column['name'] ); ?></a>
+					<?php else : ?>
+						<?php echo esc_html( $column['name'] ); ?>
+					<?php endif; ?>
+				</h3>
+				<span class="nr-stage-count"><?php echo esc_html( count( $column['tasks'] ) ); ?></span>
+			</header>
+
+			<div class="nr-kanban-list" data-empty="<?php esc_attr_e( 'Nothing here yet', 'niroroadmap' ); ?>">
+				<?php foreach ( $column['tasks'] as $task_id => $task ) : ?>
+					<article class="nr-kanban-item" id="nr-task-<?php echo esc_attr( $task_id ); ?>" tabindex="0" role="button" aria-haspopup="dialog" data-tags="<?php echo esc_attr( wp_json_encode( $task['tags'] ) ); ?>">
+						<h4 class="nr-task-title"><?php echo esc_html( $task['title'] ); ?></h4>
+
+						<div class="nr-task-meta">
+							<?php if ( ! empty( $task['tags'] ) ) : ?>
+								<ul class="nr-tags">
+									<?php foreach ( $task['tags'] as $tag ) : ?>
+										<li class="nr-tag"><?php echo esc_html( $tag ); ?></li>
+									<?php endforeach; ?>
+								</ul>
+							<?php endif; ?>
+
+							<span class="nr-task-votes" title="<?php esc_attr_e( 'Upvotes', 'niroroadmap' ); ?>">
+								<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4l6 8H4z" fill="currentColor"/></svg>
+								<span class="nr-task-votes-count"><?php echo esc_html( $task['upvotes'] ); ?></span>
+							</span>
+						</div>
+					</article>
 				<?php endforeach; ?>
-			<?php else : ?>
-			<?php endif; ?>
-		</div>
+			</div>
+		</section>
 	<?php endforeach; ?>
 </div>
 
-<div class="er-modal-overlay er-hidden" id="er-modal-overlay">
-	<div class="er-modal er-hidden" id="er-modal">
-		<span class="er-close-modal" id="er-close-modal">&times;</span>
+<?php if ( ! did_action( 'niroroadmap_modal_rendered' ) ) : ?>
+<?php do_action( 'niroroadmap_modal_rendered' ); ?>
+<div class="nr-modal-overlay" id="nr-modal-overlay" style="display: none;">
+	<div class="nr-modal" id="nr-modal" role="dialog" aria-modal="true" aria-labelledby="nr-modal-title">
+		<button type="button" class="nr-close-modal" id="nr-close-modal" aria-label="<?php esc_attr_e( 'Close', 'niroroadmap' ); ?>">&times;</button>
 
-		<div id="er-modal-content" class="er-text-gray-700">
-			<input type="hidden" id="er-modal-id">
-			<h2 id="er-modal-title" class="er-text-2xl er-font-bold er-mb-4">Task Title</h2>
+		<div id="nr-modal-content">
+			<input type="hidden" id="nr-modal-id">
 
-			<div class="er-flex er-items-center er-space-x-2 er-mb-4">
-				<span id="er-upvote" data-type="upvote" class="er-vote-btn er-flex er-items-center er-space-x-2">
-					👍 <?php esc_html_e( 'Upvote', 'niroroadmap' ); ?>
-					(<span class="er-vote-count" id="er-upvote-count">0</span>)
-				</span>
-				<span id="er-downvote" data-type="downvote" class="er-vote-btn er-flex er-items-center er-space-x-2">
-					👎 <?php esc_html_e( 'Downvote', 'niroroadmap' ); ?>
-					(<span class="er-vote-count" id="er-downvote-count">0</span>)
-				</span>
+			<div class="nr-modal-labels">
+				<div class="nr-modal-stage" id="nr-modal-stage"><span class="nr-stage-dot" aria-hidden="true"></span><span id="nr-modal-stage-name"></span></div>
+				<ul class="nr-tags" id="nr-modal-tags"></ul>
+			</div>
+			<h2 id="nr-modal-title"></h2>
+
+			<div class="nr-vote-buttons">
+				<button type="button" id="nr-upvote" data-type="upvote" class="nr-vote-btn">
+					<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4l6 8H4z" fill="currentColor"/></svg>
+					<?php esc_html_e( 'Upvote', 'niroroadmap' ); ?>
+					<span class="nr-vote-count" id="nr-upvote-count">0</span>
+				</button>
+				<button type="button" id="nr-downvote" data-type="downvote" class="nr-vote-btn">
+					<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 16L4 8h12z" fill="currentColor"/></svg>
+					<?php esc_html_e( 'Downvote', 'niroroadmap' ); ?>
+					<span class="nr-vote-count" id="nr-downvote-count">0</span>
+				</button>
 			</div>
 
-			<div id="er-modal-description" class="er-mb-4">Loading...</div>
+			<div id="nr-modal-description" class="nr-modal-description"></div>
 		</div>
 	</div>
 </div>
+<?php endif; ?>
