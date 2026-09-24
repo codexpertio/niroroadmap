@@ -18,6 +18,7 @@ class Activator {
 		$activator->set_cron();
 		$activator->register_post_types();
 		$activator->register_taxonomies();
+		$activator->seed_statuses();
 
 		// Set a flag that indicates the plugin has been activated
 		update_option( 'niroroadmap_activated', true );
@@ -33,5 +34,9 @@ class Activator {
 
 	public function register_taxonomies() {
 		$this->action( 'init', array( new Activator\Taxonomy(), 'register' ) );
+	}
+
+	public function seed_statuses() {
+		$this->action( 'init', array( Installer::class, 'seed_statuses' ), 20 );
 	}
 }

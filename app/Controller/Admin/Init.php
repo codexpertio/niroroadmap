@@ -42,16 +42,16 @@ class Init {
 			return;
 		}
 
+		// Terms are also created in code (default statuses, imports, other plugins). Only handle
+		// the "Add Status" form, and never wp_die(): that would abort whatever created the term.
 		if (
-			! isset( $_POST['_wpnonce_add-tag'] ) ||
-			! wp_verify_nonce( $this->sanitize( wp_unslash( $_POST['_wpnonce_add-tag'] ) ), 'add-tag' )
+			! isset( $_POST['color'], $_POST['_wpnonce_add-tag'] ) ||
+			! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce_add-tag'] ) ), 'add-tag' )
 		) {
-			wp_die( 'Nonce verification failed' );
+			return;
 		}
 
-		if ( isset( $_POST['color'] ) ) {
-			update_term_meta( $term_id, 'color', $this->sanitize( $_POST['color'] ) );
-		}
+		$this->save_color( $term_id );
 	}
 
 	public function show_edit_taxo_fields( $term ) {
@@ -76,15 +76,25 @@ class Init {
 	}
 
 	public function save_edit_taxo_fields( $term_id, $tt_id ) {
+		// Quick Edit and code updates don't send our field or this nonce; leave them alone.
 		if (
-			! isset( $_POST['_wpnonce'] ) ||
-			! wp_verify_nonce( $this->sanitize( wp_unslash( $_POST['_wpnonce'] ) ), 'update-tag_' . $term_id )
+			! isset( $_POST['color'], $_POST['_wpnonce'] ) ||
+			! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'update-tag_' . $term_id )
 		) {
-			wp_die( 'Nonce verification failed' );
+			return;
 		}
 
-		if ( isset( $_POST['color'] ) ) {
-			update_term_meta( $term_id, 'color', $this->sanitize( $_POST['color'] ) );
+		$this->save_color( $term_id );
+	}
+
+	/**
+	 * Save the submitted column color, if it's a valid hex color.
+	 */
+	private function save_color( $term_id ) {
+		$color = sanitize_hex_color( wp_unslash( $_POST['color'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified by the callers.
+
+		if ( $color ) {
+			update_term_meta( $term_id, 'color', $color );
 		}
 	}
 

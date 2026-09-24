@@ -9,6 +9,17 @@ class Option {
 
 	use Rest;
 
+	/**
+	 * Only the plugin's own options can be read or changed through the API. Anything else
+	 * (e.g. `active_plugins`, `siteurl`) could break or take over the site.
+	 *
+	 * @param mixed $key
+	 * @return bool
+	 */
+	private function is_allowed_key( $key ) {
+		return is_string( $key ) && 0 === strpos( $key, 'niroroadmap_' );
+	}
+
 
 	/**
 	 * Get the value of a specified option.
@@ -21,6 +32,10 @@ class Option {
 
 		if ( empty( $key ) ) {
 			return $this->response_error( __( 'Option key is required.', 'niroroadmap' ) );
+		}
+
+		if ( ! $this->is_allowed_key( $key ) ) {
+			return $this->response_error( __( 'This option cannot be changed.', 'niroroadmap' ), 403 );
 		}
 
 		$value = get_option( $key );
@@ -40,6 +55,10 @@ class Option {
 
 		if ( empty( $key ) || empty( $value ) ) {
 			return $this->response_error( __( 'Option key and value are required.', 'niroroadmap' ) );
+		}
+
+		if ( ! $this->is_allowed_key( $key ) ) {
+			return $this->response_error( __( 'This option cannot be changed.', 'niroroadmap' ), 403 );
 		}
 
 		$updated = update_option( $key, $value );
@@ -62,6 +81,10 @@ class Option {
 
 		if ( empty( $key ) ) {
 			return $this->response_error( __( 'Option key is required.', 'niroroadmap' ) );
+		}
+
+		if ( ! $this->is_allowed_key( $key ) ) {
+			return $this->response_error( __( 'This option cannot be changed.', 'niroroadmap' ), 403 );
 		}
 
 		$deleted = delete_option( $key );

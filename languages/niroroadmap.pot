@@ -1,0 +1,496 @@
+# Copyright (C) 2026 EasyCommerce
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: NiroRoadmap 0.9\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/niroroadmap\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-09-24T03:53:35+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: niroroadmap\n"
+
+#. Plugin Name of the plugin
+#: niroroadmap.php
+msgid "NiroRoadmap"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: niroroadmap.php
+msgid "https://easysuite.io"
+msgstr ""
+
+#. Description of the plugin
+#: niroroadmap.php
+msgid "Build and share your product roadmap with a visual, drag-and-drop Kanban board."
+msgstr ""
+
+#. Author of the plugin
+#: niroroadmap.php
+msgid "EasyCommerce"
+msgstr ""
+
+#. Author URI of the plugin
+#: niroroadmap.php
+msgid "https://easysuite.io/niroroadmap"
+msgstr ""
+
+#: app/API/Option.php:34
+#: app/API/Option.php:83
+msgid "Option key is required."
+msgstr ""
+
+#: app/API/Option.php:38
+#: app/API/Option.php:61
+#: app/API/Option.php:87
+msgid "This option cannot be changed."
+msgstr ""
+
+#: app/API/Option.php:57
+msgid "Option key and value are required."
+msgstr ""
+
+#: app/API/Option.php:67
+msgid "Option not updated."
+msgstr ""
+
+#: app/API/Option.php:70
+msgid "Option updated successfully."
+msgstr ""
+
+#: app/API/Option.php:93
+msgid "Failed to delete option."
+msgstr ""
+
+#: app/API/Option.php:96
+msgid "Option deleted successfully."
+msgstr ""
+
+#: app/API/Stage.php:29
+msgid "Stage order changed"
+msgstr ""
+
+#: app/API/Task.php:24
+msgid "Task moved"
+msgstr ""
+
+#: app/API/Task.php:37
+msgid "Task not found"
+msgstr ""
+
+#: app/API/Task.php:51
+msgid "Task found"
+msgstr ""
+
+#: app/API/Task.php:73
+msgid "Vote submitted"
+msgstr ""
+
+#: app/API/Task.php:100
+msgid "Task order changed"
+msgstr ""
+
+#: app/Bootstrap/Activator/Post_Type.php:10
+msgctxt "post type general name"
+msgid "Items"
+msgstr ""
+
+#: app/Bootstrap/Activator/Post_Type.php:11
+msgctxt "post type singular name"
+msgid "Item"
+msgstr ""
+
+#: app/Bootstrap/Activator/Post_Type.php:12
+msgctxt "admin menu"
+msgid "NiroRoadmap"
+msgstr ""
+
+#: app/Bootstrap/Activator/Post_Type.php:13
+msgctxt "add new on admin bar"
+msgid "Item"
+msgstr ""
+
+#: app/Bootstrap/Activator/Post_Type.php:14
+msgctxt "item"
+msgid "Add New"
+msgstr ""
+
+#: app/Bootstrap/Activator/Post_Type.php:15
+msgid "Add New"
+msgstr ""
+
+#: app/Bootstrap/Activator/Post_Type.php:16
+msgid "New Item"
+msgstr ""
+
+#: app/Bootstrap/Activator/Post_Type.php:17
+msgid "Edit Item"
+msgstr ""
+
+#: app/Bootstrap/Activator/Post_Type.php:18
+msgid "View Item"
+msgstr ""
+
+#: app/Bootstrap/Activator/Post_Type.php:19
+msgid "Items"
+msgstr ""
+
+#: app/Bootstrap/Activator/Post_Type.php:20
+msgid "Search Items"
+msgstr ""
+
+#: app/Bootstrap/Activator/Post_Type.php:21
+msgid "Parent Items:"
+msgstr ""
+
+#: app/Bootstrap/Activator/Post_Type.php:22
+msgid "No items found."
+msgstr ""
+
+#: app/Bootstrap/Activator/Post_Type.php:23
+msgid "No items found in Trash."
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:15
+msgctxt "taxonomy general name"
+msgid "Statuses"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:16
+msgctxt "taxonomy singular name"
+msgid "Status"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:17
+msgid "Search Statuses"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:18
+msgid "All Statuses"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:19
+msgid "Parent Status"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:20
+msgid "Parent Status:"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:21
+msgid "Edit Status"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:22
+msgid "Update Status"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:23
+msgid "Add New Status"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:24
+msgid "New Status Name"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:25
+msgid "Statuses"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:45
+msgctxt "taxonomy general name"
+msgid "Products"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:46
+msgctxt "taxonomy singular name"
+msgid "Product"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:47
+msgid "Search Products"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:48
+msgid "All Products"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:49
+msgid "Parent Product"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:50
+msgid "Parent Product:"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:51
+msgid "Edit Product"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:52
+msgid "Update Product"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:53
+msgid "Add New Product"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:54
+msgid "New Product Name"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:55
+msgid "Products"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:76
+msgctxt "taxonomy general name"
+msgid "Tags"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:77
+msgctxt "taxonomy singular name"
+msgid "Tag"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:78
+msgid "Search Tags"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:79
+msgid "Popular Tags"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:80
+msgid "All Tags"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:83
+msgid "Edit Tag"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:84
+msgid "Update Tag"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:85
+msgid "Add New Tag"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:86
+msgid "New Tag Name"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:87
+msgid "Separate tags with commas"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:88
+msgid "Add or remove tags"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:89
+msgid "Choose from the most used tags"
+msgstr ""
+
+#: app/Bootstrap/Activator/Taxonomy.php:90
+msgid "Tags"
+msgstr ""
+
+#: app/Bootstrap/Installer.php:45
+msgid "Under Review"
+msgstr ""
+
+#: app/Bootstrap/Installer.php:46
+msgid "Planned"
+msgstr ""
+
+#: app/Bootstrap/Installer.php:47
+msgid "In Progress"
+msgstr ""
+
+#: app/Bootstrap/Installer.php:48
+msgid "Completed"
+msgstr ""
+
+#: app/Bootstrap/Installer.php:80
+msgid "Roadmap"
+msgstr ""
+
+#: app/Controller/Admin/Init.php:33
+#: app/Controller/Admin/Init.php:66
+msgid "Color"
+msgstr ""
+
+#: app/Controller/Admin/Init.php:35
+#: app/Controller/Admin/Init.php:70
+msgid "The Kanban column color"
+msgstr ""
+
+#: app/Controller/Common/API.php:40
+#: app/Controller/Common/API.php:60
+#: app/Controller/Common/API.php:76
+msgid "The `task` ID"
+msgstr ""
+
+#: app/Controller/Common/API.php:44
+msgid "The `stage` ID"
+msgstr ""
+
+#: app/Controller/Common/API.php:80
+msgid "The vote type- upvote or downvote"
+msgstr ""
+
+#: app/Controller/Common/API.php:98
+#: app/Controller/Common/API.php:117
+msgid "The order"
+msgstr ""
+
+#: app/Controller/Common/API.php:136
+#: app/Controller/Common/API.php:152
+#: app/Controller/Common/API.php:172
+msgid "The option `key` name"
+msgstr ""
+
+#: app/Controller/Common/API.php:156
+msgid "The option `value`"
+msgstr ""
+
+#: app/Helper/functions.php:24
+msgid "General"
+msgstr ""
+
+#: app/Helper/functions.php:25
+msgid "General settings"
+msgstr ""
+
+#: app/Helper/functions.php:29
+msgid "Pages"
+msgstr ""
+
+#: app/Helper/functions.php:30
+msgid "Page Settings"
+msgstr ""
+
+#: app/Helper/functions.php:33
+msgid "Main Pages"
+msgstr ""
+
+#: app/Helper/functions.php:34
+msgid "Main Pages Settings"
+msgstr ""
+
+#: app/Helper/functions.php:39
+msgid "Homepage"
+msgstr ""
+
+#: app/Helper/functions.php:45
+msgid "Landing Page"
+msgstr ""
+
+#: app/Helper/functions.php:55
+msgid "Email"
+msgstr ""
+
+#: app/Helper/functions.php:56
+msgid "Email settings"
+msgstr ""
+
+#: app/Helper/functions.php:60
+msgid "New Ticket"
+msgstr ""
+
+#: app/Helper/functions.php:61
+msgid "New Ticket Notification"
+msgstr ""
+
+#: app/Helper/functions.php:64
+msgid "Agent Email"
+msgstr ""
+
+#: app/Helper/functions.php:65
+msgid "Email to an Agent"
+msgstr ""
+
+#: app/Helper/functions.php:70
+#: app/Helper/functions.php:91
+#: app/Helper/functions.php:118
+msgid "Header"
+msgstr ""
+
+#: app/Helper/functions.php:75
+#: app/Helper/functions.php:96
+#: app/Helper/functions.php:123
+msgid "Subject"
+msgstr ""
+
+#: app/Helper/functions.php:80
+#: app/Helper/functions.php:101
+#: app/Helper/functions.php:128
+msgid "Body"
+msgstr ""
+
+#: app/Helper/functions.php:85
+msgid "Client Email"
+msgstr ""
+
+#: app/Helper/functions.php:86
+#: app/Helper/functions.php:113
+msgid "Email to a Client"
+msgstr ""
+
+#: app/Helper/functions.php:108
+msgid "Agent Reply"
+msgstr ""
+
+#: app/Helper/functions.php:109
+msgid "Agent Reply Notification"
+msgstr ""
+
+#: app/Helper/functions.php:112
+msgid "Agent Reply Email"
+msgstr ""
+
+#. translators: %s: Post type label.
+#: app/Helper/Utility.php:110
+#, php-format
+msgid "- Choose a %s -"
+msgstr ""
+
+#: views/shortcodes/roadmap.php:26
+msgid "Nothing here yet"
+msgstr ""
+
+#: views/shortcodes/roadmap.php:40
+msgid "Upvotes"
+msgstr ""
+
+#: views/shortcodes/roadmap.php:56
+msgid "Close"
+msgstr ""
+
+#: views/shortcodes/roadmap.php:70
+msgid "Upvote"
+msgstr ""
+
+#: views/shortcodes/roadmap.php:75
+msgid "Downvote"
+msgstr ""
+
+#: app/Blocks/roadmap/edit.js:35
+msgid "Roadmap – choose a product in the settings if you want"
+msgstr ""
+
+#: app/Blocks/roadmap/block.json
+msgctxt "block title"
+msgid "Roadmap"
+msgstr ""
+
+#: app/Blocks/roadmap/block.json
+msgctxt "block description"
+msgid "Roadmap block"
+msgstr ""

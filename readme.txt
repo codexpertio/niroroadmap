@@ -3,7 +3,7 @@ Contributors: easysuite, easycommerce
 Tags: roadmap, kanban, product roadmap, feedback, voting
 Requires at least: 6.0
 Tested up to: 7.1
-Requires PHP: 7.4
+Requires PHP: 8.0
 Stable tag: 0.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -32,10 +32,12 @@ Visitors can open any item for the full details and upvote or downvote it. You f
 
 = Getting started =
 
-1. Go to **NiroRoadmap → Statuses** and add your columns (e.g. Planned, In Progress, Completed). Pick a color for each one, and drag them into order.
+On activation, NiroRoadmap creates a **Roadmap** page and four statuses (Under Review, Planned, In Progress, Completed), so the board works straight away.
+
+1. Adjust the columns under **NiroRoadmap → Statuses** if you like. Rename them, pick colors, and drag them into order.
 2. Optionally add your products under **NiroRoadmap → Products** and your labels under **NiroRoadmap → Tags**.
 3. Add items under **NiroRoadmap → Add New**. Give each one a status, and optionally a product and tags.
-4. Add the `[niroroadmap]` shortcode or the **Roadmap** block to any page.
+4. Visit the **Roadmap** page. To show the board somewhere else, use the `[niroroadmap]` shortcode or the **Roadmap** block.
 
 = Shortcode =
 
@@ -68,9 +70,8 @@ Building an online store? [EasyCommerce](https://wordpress.org/plugins/easycomme
 == Installation ==
 
 1. In your dashboard, go to **Plugins → Add New**, search for "NiroRoadmap", then install and activate it. Or upload the `niroroadmap` folder to `/wp-content/plugins/` and activate it from the **Plugins** screen.
-2. Go to **NiroRoadmap → Statuses** and create your columns.
-3. Add items under **NiroRoadmap**.
-4. Place the `[niroroadmap]` shortcode or the **Roadmap** block on a page.
+2. A **Roadmap** page and default statuses are created for you. If a page already shows the roadmap, it's used instead of creating a new one.
+3. Add items under **NiroRoadmap → Add New**.
 
 == Frequently Asked Questions ==
 
@@ -98,9 +99,13 @@ Yes. Assign items to a product, then use `[niroroadmap product="ID"]` with that 
 
 It uses your theme's fonts and a neutral design. To adjust the colors, override the CSS custom properties listed under "For developers".
 
+= Will activating it create pages or statuses every time? =
+
+No. The Roadmap page is created once, and only if no page already shows the roadmap. The default statuses are added once, and only if you have none. If you delete them, they won't come back.
+
 = What happens to my data if I delete the plugin? =
 
-Deleting the plugin removes its settings. Your roadmap items, statuses, products and tags are kept in the database.
+Deleting the plugin removes its settings. Your roadmap items, statuses, products, tags and the Roadmap page are kept.
 
 == Screenshots ==
 

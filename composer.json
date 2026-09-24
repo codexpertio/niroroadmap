@@ -7,7 +7,24 @@
         "psr-4": {
             "NiroRoadmap\\": "app/"
         },
-        "files": ["app/Helper/functions.php", "app/Config/autoload.php"]
+        "files": [
+            "app/Helper/functions.php",
+            "app/Config/autoload.php"
+        ]
+    },
+    "scripts": {
+        "makepot": "wp i18n make-pot --allow-root . languages/niroroadmap.pot --domain=niroroadmap --exclude=node_modules,vendor,build,release,svn-assets,tests",
+        "release": [
+            "rm -rf release build",
+            "npm run build:blocks",
+            "@makepot",
+            "composer install --no-dev --optimize-autoloader --no-interaction",
+            "mkdir -p release",
+            "rsync -a --exclude-from=.distignore ./ release/niroroadmap/",
+            "cd release && zip -rq niroroadmap.zip niroroadmap/",
+            "rm -rf release/niroroadmap/",
+            "composer install --no-interaction"
+        ]
     },
     "authors": [
         {
@@ -19,7 +36,6 @@
     "require-dev": {
         "phpunit/phpunit": "^10.5",
         "brain/monkey": "^2.6",
-        "wp-cli/wp-cli": "^2.5",
         "squizlabs/php_codesniffer": "^3.7",
         "phpcompatibility/php-compatibility": "^9.3",
         "wp-coding-standards/wpcs": "^3.0"
@@ -28,5 +44,9 @@
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
+    },
+    "scripts-descriptions": {
+        "makepot": "Generate languages/niroroadmap.pot",
+        "release": "Build blocks, generate the POT and create release/niroroadmap.zip"
     }
 }

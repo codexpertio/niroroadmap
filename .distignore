@@ -1,0 +1,65 @@
+# Files and folders excluded from the release zip (`composer release`).
+# Patterns starting with / are anchored to the plugin root.
+
+# Development and build files
+/node_modules/
+/package.json
+/package-lock.json
+/yarn.lock
+/composer.json
+/composer.lock
+/vendor/bin/
+webpack*.js
+*.config.js
+
+# Block sources (compiled into /build/ by `npm run build:blocks`)
+/app/Blocks/
+
+# Development tools and configuration
+/.git/
+/.github/
+/.gitignore
+/.gitattributes
+/.distignore
+/.editorconfig
+/phpunit.xml
+/phpcs.xml
+/phpcs.xml.dist
+/phpstan.neon
+/.phpunit.cache/
+/.phpunit.result.cache
+
+# Tests
+/tests/
+
+# Docs and project files
+/readme.md
+/tree.txt
+*.sh
+
+# WordPress.org assets (deployed to SVN /assets, not the plugin)
+/svn-assets/
+
+# Release output
+/release/
+
+# IDE and OS files
+/.vscode/
+/.idea/
+*.sublime-*
+.DS_Store
+Thumbs.db
+
+# Temporary files and archives
+*.log
+*.tmp
+*.cache
+*.swp
+*~
+*.zip
+*.tar.gz
+
+# Agentic development files
+/AGENTS.md
+/CLAUDE.md
+/.claude/
