@@ -1,10 +1,10 @@
 === NiroRoadmap - Public Product Roadmap & Kanban Board ===
-Contributors: easysuite, easycommerce
+Contributors: easycommerce
 Tags: roadmap, kanban, product roadmap, feedback, voting
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 0.9
+Stable tag: 0.9.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,10 +68,6 @@ The only compiled file is the block script in `build/roadmap/`. Its human-readab
 = Privacy =
 
 NiroRoadmap makes no requests to external services and stores no personal data. Votes are stored as plain counts on each item. To stop repeat votes, the visitor's browser keeps a list of the items it has voted on in local storage (`niroroadmap_votes`). This list is never sent to the server.
-
-= More from us =
-
-Building an online store? [EasyCommerce](https://wordpress.org/plugins/easycommerce/) is a lightweight eCommerce plugin for WordPress from the same team. It pairs well with NiroRoadmap.
 
 == Installation ==
 
