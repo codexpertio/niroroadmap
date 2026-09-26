@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: NiroRoadmap
- * Plugin URI: https://nirosuite.com
+ * Plugin URI: https://nirosuite.com/niroroadmap
  * Author: NiroSuite
- * Author URI: https://nirosuite.com/niroroadmap
+ * Author URI: https://nirosuite.com
  * Description: Build and share your product roadmap with a visual, drag-and-drop Kanban board.
- * Version: 0.9.1
+ * Version: 0.9.2
  * Requires at least: 6.0
  * Requires PHP: 8.0
  * Text Domain: niroroadmap
@@ -29,7 +29,7 @@ namespace NiroRoadmap;
 defined( 'ABSPATH' ) || exit;
 
 define( 'NIROROADMAP_FILE', __FILE__ );
-define( 'NIROROADMAP_VERSION', '0.9.1' );
+define( 'NIROROADMAP_VERSION', '0.9.2' );
 define( 'NIROROADMAP_PLUGIN_DIR', plugin_dir_path( NIROROADMAP_FILE ) );
 define( 'NIROROADMAP_PLUGIN_URL', plugin_dir_url( NIROROADMAP_FILE ) );
 define( 'NIROROADMAP_ASSETS_URL', NIROROADMAP_PLUGIN_URL . 'assets/' );

@@ -28,9 +28,6 @@ webpack*.js
 # Tests
 /tests/
 
-# Block sources (compiled into /build/)
-/app/Blocks/
-
 # Docs and project files
 /readme.md
 /tree.txt
