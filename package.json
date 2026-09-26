@@ -1,13 +1,7 @@
 {
   "scripts": {
-    "build": "webpack --config webpack.config.js",
-    "build:admin": "webpack --config webpack.config.admin.js",
-    "build:public": "webpack --config webpack.config.public.js",
-    "build:css": "webpack --config webpack.config.js",
     "build:blocks": "wp-scripts build --source-path=app/Blocks --webpack-copy-php --blocks-manifest",
-    "start": "webpack serve --config webpack.config.dev.js",
-    "start:blocks": "wp-scripts start --webpack-copy-php --blocks-manifest",
-    "watch": "webpack --watch"
+    "start:blocks": "wp-scripts start --source-path=app/Blocks --webpack-copy-php --blocks-manifest"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",

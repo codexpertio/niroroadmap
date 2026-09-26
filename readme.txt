@@ -121,7 +121,7 @@ Deleting the plugin removes its settings. Your roadmap items, statuses, products
 
 == Changelog ==
 
-= 0.9 - 2026-09-24 =
+= 0.9 - 2026-09-26 =
 * Initial release with Kanban board, task voting, shortcode support, REST API integration, and customizable taxonomy columns.
 
 == Upgrade Notice ==
