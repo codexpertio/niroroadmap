@@ -35,8 +35,8 @@ jobs:
             --exclude="spa" \
             --exclude="tests" \
             --exclude="*.md" \
-            --exclude="composer.*" \
-            --exclude="package*.json" \
+            --exclude="composer.lock" \
+            --exclude="package-lock.json" \
             --exclude="webpack.config.js" \
             --exclude="tailwind.config.js" \
             --exclude="postcss.config.js" \

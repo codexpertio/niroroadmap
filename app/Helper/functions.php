@@ -1,4 +1,7 @@
 <?php
+
+defined( 'ABSPATH' ) || exit;
+
 use NiroRoadmap\Helper\Utility;
 
 /**

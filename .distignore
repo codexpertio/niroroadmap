@@ -3,17 +3,12 @@
 
 # Development and build files
 /node_modules/
-/package.json
 /package-lock.json
 /yarn.lock
-/composer.json
 /composer.lock
 /vendor/bin/
 webpack*.js
 *.config.js
-
-# Block sources (compiled into /build/ by `npm run build:blocks`)
-/app/Blocks/
 
 # Development tools and configuration
 /.git/

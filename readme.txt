@@ -59,6 +59,12 @@ The board's look can be changed by overriding these CSS custom properties on `.n
 
 Roadmap data is stored as a regular custom post type (`niroroadmap_item`) with the taxonomies `niroroadmap_status`, `niroroadmap_product` and `niroroadmap_tag`, so it works with the standard WordPress APIs.
 
+= Source code and build tools =
+
+The full source code is publicly available at [github.com/codexpertio/niroroadmap](https://github.com/codexpertio/niroroadmap).
+
+The only compiled file is the block script in `build/roadmap/`. Its human-readable source ships with the plugin in `app/Blocks/roadmap/`. To rebuild it, run `npm install` and then `npm run build:blocks` (uses [@wordpress/scripts](https://www.npmjs.com/package/@wordpress/scripts)). PHP dependencies are listed in `composer.json`; run `composer install` to install them.
+
 = Privacy =
 
 NiroRoadmap makes no requests to external services and stores no personal data. Votes are stored as plain counts on each item. To stop repeat votes, the visitor's browser keeps a list of the items it has voted on in local storage (`niroroadmap_votes`). This list is never sent to the server.

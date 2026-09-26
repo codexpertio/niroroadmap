@@ -61,6 +61,79 @@ trait Auth {
 	 * @return bool True if sandbox mode is enabled or the user has administrator capabilities, false otherwise.
 	 */
 	public function is_admin( $request ) {
-		return $this->is_sandbox_mode() || current_user_can( 'administrator' );
+		return $this->is_sandbox_mode() || current_user_can( 'manage_options' );
+	}
+
+	/**
+	 * Check if the current user can move the requested task to the requested stage.
+	 *
+	 * @param WP_REST_Request $request The request object.
+	 * @return bool True if the user can edit the task and assign the stage, false otherwise.
+	 */
+	public function can_move_task( $request ) {
+		$task  = get_post( (int) $request->get_param( 'id' ) );
+		$stage = get_term( (int) $request->get_param( 'stage' ), 'niroroadmap_status' );
+
+		if ( ! $task || 'niroroadmap_item' !== $task->post_type || ! $stage || is_wp_error( $stage ) ) {
+			return false;
+		}
+
+		return $this->is_sandbox_mode() || ( current_user_can( 'edit_post', $task->ID ) && current_user_can( 'assign_term', $stage->term_id ) );
+	}
+
+	/**
+	 * Check if the current user can reorder every task in the request.
+	 *
+	 * @param WP_REST_Request $request The request object.
+	 * @return bool True if every ID is a task the user can edit, false otherwise.
+	 */
+	public function can_order_tasks( $request ) {
+		$order = $request->get_param( 'order' );
+
+		if ( ! is_array( $order ) ) {
+			return false;
+		}
+
+		foreach ( $order as $task_id ) {
+			$task = get_post( (int) str_replace( 'nr-task-', '', $task_id ) );
+
+			if ( ! $task || 'niroroadmap_item' !== $task->post_type ) {
+				return false;
+			}
+
+			if ( ! $this->is_sandbox_mode() && ! current_user_can( 'edit_post', $task->ID ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check if the current user can reorder every stage in the request.
+	 *
+	 * @param WP_REST_Request $request The request object.
+	 * @return bool True if every ID is a stage the user can edit, false otherwise.
+	 */
+	public function can_order_stages( $request ) {
+		$order = $request->get_param( 'order' );
+
+		if ( ! is_array( $order ) ) {
+			return false;
+		}
+
+		foreach ( $order as $term_id ) {
+			$stage = get_term( (int) str_replace( 'tag-', '', $term_id ), 'niroroadmap_status' );
+
+			if ( ! $stage || is_wp_error( $stage ) ) {
+				return false;
+			}
+
+			if ( ! $this->is_sandbox_mode() && ! current_user_can( 'edit_term', $stage->term_id ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

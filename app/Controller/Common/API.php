@@ -45,7 +45,7 @@ class API {
 						'required'    => true,
 					),
 				),
-				'permission_callback' => array( $this, 'is_editor' ),
+				'permission_callback' => array( $this, 'can_move_task' ),
 			)
 		);
 
@@ -61,7 +61,7 @@ class API {
 						'required'    => true,
 					),
 				),
-				'permission_callback' => array( $this, 'is_user' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -83,7 +83,7 @@ class API {
 						'enum'        => array( 'upvote', 'downvote' ),
 					),
 				),
-				'permission_callback' => array( $this, 'is_user' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -99,7 +99,7 @@ class API {
 						'required'    => true,
 					),
 				),
-				'permission_callback' => array( $this, 'is_editor' ),
+				'permission_callback' => array( $this, 'can_order_tasks' ),
 			)
 		);
 
@@ -118,7 +118,7 @@ class API {
 						'required'    => true,
 					),
 				),
-				'permission_callback' => array( $this, 'is_editor' ),
+				'permission_callback' => array( $this, 'can_order_stages' ),
 			)
 		);
 
