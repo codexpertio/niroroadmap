@@ -5,6 +5,10 @@ on:
     tags:
       - "v*"  # Runs when a tag like v1.0.0 is pushed
 
+env:
+  SVN_URL: https://plugins.svn.wordpress.org/niroroadmap/
+  SVN_DIR: ${{ github.workspace }}/../svn  # Outside the workspace so it never gets synced into trunk
+
 jobs:
   deploy:
     name: Deploy to WordPress SVN
@@ -15,70 +19,75 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 2: Install Composer dependencies to regenerate `vendor/`
+      # Step 2: Get the plugin version from the tag name and make sure it matches the plugin files
+      - name: Get Plugin Version
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+          grep -Eq "^[ *]*Version:[[:space:]]*${VERSION}[[:space:]]*$" niroroadmap.php \
+            || { echo "::error::Version header in niroroadmap.php does not match ${VERSION}"; exit 1; }
+          grep -Eq "^Stable tag:[[:space:]]*${VERSION}[[:space:]]*$" readme.txt \
+            || { echo "::error::Stable tag in readme.txt does not match ${VERSION}"; exit 1; }
+
+      # Step 3: Install Composer dependencies to regenerate `vendor/`
       - name: Install Composer Dependencies
         run: composer install --no-dev --optimize-autoloader -n
 
-      # Step 3: Get the plugin version from the tag name
-      - name: Get Plugin Version
-        id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+      # Step 4: Build the blocks into `build/` (not tracked in Git)
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-      # Step 4: Install Subversion (SVN)
+      - name: Build Blocks
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+          npm run build:blocks
+          test -f build/blocks-manifest.php
+
+      # Step 5: Install Subversion (SVN)
       - name: Install Subversion
         run: sudo apt-get update && sudo apt-get install -y subversion
 
-      # Step 5: Checkout WordPress SVN Repository
+      # Step 6: Checkout WordPress SVN Repo (tags only at the top level, it can be large)
       - name: Checkout WordPress SVN Repo
         run: |
-          svn checkout --depth=immediates "https://plugins.svn.wordpress.org/niroroadmap/" svn
-          cd svn
-          svn update --set-depth=infinity trunk assets tags
+          svn checkout --depth=immediates "$SVN_URL" "$SVN_DIR"
+          cd "$SVN_DIR"
+          svn update --set-depth=infinity trunk assets
+          if svn ls "${SVN_URL}tags/${VERSION}" > /dev/null 2>&1; then
+            echo "::error::SVN tag ${VERSION} already exists"
+            exit 1
+          fi
 
-      # Step 6: Sync Plugin Files to SVN trunk (excluding unnecessary files)
+      # Step 7: Sync Plugin Files to SVN trunk (exclusions come from .distignore)
       - name: Sync Plugin Files to SVN trunk
-        run: |
-          rsync -rc --delete \
-            --exclude=".git*" \
-            --exclude=".github" \
-            --exclude="node_modules" \
-            --exclude="spa" \
-            --exclude="tests" \
-            --exclude=".gitignore" \
-            --exclude="composer.lock" \
-            --exclude="mapper.sh" \
-            --exclude="package-lock.json" \
-            --exclude="phpunit.xml" \
-            --exclude="readme.md" \
-            --exclude="tree.txt" \
-            --exclude="svn-assets" \
-            --exclude="svn" \
-            ./ svn/trunk/
+        run: rsync -rc --delete --exclude-from=.distignore ./ "$SVN_DIR/trunk/"
 
-      # Step 7: Sync WordPress.org Assets (from `svn-assets/` in Git) to SVN `assets/`
+      # Step 8: Sync WordPress.org Assets (from `svn-assets/` in Git) to SVN `assets/`
       - name: Sync WordPress.org Assets to SVN
         run: |
           if [ -d svn-assets ]; then
-            rsync -rc --delete svn-assets/ svn/assets/
+            rsync -rc --delete svn-assets/ "$SVN_DIR/assets/"
           fi
 
-      # Step 8: Commit Plugin Files to Trunk
-      - name: Commit Plugin Files to Trunk
+      # Step 9: Stage changes, copy trunk to the new tag and commit everything at once
+      - name: Commit to SVN
         run: |
-          cd svn
-          svn add --force trunk assets
-          svn status | grep '^!' | awk '{print $2}' | xargs -r svn delete
-          svn commit -m "Deploy NiroRoadmap version ${VERSION}" \
-            --username "${{ secrets.SVN_USERNAME }}" \
-            --password "${{ secrets.SVN_PASSWORD }}" \
-            --no-auth-cache --non-interactive
+          cd "$SVN_DIR"
+          svn add --force trunk assets --auto-props --parents --depth infinity -q
+          svn status | grep '^!' | sed 's/^! *//' | xargs -r -d '\n' -I{} svn delete --force "{}@"
 
-      # Step 9: Tag Release in SVN
-      - name: Tag Release in SVN
-        run: |
-          cd svn
-          svn copy trunk tags/${VERSION}
-          svn commit -m "Tagging NiroRoadmap version ${VERSION}" \
+          # Serve images inline on wordpress.org instead of as downloads
+          find assets -type f -name '*.png' -exec svn propset -q svn:mime-type image/png {} + || true
+          find assets -type f \( -name '*.jpg' -o -name '*.jpeg' \) -exec svn propset -q svn:mime-type image/jpeg {} + || true
+          find assets -type f -name '*.gif' -exec svn propset -q svn:mime-type image/gif {} + || true
+          find assets -type f -name '*.svg' -exec svn propset -q svn:mime-type image/svg+xml {} + || true
+
+          svn copy trunk "tags/${VERSION}"
+          svn status
+
+          svn commit -m "Release NiroRoadmap version ${VERSION}" \
             --username "${{ secrets.SVN_USERNAME }}" \
             --password "${{ secrets.SVN_PASSWORD }}" \
             --no-auth-cache --non-interactive

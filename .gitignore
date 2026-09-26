@@ -1,9 +1,21 @@
-vendor/
-node_modules/
-spa/build/
+# Dependencies (install with `composer install` / `npm ci`)
+/vendor/
+/node_modules/
+
+# Build output (`npm run build:blocks`, `composer release`)
 /build/
-composer.lock
-package-lock.json
-.phpunit.cache/
-tree.txt
 /release/
+
+# Tooling caches
+/.phpunit.cache/
+/.phpunit.result.cache
+
+# Generated files
+/tree.txt
+
+# IDE and OS files
+/.vscode/
+/.idea/
+.DS_Store
+Thumbs.db
+*.log

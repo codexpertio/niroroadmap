@@ -4,6 +4,7 @@
 # Development and build files
 /node_modules/
 /package-lock.json
+/package.json
 /yarn.lock
 /composer.lock
 /vendor/bin/
@@ -27,6 +28,9 @@ webpack*.js
 # Tests
 /tests/
 
+# Block sources (compiled into /build/)
+/app/Blocks/
+
 # Docs and project files
 /readme.md
 /tree.txt
@@ -35,8 +39,9 @@ webpack*.js
 # WordPress.org assets (deployed to SVN /assets, not the plugin)
 /svn-assets/
 
-# Release output
+# Release output and CI SVN checkout
 /release/
+/svn/
 
 # IDE and OS files
 /.vscode/
