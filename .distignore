@@ -10,6 +10,12 @@
 /vendor/bin/
 webpack*.js
 *.config.js
+/.babelrc
+/.npmrc
+/.nvmrc
+/.eslintrc*
+/.prettierrc*
+/.stylelintrc*
 
 # Development tools and configuration
 /.git/
@@ -19,8 +25,15 @@ webpack*.js
 /.distignore
 /.editorconfig
 /phpunit.xml
+/phpunit.xml.dist
 /phpcs.xml
 /phpcs.xml.dist
+/.phpcs.xml
+/.phpcs.xml.dist
+/.env
+/.env.*
+/.wp-env.json
+/.wp-env.override.json
 /phpstan.neon
 /.phpunit.cache/
 /.phpunit.result.cache
@@ -30,6 +43,8 @@ webpack*.js
 
 # Docs and project files
 /readme.md
+/CHANGELOG.md
+/CONTRIBUTING.md
 /tree.txt
 *.sh
 
@@ -60,3 +75,7 @@ Thumbs.db
 /AGENTS.md
 /CLAUDE.md
 /.claude/
+/.mcp.json
+/.cursor/
+/.cursorrules
+/GEMINI.md

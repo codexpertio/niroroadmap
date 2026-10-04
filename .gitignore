@@ -12,6 +12,8 @@
 
 # Generated files
 /tree.txt
+/svn/
+*.zip
 
 # IDE and OS files
 /.vscode/
@@ -19,3 +21,13 @@
 .DS_Store
 Thumbs.db
 *.log
+*.swp
+*~
+
+# Local config and secrets
+/.env
+/.env.*
+/.wp-env.override.json
+
+# Local agent settings
+/.claude/settings.local.json
