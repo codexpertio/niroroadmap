@@ -41,20 +41,46 @@ class Task {
 	}
 
 	/**
+	 * Whether the current visitor may see the count of a vote type.
+	 *
+	 * Counts that must stay hidden are left out of API responses, not just hidden on the page.
+	 *
+	 * @param string $type `upvote` or `downvote`.
+	 * @return bool
+	 */
+	private function can_see_count( $type ) {
+		if ( ! niroroadmap_get_setting( 'show_vote_counts' ) ) {
+			return false;
+		}
+
+		if ( 'downvote' !== $type ) {
+			return true;
+		}
+
+		return niroroadmap_get_setting( 'show_downvote' ) && ( 'admins' !== niroroadmap_get_setting( 'show_downvotes_to' ) || current_user_can( 'manage_options' ) );
+	}
+
+	/**
 	 * Get a task details
 	 */
 	public function get( $request ) {
 		$task = $this->get_public_task( $request->get_param( 'id' ) );
 
+		$data = array(
+			'title'       => $task->post_title,
+			'description' => wpautop( $task->post_content ),
+		);
+
+		foreach ( array( 'upvote', 'downvote' ) as $type ) {
+			if ( $this->can_see_count( $type ) ) {
+				$data[ $type . 's' ] = get_post_meta( $task->ID, $type, true );
+			}
+		}
+
 		$this->response_success(
 			array(
 				'message' => __( 'Task found', 'niroroadmap' ),
-				'task'    => array(
-					'title'       => $task->post_title,
-					'description' => wpautop( $task->post_content ),
-					'upvotes'     => get_post_meta( $task->ID, 'upvote', true ),
-					'downvotes'   => get_post_meta( $task->ID, 'downvote', true ),
-				),
+				'task'    => $data,
 			)
 		);
 	}
@@ -63,17 +89,26 @@ class Task {
 		$id   = $this->get_public_task( $request->get_param( 'id' ) )->ID;
 		$type = $request->get_param( 'type' );
 
+		if ( 'logged_in' === niroroadmap_get_setting( 'vote_who' ) && ! is_user_logged_in() ) {
+			$this->response_error( array( 'message' => __( 'Please log in to vote.', 'niroroadmap' ) ), 401 );
+		}
+
+		if ( 'downvote' === $type && ! niroroadmap_get_setting( 'show_downvote' ) ) {
+			$this->response_error( array( 'message' => __( 'Downvoting is turned off.', 'niroroadmap' ) ), 403 );
+		}
+
 		$current_vote = get_post_meta( $id, $type, true );
 		$new_vote     = (int) $current_vote + 1;
 
 		update_post_meta( $id, $type, $new_vote );
 
-		$this->response_success(
-			array(
-				'message' => __( 'Vote submitted', 'niroroadmap' ),
-				'votes'   => $new_vote,
-			)
-		);
+		$data = array( 'message' => __( 'Vote submitted', 'niroroadmap' ) );
+
+		if ( $this->can_see_count( $type ) ) {
+			$data['votes'] = $new_vote;
+		}
+
+		$this->response_success( $data );
 	}
 
 	/**

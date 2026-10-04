@@ -3,6 +3,7 @@ namespace NiroRoadmap\Bootstrap;
 
 defined( 'ABSPATH' ) || exit;
 
+use NiroRoadmap\Helper\Settings;
 use NiroRoadmap\Model\Database;
 
 class Installer {
@@ -63,7 +64,8 @@ class Installer {
 	 * Create the public roadmap page, unless one already exists.
 	 */
 	protected function create_roadmap_page() {
-		$page_id = (int) get_option( 'niroroadmap_page_id' );
+		// Falls back to the old hidden `niroroadmap_page_id` option for sites installed before Settings existed.
+		$page_id = (int) niroroadmap_get_setting( 'roadmap_page' );
 
 		// Created before. Also covers a trashed page, so we don't bring back a page the user removed.
 		if ( $page_id && get_post( $page_id ) ) {
@@ -84,7 +86,7 @@ class Installer {
 		}
 
 		if ( $page_id && ! is_wp_error( $page_id ) ) {
-			update_option( 'niroroadmap_page_id', (int) $page_id );
+			Settings::update( 'roadmap_page', (int) $page_id );
 		}
 	}
 

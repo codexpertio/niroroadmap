@@ -2,6 +2,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
+use NiroRoadmap\Helper\Settings;
 use NiroRoadmap\Helper\Utility;
 
 /**
@@ -14,6 +15,18 @@ use NiroRoadmap\Helper\Utility;
  */
 function niroroadmap_home_url( $path = '', $blog_id = null ) {
 	return get_home_url( $blog_id, $path );
+}
+
+/**
+ * Get a plugin setting (see Helper\Settings for the list of keys).
+ *
+ * @param string $key     Setting key.
+ * @param mixed  $default Returned when the key doesn't exist.
+ *
+ * @return mixed The saved value, or the setting's default.
+ */
+function niroroadmap_get_setting( $key, $default = null ) {
+	return Settings::get( $key, $default );
 }
 
 function niroroadmap_settings_menus() {

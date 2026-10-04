@@ -3,6 +3,7 @@ namespace NiroRoadmap\API;
 
 defined( 'ABSPATH' ) || exit;
 
+use NiroRoadmap\Helper\Settings;
 use NiroRoadmap\Trait\Rest;
 
 class Option {
@@ -20,6 +21,17 @@ class Option {
 		return is_string( $key ) && 0 === strpos( $key, 'niroroadmap_' );
 	}
 
+
+	/**
+	 * The settings option is written by the Settings page, which validates every field. Writing it
+	 * here would skip that.
+	 *
+	 * @param string $key
+	 * @return bool
+	 */
+	private function is_protected_key( $key ) {
+		return Settings::OPTION === $key;
+	}
 
 	/**
 	 * Get the value of a specified option.
@@ -53,11 +65,12 @@ class Option {
 		$key   = $request->get_param( 'key' );
 		$value = $request->get_param( 'value' );
 
-		if ( empty( $key ) || empty( $value ) ) {
+		// `0`, `false` and an empty string are valid values; only a missing one is an error.
+		if ( empty( $key ) || null === $value ) {
 			return $this->response_error( __( 'Option key and value are required.', 'niroroadmap' ) );
 		}
 
-		if ( ! $this->is_allowed_key( $key ) ) {
+		if ( ! $this->is_allowed_key( $key ) || $this->is_protected_key( $key ) ) {
 			return $this->response_error( __( 'This option cannot be changed.', 'niroroadmap' ), 403 );
 		}
 
@@ -83,7 +96,7 @@ class Option {
 			return $this->response_error( __( 'Option key is required.', 'niroroadmap' ) );
 		}
 
-		if ( ! $this->is_allowed_key( $key ) ) {
+		if ( ! $this->is_allowed_key( $key ) || $this->is_protected_key( $key ) ) {
 			return $this->response_error( __( 'This option cannot be changed.', 'niroroadmap' ), 403 );
 		}
 

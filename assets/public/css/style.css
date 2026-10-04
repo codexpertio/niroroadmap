@@ -309,6 +309,14 @@
 	background: color-mix(in srgb, var(--nr-accent) 8%, transparent);
 	opacity: 1;
 }
+.nr-vote-notice {
+	margin: 8px 0 0;
+	font-size: 13px;
+	color: var(--nr-muted);
+}
+.nr-vote-notice:empty {
+	display: none;
+}
 .nr-vote-btn svg {
 	width: 16px;
 	height: 16px;

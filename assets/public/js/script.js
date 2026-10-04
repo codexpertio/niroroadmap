@@ -108,6 +108,7 @@ jQuery(
 			$( "#nr-modal-tags" ).empty().append( tags.map( (tag) => $( "<li class='nr-tag'>" ).text( tag ) ) );
 			$( "#nr-upvote-count" ).text( card.find( ".nr-task-votes-count" ).text() );
 			$( "#nr-downvote-count" ).text( "–" );
+			$( "#nr-vote-notice" ).text( "" );
 			$( "#nr-modal-description" ).addClass( "nr-loading" ).text( "Loading…" );
 			renderVoteState( taskId );
 
@@ -132,8 +133,9 @@ jQuery(
 					const task = response.data.task;
 					$( "#nr-modal-title" ).text( task.title );
 					$( "#nr-modal-description" ).removeClass( "nr-loading" ).html( task.description );
-					$( "#nr-upvote-count" ).text( task.upvotes || 0 );
-					$( "#nr-downvote-count" ).text( task.downvotes || 0 );
+					// A count the server leaves out is hidden by a setting (or only for admins).
+					$( "#nr-upvote-count" ).text( task.upvotes || 0 ).toggle( task.upvotes !== undefined );
+					$( "#nr-downvote-count" ).text( task.downvotes || 0 ).toggle( task.downvotes !== undefined );
 				}
 			).fail(
 				function () {
@@ -193,18 +195,23 @@ jQuery(
 				const type    = voteBtn.data( "type" );
 
 				$( ".nr-vote-btn" ).prop( "disabled", true );
+				$( "#nr-vote-notice" ).text( "" );
 
 				request( `/tasks/${taskId}/vote`, "POST", { type: type } ).done(
 					function (response) {
-						$( ".nr-vote-count", voteBtn ).text( response.data.votes );
-						if (type === "upvote") {
-							$( `#nr-task-${taskId} .nr-task-votes-count` ).text( response.data.votes );
+						if (response.data.votes !== undefined) {
+							$( ".nr-vote-count", voteBtn ).text( response.data.votes );
+							if (type === "upvote") {
+								$( `#nr-task-${taskId} .nr-task-votes-count` ).text( response.data.votes );
+							}
 						}
 						setVoted( taskId, type );
 						renderVoteState( taskId );
 					}
 				).fail(
-					function () {
+					function (xhr) {
+						const data = xhr.responseJSON && xhr.responseJSON.data;
+						$( "#nr-vote-notice" ).text( (data && data.message) || NIROROADMAP.settings.vote_failed );
 						renderVoteState( taskId );
 					}
 				);

@@ -8,6 +8,11 @@ use NiroRoadmap\Helper\Utility;
 class Roadmap {
 
     public static function get_roadmap( $product = null ) {
+        // The shortcode / block can name a product; otherwise use the one chosen in Settings.
+        if ( is_null( $product ) && niroroadmap_get_setting( 'default_product' ) ) {
+            $product = niroroadmap_get_setting( 'default_product' );
+        }
+
         $tasks  = array();
 		$stages = get_terms(
 			array(
@@ -61,11 +66,15 @@ class Roadmap {
 			}
 		}
 
-		$show_links = apply_filters( 'niroroadmap_show_stage_links', false );
+		// The filter keeps working and overrides the setting.
+		$show_links = apply_filters( 'niroroadmap_show_stage_links', niroroadmap_get_setting( 'stage_links' ) );
 
 		return Utility::get_template( 'shortcodes/roadmap.php', array( 
 			'tasks' => $tasks,
 			'show_stage_links' => $show_links,
+			'show_vote_counts' => niroroadmap_get_setting( 'show_vote_counts' ),
+			'show_tags'        => niroroadmap_get_setting( 'show_tags' ),
+			'show_downvote'    => niroroadmap_get_setting( 'show_downvote' ),
 		) );
     }
 }
