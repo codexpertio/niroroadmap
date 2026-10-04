@@ -5,7 +5,9 @@ defined( 'ABSPATH' ) || exit;
 
 use NiroRoadmap\Helper\Rate_Limit;
 use NiroRoadmap\Helper\Voter;
+use NiroRoadmap\Model\Fields;
 use NiroRoadmap\Model\Roadmap;
+use NiroRoadmap\Model\Status_Log;
 use NiroRoadmap\Model\Vote;
 use NiroRoadmap\Trait\Rest;
 
@@ -49,11 +51,12 @@ class Task {
 	 *
 	 * Counts that must stay hidden are left out of API responses, not just hidden on the page.
 	 *
-	 * @param string $type `upvote` or `downvote`.
+	 * @param string $type    `upvote` or `downvote`.
+	 * @param int    $item_id Item ID: an item can have its counts switched off on its own.
 	 * @return bool
 	 */
-	private function can_see_count( $type ) {
-		if ( ! niroroadmap_get_setting( 'show_vote_counts' ) ) {
+	private function can_see_count( $type, $item_id ) {
+		if ( ! niroroadmap_get_setting( 'show_vote_counts' ) || Fields::votes_hidden( $item_id ) ) {
 			return false;
 		}
 
@@ -84,6 +87,18 @@ class Task {
 
 		$data += $this->visible_counts( $task->ID );
 
+		// Cover image, target, release, version and link: only what is public (see Fields::public_facts()).
+		$data += Fields::public_facts( $task );
+
+		// The status timeline, if the site shows it.
+		if ( niroroadmap_get_setting( 'show_history' ) ) {
+			$timeline = Status_Log::timeline( $task->ID );
+
+			if ( count( $timeline ) > 1 ) {
+				$data['history'] = $timeline;
+			}
+		}
+
 		$this->response_success(
 			array(
 				'message' => __( 'Task found', 'niroroadmap' ),
@@ -103,7 +118,7 @@ class Task {
 		$data   = array();
 
 		foreach ( Vote::TYPES as $type ) {
-			if ( $this->can_see_count( $type ) ) {
+			if ( $this->can_see_count( $type, $id ) ) {
 				$data[ $type . 's' ] = $counts[ $type ];
 			}
 		}

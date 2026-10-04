@@ -33,6 +33,12 @@ class Front {
 			'vote_failed'       => __( 'Your vote could not be saved.', 'niroroadmap' ),
 			'login_url'         => wp_login_url(),
 			'comments_newest'   => 'newest' === niroroadmap_get_setting( 'comments_order' ),
+			'item'              => array(
+				'target'   => __( 'Target', 'niroroadmap' ),
+				'released' => __( 'Released', 'niroroadmap' ),
+				'version'  => __( 'Version', 'niroroadmap' ),
+				'link'     => __( 'More info', 'niroroadmap' ),
+			),
 			'suggest'           => array(
 				'need_title'    => __( 'Please give your idea a title (at least 3 characters).', 'niroroadmap' ),
 				'need_identity' => __( 'Please enter your name and email.', 'niroroadmap' ),

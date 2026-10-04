@@ -81,6 +81,7 @@
 					date: parseInt( node.getAttribute( 'data-date' ), 10 ) || 0,
 					tags: ( node.getAttribute( 'data-tag-slugs' ) || '' ).split( ' ' ).filter( Boolean ),
 					products: ( node.getAttribute( 'data-product-ids' ) || '' ).split( ' ' ).filter( Boolean ),
+					pinned: node.getAttribute( 'data-pinned' ) === '1',
 					marked: false
 				};
 			}
@@ -196,6 +197,11 @@
 
 		function compare( sort ) {
 			return function ( a, b ) {
+				// A pinned item leads its column whatever the sort.
+				if ( a.pinned !== b.pinned ) {
+					return a.pinned ? -1 : 1;
+				}
+
 				var diff = 0;
 
 				if ( sort === 'votes' ) {

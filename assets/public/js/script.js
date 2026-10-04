@@ -579,6 +579,49 @@ jQuery(
 			);
 		}
 
+		// What an item can say about itself beyond its text: cover image, target, release, link, timeline.
+		// Everything comes from the server's public view of the item (internal fields are never in it),
+		// and is put in with .text() / .attr(), never as HTML.
+		const I = NIROROADMAP.settings.item || {};
+
+		const renderDetails = (task) => {
+			if (task.cover && /^https?:\/\//i.test( task.cover.url )) {
+				$( "#nr-modal-cover" ).append( $( "<img>" ).attr( { src: task.cover.url, alt: task.cover.alt || "", loading: "lazy" } ) ).prop( "hidden", false );
+			}
+
+			const facts = $( "#nr-modal-facts" );
+			const row   = (label, value) => facts.append( $( "<dt>" ).text( label ), value );
+
+			if (task.target) {
+				row( I.target, $( "<dd>" ).text( task.target ) );
+			}
+			if (task.release) {
+				row( I.released, $( "<dd>" ).text( task.release + ( task.version ? " · " + task.version : "" ) ) );
+			} else if (task.version) {
+				row( I.version, $( "<dd>" ).text( task.version ) );
+			}
+			if (task.link && /^https?:\/\//i.test( task.link )) {
+				let host = task.link;
+				try {
+					host = new URL( task.link ).hostname.replace( /^www\./, "" );
+				} catch (e) {}
+				row( I.link, $( "<dd>" ).append( $( "<a>" ).attr( { href: task.link, target: "_blank", rel: "noopener noreferrer nofollow" } ).text( host ) ) );
+			}
+			facts.prop( "hidden", ! facts.children().length );
+
+			const list = $( "#nr-modal-history-list" );
+			( task.history || [] ).forEach(
+				(step) => {
+					const li = $( "<li>" ).append( $( "<span class='nr-history-name'>" ).text( step.name ) );
+					if (step.date) {
+						li.append( " ", $( "<time class='nr-history-date'>" ).attr( "datetime", step.iso || "" ).text( step.date ) );
+					}
+					list.append( li );
+				}
+			);
+			$( "#nr-modal-history" ).prop( "hidden", ! list.children().length );
+		};
+
 		const overlay = $( "#nr-modal-overlay" );
 		let hideTimer;
 
@@ -595,6 +638,8 @@ jQuery(
 			$( "#nr-upvote-count" ).text( card.find( ".nr-task-votes-count" ).text() );
 			$( "#nr-downvote-count" ).text( "–" );
 			$( "#nr-vote-notice" ).text( "" );
+			$( "#nr-modal-cover, #nr-modal-facts, #nr-modal-history" ).prop( "hidden", true );
+			$( "#nr-modal-cover, #nr-modal-facts, #nr-modal-history-list" ).empty();
 			$( "#nr-modal-description" ).addClass( "nr-loading" ).text( "Loading…" );
 			renderVoteState( taskId );
 
@@ -629,6 +674,7 @@ jQuery(
 					$( "#nr-modal-title" ).text( task.title );
 					$( "#nr-modal-description" ).removeClass( "nr-loading" ).html( task.description );
 					showCounts( taskId, task );
+					renderDetails( task );
 
 					// The server knows what this visitor voted, even after clearing site data.
 					// Skip while their own vote is still being saved: this answer may predate it.

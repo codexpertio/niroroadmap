@@ -49,8 +49,14 @@ $board_id            = $args['board_id'] ?? 'nr-board';
 
 			<div class="nr-kanban-list" data-empty="<?php esc_attr_e( 'Nothing here yet', 'niroroadmap' ); ?>"<?php echo $toolbar_on ? ' data-nomatch="' . esc_attr__( 'No matching items', 'niroroadmap' ) . '"' : ''; ?>>
 				<?php foreach ( $column['tasks'] as $task_id => $task ) : ?>
-					<article class="nr-kanban-item" id="nr-task-<?php echo esc_attr( $task_id ); ?>" tabindex="0" role="button" aria-haspopup="dialog" data-tags="<?php echo esc_attr( wp_json_encode( $show_tags ? $task['tags'] : array() ) ); ?>"<?php if ( $toolbar_on ) : ?> data-date="<?php echo esc_attr( $task['date'] ); ?>" data-product-ids="<?php echo esc_attr( implode( ' ', array_keys( $task['products'] ) ) ); ?>"<?php if ( $show_tags ) : ?> data-tag-slugs="<?php echo esc_attr( implode( ' ', $task['tag_slugs'] ) ); ?>"<?php endif; ?><?php endif; ?>>
+					<article class="nr-kanban-item" id="nr-task-<?php echo esc_attr( $task_id ); ?>" tabindex="0" role="button" aria-haspopup="dialog" data-tags="<?php echo esc_attr( wp_json_encode( $show_tags ? $task['tags'] : array() ) ); ?>"<?php echo $task['pinned'] ? ' data-pinned="1"' : ''; ?><?php if ( $toolbar_on ) : ?> data-date="<?php echo esc_attr( $task['date'] ); ?>" data-product-ids="<?php echo esc_attr( implode( ' ', array_keys( $task['products'] ) ) ); ?>"<?php if ( $show_tags ) : ?> data-tag-slugs="<?php echo esc_attr( implode( ' ', $task['tag_slugs'] ) ); ?>"<?php endif; ?><?php endif; ?>>
 						<h4 class="nr-task-title"><?php echo esc_html( $task['title'] ); ?></h4>
+						<?php if ( $task['pinned'] ) : ?>
+							<span class="nr-task-pin" title="<?php esc_attr_e( 'Pinned', 'niroroadmap' ); ?>">
+								<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12 2l6 6-2 1-3 3 .5 4-1.5 1.5-3.5-3.5L4 17.5 2.5 16 6 12.5 2.5 9 4 7.5l4 .5 3-3z" fill="currentColor"/></svg>
+								<span class="nr-sr-only"><?php esc_html_e( 'Pinned', 'niroroadmap' ); ?></span>
+							</span>
+						<?php endif; ?>
 
 						<div class="nr-task-meta">
 							<?php if ( $show_tags && ! empty( $task['tags'] ) ) : ?>
@@ -69,7 +75,7 @@ $board_id            = $args['board_id'] ?? 'nr-board';
 								</span>
 							<?php endif; ?>
 
-							<?php if ( $show_vote_counts ) : ?>
+							<?php if ( $show_vote_counts && ! $task['hide_votes'] ) : ?>
 								<span class="nr-task-votes" title="<?php esc_attr_e( 'Upvotes', 'niroroadmap' ); ?>">
 									<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4l6 8H4z" fill="currentColor"/></svg>
 									<span class="nr-task-votes-count"><?php echo esc_html( $task['upvotes'] ); ?></span>
@@ -92,6 +98,8 @@ $board_id            = $args['board_id'] ?? 'nr-board';
 
 		<div id="nr-modal-content">
 			<input type="hidden" id="nr-modal-id">
+
+			<div class="nr-modal-cover" id="nr-modal-cover" hidden></div>
 
 			<div class="nr-modal-labels">
 				<div class="nr-modal-stage" id="nr-modal-stage"><span class="nr-stage-dot" aria-hidden="true"></span><span id="nr-modal-stage-name"></span></div>
@@ -116,6 +124,13 @@ $board_id            = $args['board_id'] ?? 'nr-board';
 			<p class="nr-vote-notice" id="nr-vote-notice" role="status" aria-live="polite"></p>
 
 			<div id="nr-modal-description" class="nr-modal-description"></div>
+
+			<dl class="nr-modal-facts" id="nr-modal-facts" hidden></dl>
+
+			<section class="nr-modal-history" id="nr-modal-history" aria-labelledby="nr-modal-history-title" hidden>
+				<h3 id="nr-modal-history-title"><?php esc_html_e( 'Status timeline', 'niroroadmap' ); ?></h3>
+				<ol id="nr-modal-history-list"></ol>
+			</section>
 
 			<?php if ( $comments_enabled ) : ?>
 				<section class="nr-comments" id="nr-comments" aria-labelledby="nr-comments-title" hidden>
