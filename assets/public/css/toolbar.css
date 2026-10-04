@@ -3,21 +3,48 @@
 .nr-toolbar {
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: 8px;
 	margin: 24px 0 -8px;
 	color: var(--nr-text);
 }
-.nr-board-toolbar + .nr-toolbar {
-	margin-top: 20px;
-}
-.nr-toolbar-row {
+
+/* One row on wide screens. It only wraps if the container is too narrow to hold everything. */
+.nr-toolbar-bar {
 	display: flex;
-	gap: 8px;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 12px;
 }
 .nr-tool-search {
-	flex: 1;
-	max-width: 420px;
+	flex: 1 1 220px;
+	max-width: 360px;
 }
+.nr-toolbar-controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 12px;
+}
+/* The Suggest button, when the board offers it, closes the row on the right. */
+.nr-toolbar-bar .nr-suggest-btn {
+	margin-left: auto;
+	white-space: nowrap;
+}
+
+/* Every control in the row has the same height, so they line up whatever the browser's own sizing. */
+.nr-toolbar input[type="search"],
+.nr-toolbar select,
+.nr-toolbar .nr-tags-toggle,
+.nr-toolbar .nr-toolbar-toggle,
+.nr-toolbar .nr-toolbar-reset,
+.nr-toolbar-bar .nr-suggest-btn {
+	box-sizing: border-box;
+	height: 40px;
+	min-height: 40px;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
 .nr-toolbar input[type="search"],
 .nr-toolbar select {
 	box-sizing: border-box;
@@ -33,19 +60,14 @@
 }
 .nr-toolbar input[type="search"]:focus-visible,
 .nr-toolbar select:focus-visible,
-.nr-chip:focus-visible,
-.nr-toolbar-toggle:focus-visible,
-.nr-toolbar-reset:focus-visible {
+.nr-toolbar .nr-chip:focus-visible,
+.nr-toolbar .nr-tags-toggle:focus-visible,
+.nr-toolbar .nr-toolbar-toggle:focus-visible,
+.nr-toolbar .nr-toolbar-reset:focus-visible {
 	outline: 2px solid var(--nr-accent);
 	outline-offset: 2px;
 }
 
-.nr-toolbar-controls {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: flex-end;
-	gap: 12px 16px;
-}
 .nr-tool {
 	display: flex;
 	flex-direction: column;
@@ -55,25 +77,96 @@
 	padding: 0;
 	border: 0;
 }
-.nr-tool label,
-.nr-tool legend {
+.nr-tool label {
 	padding: 0;
-	font-size: 12px;
+	font-size: 13px;
 	font-weight: 600;
 	color: var(--nr-muted);
+}
+/* "Sort" and "Product": the label sits in front of its dropdown, on the same line. */
+.nr-tool-inline {
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+}
+.nr-tool-inline label {
+	white-space: nowrap;
 }
 .nr-tool select {
 	min-width: 150px;
 }
+
+/* Tags: a dropdown, so the row stays one row however many tags there are. */
 .nr-tool-tags {
-	flex-direction: row;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 6px;
+	position: relative;
 }
-.nr-tool-tags legend {
-	float: left;
-	margin-right: 4px;
+.nr-toolbar .nr-tags-toggle,
+.nr-toolbar .nr-toolbar-toggle {
+	box-sizing: border-box;
+	min-height: 38px;
+	padding: 6px 12px;
+	font: inherit;
+	font-size: 14px;
+	color: var(--nr-text);
+	background: var(--nr-card);
+	border: 1px solid var(--nr-border);
+	border-radius: calc(var(--nr-radius) / 2);
+	text-decoration: none;
+	cursor: pointer;
+}
+.nr-toolbar .nr-tags-toggle::after {
+	content: "";
+	display: inline-block;
+	margin-left: 8px;
+	vertical-align: middle;
+	border: 4px solid transparent;
+	border-top-color: currentColor;
+	border-bottom-width: 0;
+}
+.nr-toolbar .nr-tags-toggle[aria-expanded="true"] {
+	border-color: var(--nr-accent);
+}
+.nr-tags-count {
+	display: inline-block;
+	min-width: 18px;
+	padding: 0 5px;
+	margin-left: 2px;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 18px;
+	text-align: center;
+	color: #fff;
+	background: var(--nr-accent);
+	border-radius: 999px;
+}
+.nr-tags-count[hidden] {
+	display: none;
+}
+.nr-toolbar .nr-tags-panel {
+	position: absolute;
+	top: calc(100% + 6px);
+	left: 0;
+	z-index: 20;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	box-sizing: border-box;
+	width: max-content;
+	min-width: 220px;
+	max-width: min(440px, 86vw);
+	margin: 0;
+	padding: 10px;
+	background: var(--nr-card);
+	border: 1px solid var(--nr-border);
+	border-radius: var(--nr-radius);
+	box-shadow: var(--nr-shadow-hover);
+}
+.nr-toolbar .nr-tags-panel[hidden] {
+	display: none;
+}
+.nr-toolbar .nr-tags-panel.nr-align-right {
+	right: 0;
+	left: auto;
 }
 .nr-toolbar .nr-chip {
 	padding: 4px 12px;
@@ -91,8 +184,8 @@
 	border-color: var(--nr-accent);
 }
 
-.nr-toolbar .nr-toolbar-reset,
-.nr-toolbar .nr-toolbar-toggle {
+.nr-toolbar .nr-toolbar-reset {
+	min-height: 38px;
 	padding: 6px 12px;
 	font: inherit;
 	font-size: 13px;
@@ -107,26 +200,8 @@
 }
 .nr-toolbar .nr-toolbar-toggle {
 	display: none;
-	border: 1px solid var(--nr-border);
-	border-radius: calc(var(--nr-radius) / 2);
-	text-decoration: none;
-	color: var(--nr-text);
-	background: var(--nr-card);
 }
 
-.nr-toolbar-status {
-	margin: 0;
-	font-size: 13px;
-	color: var(--nr-muted);
-}
-.nr-toolbar-note {
-	margin: 0;
-	font-size: 13px;
-	color: var(--nr-muted);
-}
-.nr-toolbar-note[hidden] {
-	display: none;
-}
 
 .nr-kanban-item[hidden] {
 	display: none !important;
@@ -141,16 +216,30 @@
 	content: attr(data-nomatch);
 }
 
-/* Narrow screens: the search stays in view, the rest folds behind one button. */
+/* Narrow screens: search and the fold-out button share a row, Suggest sits below it full width,
+   and the rest folds behind the button. Tags show as chips here instead of a dropdown. */
 @media (max-width: 640px) {
+	.nr-toolbar-bar {
+		align-items: stretch;
+	}
 	.nr-tool-search {
+		flex: 1 1 0;
 		max-width: none;
+		min-width: 0;
 	}
 	.nr-toolbar .nr-toolbar-toggle {
 		display: inline-block;
 	}
+	.nr-toolbar-bar .nr-suggest-btn {
+		flex: 1 1 100%;
+		justify-content: center;
+		margin-left: 0;
+		order: 3;
+	}
 	.nr-toolbar-controls {
 		display: none;
+		flex: 1 1 100%;
+		order: 4;
 	}
 	.nr-toolbar.nr-controls-open .nr-toolbar-controls {
 		display: flex;
@@ -159,5 +248,24 @@
 	}
 	.nr-toolbar-controls .nr-tool select {
 		width: 100%;
+	}
+	.nr-tool-inline select {
+		flex: 1;
+		min-width: 0;
+	}
+	.nr-toolbar .nr-tags-toggle {
+		display: none;
+	}
+	.nr-toolbar .nr-tags-panel,
+	.nr-toolbar .nr-tags-panel[hidden] {
+		position: static;
+		display: flex;
+		width: auto;
+		min-width: 0;
+		max-width: none;
+		padding: 0;
+		background: none;
+		border: 0;
+		box-shadow: none;
 	}
 }

@@ -17,7 +17,8 @@ $board_id            = $args['board_id'] ?? 'nr-board';
 
 ?>
 <div class="nr-board<?php echo $toolbar_on ? ' nr-has-toolbar' : ''; ?>"<?php echo $toolbar_on ? ' data-nr-toolbar data-nr-default-sort="' . esc_attr( $toolbar['sort'] ) . '"' : ''; ?>>
-<?php if ( $submissions_enabled ) : ?>
+<?php if ( $submissions_enabled && ! $toolbar_on ) : ?>
+	<?php // With a toolbar, the button sits in its row instead. ?>
 	<div class="nr-board-toolbar">
 		<button type="button" class="nr-suggest-btn" aria-haspopup="dialog" data-product="<?php echo esc_attr( $submission_product ); ?>">
 			<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3a1 1 0 0 1 1 1v5h5a1 1 0 1 1 0 2h-5v5a1 1 0 1 1-2 0v-5H4a1 1 0 1 1 0-2h5V4a1 1 0 0 1 1-1z" fill="currentColor"/></svg>

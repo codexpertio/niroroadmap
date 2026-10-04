@@ -49,8 +49,11 @@
 		var chips = slice.call( el.querySelectorAll( '[data-nr-tag]' ) );
 		var resetBtn = el.querySelector( '[data-nr-reset]' );
 		var status = el.querySelector( '[data-nr-status]' );
-		var note = el.querySelector( '[data-nr-note]' );
 		var toggle = el.querySelector( '[data-nr-toggle]' );
+		var tagsWrap = el.querySelector( '[data-nr-tags]' );
+		var tagsToggle = el.querySelector( '[data-nr-tags-toggle]' );
+		var tagsPanel = tagsWrap ? tagsWrap.querySelector( '.nr-tags-panel' ) : null;
+		var tagsCount = el.querySelector( '[data-nr-tags-count]' );
 		var toolbar = el.querySelector( '.nr-toolbar' );
 		var lists = slice.call( el.querySelectorAll( '.nr-kanban-list' ) );
 		var defaultSort = el.getAttribute( 'data-nr-default-sort' ) || 'manual';
@@ -268,9 +271,6 @@
 			if ( isEditor && $.fn.sortable ) {
 				$( el ).find( '.nr-kanban-list.ui-sortable' ).sortable( 'option', 'disabled', reorderOff );
 			}
-			if ( note ) {
-				note.hidden = ! ( isEditor && reorderOff );
-			}
 
 			if ( resetBtn ) {
 				resetBtn.hidden = ! ( filtered || state.sort !== defaultSort );
@@ -305,6 +305,33 @@
 					chip.setAttribute( 'aria-pressed', state.tags.indexOf( chip.getAttribute( 'data-nr-tag' ) ) !== -1 ? 'true' : 'false' );
 				}
 			);
+			if ( tagsCount ) {
+				tagsCount.hidden = ! state.tags.length;
+				tagsCount.textContent = state.tags.length ? '(' + state.tags.length + ')' : '';
+			}
+		}
+
+		// The tags dropdown. On phones CSS shows the chips inline and hides the button, so this only matters on wide screens.
+		function setTagsOpen( open, restoreFocus ) {
+			if ( ! tagsToggle || ! tagsPanel ) {
+				return;
+			}
+
+			tagsPanel.hidden = ! open;
+			tagsToggle.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+
+			// Open under the button's left edge; if that would run off the screen, line up with its right edge instead.
+			if ( open ) {
+				tagsPanel.classList.remove( 'nr-align-right' );
+
+				if ( tagsPanel.getBoundingClientRect().right > document.documentElement.clientWidth - 8 ) {
+					tagsPanel.classList.add( 'nr-align-right' );
+				}
+			}
+
+			if ( ! open && restoreFocus ) {
+				tagsToggle.focus();
+			}
 		}
 
 		function changed() {
@@ -371,6 +398,42 @@
 				);
 			}
 		);
+
+		if ( tagsToggle && tagsPanel ) {
+			tagsToggle.addEventListener(
+				'click',
+				function () {
+					setTagsOpen( tagsPanel.hidden, false );
+				}
+			);
+
+			// Escape closes it and gives focus back; a click or Tab elsewhere just closes it.
+			tagsWrap.addEventListener(
+				'keydown',
+				function ( e ) {
+					if ( e.key === 'Escape' && ! tagsPanel.hidden ) {
+						e.stopPropagation();
+						setTagsOpen( false, true );
+					}
+				}
+			);
+			tagsWrap.addEventListener(
+				'focusout',
+				function ( e ) {
+					if ( ! tagsPanel.hidden && e.relatedTarget && ! tagsWrap.contains( e.relatedTarget ) ) {
+						setTagsOpen( false, false );
+					}
+				}
+			);
+			document.addEventListener(
+				'click',
+				function ( e ) {
+					if ( ! tagsPanel.hidden && ! tagsWrap.contains( e.target ) ) {
+						setTagsOpen( false, false );
+					}
+				}
+			);
+		}
 
 		if ( resetBtn ) {
 			resetBtn.addEventListener(

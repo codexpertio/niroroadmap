@@ -197,6 +197,41 @@ class ToolbarTest extends TestCase {
 		$this->assertMatchesRegularExpression( '/id="nr-task-' . $id . '"[^>]*data-date="\d+"[^>]*data-product-ids=""[^>]*data-tag-slugs="[a-z0-9-]+"/', $html );
 	}
 
+	public function test_the_suggest_button_joins_the_toolbar_row_instead_of_standing_alone() {
+		$this->item( 'Suggest placement' );
+
+		// Both on: one button, inside the toolbar's bar, ahead of the columns.
+		$both = $this->board( array( 'submissions' => 'yes' ) );
+		$this->assertSame( 1, substr_count( $both, 'class="nr-suggest-btn"' ), 'One Suggest button, not two.' );
+		$this->assertStringNotContainsString( 'nr-board-toolbar', $both, 'No separate row for it.' );
+		$bar   = strpos( $both, 'class="nr-toolbar-bar"' );
+		$btn   = strpos( $both, 'class="nr-suggest-btn"' );
+		$board = strpos( $both, 'class="nr-kanban-columns"' );
+		$this->assertTrue( false !== $bar && $bar < $btn && $btn < $board, 'The button is inside the toolbar bar.' );
+
+		// Toolbar off, suggest on: the button keeps its own row, as before.
+		unset( $GLOBALS['wp_actions']['niroroadmap_suggest_rendered'], $GLOBALS['wp_actions']['niroroadmap_modal_rendered'] );
+		$alone = Roadmap::get_roadmap( null, array( 'toolbar' => 'no', 'submissions' => 'yes' ) );
+		$this->assertStringContainsString( 'nr-board-toolbar', $alone );
+		$this->assertSame( 1, substr_count( $alone, 'class="nr-suggest-btn"' ) );
+
+		// Toolbar on, suggest off: no button anywhere.
+		unset( $GLOBALS['wp_actions']['niroroadmap_suggest_rendered'] );
+		$this->assertStringNotContainsString( 'nr-suggest-btn', $this->board( array( 'submissions' => 'no' ) ) );
+	}
+
+	public function test_tags_are_in_a_dropdown_whose_button_is_wired_to_its_panel() {
+		$tag = $this->term( 'niroroadmap_tag', 'Dropdown ' . wp_generate_password( 4, false ) );
+		$this->item( 'Dropdown item', array( $tag ) );
+
+		$html = $this->board();
+
+		$this->assertMatchesRegularExpression( '/<button[^>]*data-nr-tags-toggle[^>]*aria-expanded="false"[^>]*aria-controls="(nr-board-\d+-tags)"/', $html );
+		preg_match( '/aria-controls="(nr-board-\d+-tags)"/', $html, $m );
+		$this->assertStringContainsString( 'id="' . $m[1] . '"', $html, 'The panel the button controls exists.' );
+		$this->assertMatchesRegularExpression( '/<fieldset class="nr-tags-panel"[^>]*hidden>\s*<legend class="nr-sr-only">/', $html, 'Closed by default, and labelled.' );
+	}
+
 	public function test_only_the_sorts_the_board_can_offer_are_in_the_menu() {
 		$this->item( 'Menu item' );
 		$this->set( 'show_vote_counts', false );
