@@ -5,6 +5,7 @@ defined( 'ABSPATH' ) || exit;
 
 use NiroRoadmap\Trait\Hook;
 use NiroRoadmap\Trait\Asset;
+use NiroRoadmap\Model\Vote;
 
 class Init {
 
@@ -20,6 +21,16 @@ class Init {
 		$this->action( 'wp_enqueue_scripts', array( $this, 'add_assets' ) );
 		$this->action( 'admin_enqueue_scripts', array( $this, 'add_assets' ) );
 		$this->filter( 'get_terms', array( $this, 'order_terms' ), 10, 4 );
+		$this->action( 'deleted_post', array( $this, 'delete_votes' ), 10, 2 );
+	}
+
+	/**
+	 * Drop the vote rows of an item that was deleted for good.
+	 */
+	public function delete_votes( $post_id, $post ) {
+		if ( $post instanceof \WP_Post && 'niroroadmap_item' === $post->post_type ) {
+			Vote::delete_for_item( $post_id );
+		}
 	}
 
 	public function modal() {

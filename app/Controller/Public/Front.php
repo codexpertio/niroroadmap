@@ -29,7 +29,8 @@ class Front {
 	 */
 	public function add_localized_vars( $vars ) {
 		$vars['settings'] = array(
-			'vote_failed' => __( 'Your vote could not be saved.', 'niroroadmap' ),
+			'allow_vote_change' => (bool) niroroadmap_get_setting( 'allow_vote_change' ),
+			'vote_failed'       => __( 'Your vote could not be saved.', 'niroroadmap' ),
 		);
 
 		return $vars;

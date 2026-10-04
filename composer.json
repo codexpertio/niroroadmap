@@ -13,6 +13,7 @@
         ]
     },
     "scripts": {
+        "test": "php -d auto_prepend_file=tests/bootstrap.php vendor/bin/phpunit",
         "makepot": "wp i18n make-pot --allow-root . languages/niroroadmap.pot --domain=niroroadmap --exclude=node_modules,vendor,build,release,svn-assets,tests",
         "release": [
             "rm -rf release build",
@@ -46,6 +47,7 @@
         }
     },
     "scripts-descriptions": {
+        "test": "Run the integration tests against the WordPress install the plugin sits in (see tests/bootstrap.php)",
         "makepot": "Generate languages/niroroadmap.pot",
         "release": "Build blocks, generate the POT and create release/niroroadmap.zip"
     }

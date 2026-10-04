@@ -5,6 +5,7 @@ defined( 'ABSPATH' ) || exit;
 
 use NiroRoadmap\Helper\Settings;
 use NiroRoadmap\Model\Database;
+use NiroRoadmap\Model\Vote;
 
 class Installer {
 
@@ -18,6 +19,8 @@ class Installer {
 			$installer->update_db_version();
 		}
 
+		Vote::maybe_create_table();
+
 		$installer->create_roadmap_page();
 
 		// Statuses need the taxonomy, which isn't registered yet during activation.
@@ -25,6 +28,13 @@ class Installer {
 		if ( ! get_option( 'niroroadmap_statuses_seeded' ) ) {
 			update_option( 'niroroadmap_statuses_seeded', 'pending' );
 		}
+	}
+
+	/**
+	 * Bring the database up to date after a plugin update. Cheap when nothing is needed.
+	 */
+	public static function maybe_upgrade() {
+		Vote::maybe_create_table();
 	}
 
 	/**

@@ -3,6 +3,9 @@ namespace NiroRoadmap\API;
 
 defined( 'ABSPATH' ) || exit;
 
+use NiroRoadmap\Helper\Rate_Limit;
+use NiroRoadmap\Helper\Voter;
+use NiroRoadmap\Model\Vote;
 use NiroRoadmap\Trait\Rest;
 
 class Task {
@@ -66,16 +69,19 @@ class Task {
 	public function get( $request ) {
 		$task = $this->get_public_task( $request->get_param( 'id' ) );
 
+		// The response says what *this* visitor voted, so it must never be served from a shared cache.
+		nocache_headers();
+
+		$voter = Voter::identify();
+		$own   = Vote::find( $task->ID, $voter['hash'], $voter['fingerprint'] );
+
 		$data = array(
 			'title'       => $task->post_title,
 			'description' => wpautop( $task->post_content ),
+			'voted'       => $own ? $own->type : null,
 		);
 
-		foreach ( array( 'upvote', 'downvote' ) as $type ) {
-			if ( $this->can_see_count( $type ) ) {
-				$data[ $type . 's' ] = get_post_meta( $task->ID, $type, true );
-			}
-		}
+		$data += $this->visible_counts( $task->ID );
 
 		$this->response_success(
 			array(
@@ -85,6 +91,28 @@ class Task {
 		);
 	}
 
+	/**
+	 * The counts this visitor is allowed to see, as `upvotes` / `downvotes`.
+	 *
+	 * @param int $id Item ID.
+	 * @return array
+	 */
+	private function visible_counts( $id ) {
+		$counts = Vote::counts( $id );
+		$data   = array();
+
+		foreach ( Vote::TYPES as $type ) {
+			if ( $this->can_see_count( $type ) ) {
+				$data[ $type . 's' ] = $counts[ $type ];
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Cast a vote. One vote per visitor per item, enforced here, not in the browser.
+	 */
 	public function vote( $request ) {
 		$id   = $this->get_public_task( $request->get_param( 'id' ) )->ID;
 		$type = $request->get_param( 'type' );
@@ -97,17 +125,40 @@ class Task {
 			$this->response_error( array( 'message' => __( 'Downvoting is turned off.', 'niroroadmap' ) ), 403 );
 		}
 
-		$current_vote = get_post_meta( $id, $type, true );
-		$new_vote     = (int) $current_vote + 1;
+		/**
+		 * Filters how many votes one IP address may send, and over how many seconds.
+		 *
+		 * @param array $limit `array( votes, seconds )`. Default 30 votes per 10 minutes.
+		 */
+		$limit = apply_filters( 'niroroadmap_vote_rate_limit', array( 30, 10 * MINUTE_IN_SECONDS ) );
 
-		update_post_meta( $id, $type, $new_vote );
-
-		$data = array( 'message' => __( 'Vote submitted', 'niroroadmap' ) );
-
-		if ( $this->can_see_count( $type ) ) {
-			$data['votes'] = $new_vote;
+		if ( ! Rate_Limit::allow( 'vote', Voter::ip_hash(), (int) $limit[0], (int) $limit[1] ) ) {
+			$this->response_error( array( 'message' => __( 'Too many votes in a short time. Please try again later.', 'niroroadmap' ) ), 429 );
 		}
 
+		$voter = Voter::identify();
+
+		// An anonymous visitor needs a cookie to be recognised next time.
+		if ( '' === $voter['hash'] ) {
+			Voter::issue_cookie();
+			$voter = Voter::identify();
+		}
+
+		$result = Vote::cast( $id, $type, $voter, niroroadmap_get_setting( 'allow_vote_change' ) );
+
+		$data = array( 'vote' => $result['vote'] ) + $this->visible_counts( $id );
+
+		// Kept for older scripts: the count of the type that was voted on (absent when hidden).
+		if ( isset( $data[ $result['vote'] . 's' ] ) ) {
+			$data['votes'] = $data[ $result['vote'] . 's' ];
+		}
+
+		if ( 'duplicate' === $result['status'] ) {
+			$data['message'] = __( 'You have already voted on this item.', 'niroroadmap' );
+			$this->response_error( $data, 409 );
+		}
+
+		$data['message'] = __( 'Vote submitted', 'niroroadmap' );
 		$this->response_success( $data );
 	}
 

@@ -52,4 +52,9 @@ foreach ( $taxonomies as $taxonomy ) {
     }
 }
 
+// The per-voter vote rows (hashes only) go with the items.
+global $wpdb;
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}niroroadmap_votes" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Our own table, on uninstall.
+delete_option( 'niroroadmap_schema_version' );
+
 delete_option( 'niroroadmap_settings' );
