@@ -20,7 +20,8 @@ jQuery(
 			);
 		};
 
-		// Votes are remembered per browser so a visitor can't vote on the same task twice.
+		// The server enforces one vote per visitor. This list is only a UX cache so the buttons
+		// look right before the popup has loaded; the server's answer replaces it.
 		const votedKey = "niroroadmap_votes";
 		const getVoted = () => {
 			try {
@@ -36,11 +37,31 @@ jQuery(
 				localStorage.setItem( votedKey, JSON.stringify( voted ) );
 			} catch (e) {}
 		};
+		// A vote request in flight for this task id, so a slower popup reload can't undo it.
+		let pendingVote = null;
+		const clearVoted = (taskId) => {
+			try {
+				const voted = getVoted();
+				delete voted[ taskId ];
+				localStorage.setItem( votedKey, JSON.stringify( voted ) );
+			} catch (e) {}
+		};
 		const renderVoteState = (taskId) => {
 			const type = getVoted()[ taskId ];
-			$( ".nr-vote-btn" ).prop( "disabled", !! type ).removeClass( "nr-voted" );
+			// With vote changing on, only the current vote is locked; the other button stays usable.
+			const lock = ! type ? $() : ( NIROROADMAP.settings.allow_vote_change ? $( `#nr-${type}` ) : $( ".nr-vote-btn" ) );
+			$( ".nr-vote-btn" ).prop( "disabled", false ).removeClass( "nr-voted" );
+			lock.prop( "disabled", true );
 			if (type) {
 				$( `#nr-${type}` ).addClass( "nr-voted" );
+			}
+		};
+		// Counts the server leaves out are hidden by a setting (or only for admins).
+		const showCounts = (taskId, data) => {
+			$( "#nr-upvote-count" ).text( data.upvotes || 0 ).toggle( data.upvotes !== undefined );
+			$( "#nr-downvote-count" ).text( data.downvotes || 0 ).toggle( data.downvotes !== undefined );
+			if (data.upvotes !== undefined) {
+				$( `#nr-task-${taskId} .nr-task-votes-count` ).text( data.upvotes );
 			}
 		};
 
@@ -130,12 +151,26 @@ jQuery(
 
 			request( `/tasks/${taskId}`, "GET" ).done(
 				function (response) {
+					// The popup may have moved on to another card while this was loading.
+					if ($( "#nr-modal-id" ).val() !== String( taskId )) {
+						return;
+					}
+
 					const task = response.data.task;
 					$( "#nr-modal-title" ).text( task.title );
 					$( "#nr-modal-description" ).removeClass( "nr-loading" ).html( task.description );
-					// A count the server leaves out is hidden by a setting (or only for admins).
-					$( "#nr-upvote-count" ).text( task.upvotes || 0 ).toggle( task.upvotes !== undefined );
-					$( "#nr-downvote-count" ).text( task.downvotes || 0 ).toggle( task.downvotes !== undefined );
+					showCounts( taskId, task );
+
+					// The server knows what this visitor voted, even after clearing site data.
+					// Skip while their own vote is still being saved: this answer may predate it.
+					if (pendingVote !== taskId) {
+						if (task.voted) {
+							setVoted( taskId, task.voted );
+						} else {
+							clearVoted( taskId );
+						}
+						renderVoteState( taskId );
+					}
 				}
 			).fail(
 				function () {
@@ -196,22 +231,26 @@ jQuery(
 
 				$( ".nr-vote-btn" ).prop( "disabled", true );
 				$( "#nr-vote-notice" ).text( "" );
+				pendingVote = taskId;
 
 				request( `/tasks/${taskId}/vote`, "POST", { type: type } ).done(
 					function (response) {
-						if (response.data.votes !== undefined) {
-							$( ".nr-vote-count", voteBtn ).text( response.data.votes );
-							if (type === "upvote") {
-								$( `#nr-task-${taskId} .nr-task-votes-count` ).text( response.data.votes );
-							}
-						}
-						setVoted( taskId, type );
+						pendingVote = null;
+						showCounts( taskId, response.data );
+						setVoted( taskId, response.data.vote || type );
 						renderVoteState( taskId );
 					}
 				).fail(
 					function (xhr) {
+						pendingVote = null;
 						const data = xhr.responseJSON && xhr.responseJSON.data;
 						$( "#nr-vote-notice" ).text( (data && data.message) || NIROROADMAP.settings.vote_failed );
+
+						// Already voted (409): show the vote the server has on record.
+						if (data && data.vote) {
+							setVoted( taskId, data.vote );
+							showCounts( taskId, data );
+						}
 						renderVoteState( taskId );
 					}
 				);

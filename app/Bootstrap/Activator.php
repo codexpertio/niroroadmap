@@ -20,6 +20,9 @@ class Activator {
 		$activator->register_taxonomies();
 		$activator->seed_statuses();
 
+		// Sites that update the plugin don't go through activation, so check the schema on load too.
+		Installer::maybe_upgrade();
+
 		// Set a flag that indicates the plugin has been activated
 		update_option( 'niroroadmap_activated', true );
 	}

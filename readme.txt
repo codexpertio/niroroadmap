@@ -67,7 +67,12 @@ The only compiled file is the block script in `build/roadmap/`. Its human-readab
 
 = Privacy =
 
-NiroRoadmap makes no requests to external services and stores no personal data. Votes are stored as plain counts on each item. To stop repeat votes, the visitor's browser keeps a list of the items it has voted on in local storage (`niroroadmap_votes`). This list is never sent to the server.
+NiroRoadmap makes no requests to external services. To allow one vote per visitor per item, it recognises voters like this:
+
+* Logged-in users are identified by user ID.
+* Other visitors get a random token in a first-party cookie, `niroroadmap_voter` (1 year, `SameSite=Lax`, `HttpOnly`, `Secure` on HTTPS), set when they first vote. They are also recognised by a salted hash (HMAC-SHA256, keyed with your site's WordPress salts) of their IP address and browser user agent, so clearing cookies doesn't reset their votes.
+
+The vote table stores only these hashes, the item, the vote type and the time. The raw IP address and user agent are never stored. A salted hash is still pseudonymous data, so mention it in your privacy policy. To stop using IP addresses at all, return an empty string from the `niroroadmap_vote_fingerprint` filter; votes are then recognised by cookie only. Votes are also shown as plain counts on each item, and the visitor's browser keeps a list of the items it has voted on in local storage (`niroroadmap_votes`) to display the buttons correctly. That list is never sent to the server. A short-lived counter keyed by a hash of the IP address limits how fast votes can be sent. Vote data is deleted when you uninstall with "Delete all data" turned on.
 
 == Installation ==
 

@@ -132,6 +132,13 @@ class Settings {
 					);
 				},
 			),
+			'allow_vote_change'   => array(
+				'tab'         => 'voting',
+				'type'        => 'checkbox',
+				'label'       => __( 'Let voters change their vote', 'niroroadmap' ),
+				'description' => __( 'When off, a vote is final. Each visitor gets one vote per item.', 'niroroadmap' ),
+				'default'     => false,
+			),
 			'show_downvotes_to'   => array(
 				'tab'         => 'voting',
 				'type'        => 'select',
