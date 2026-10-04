@@ -93,6 +93,8 @@ class Roadmap {
 					'tag_slugs' => is_array( $tags ) ? wp_list_pluck( $tags, 'slug' ) : array(),
 					'products'  => array(),
 					'date'      => 0,
+					'pinned'     => Fields::is_pinned( $task_id ),
+					'hide_votes' => Fields::votes_hidden( $task_id ),
 				);
 
 				if ( $toolbar['enabled'] ) {
@@ -102,6 +104,14 @@ class Roadmap {
 					$tasks[ $stage->slug ]['tasks'][ $task_id ]['date']     = (int) get_post_time( 'U', true, $task_id );
 				}
 			}
+
+			// Pinned items lead their column. The sort is stable, so each group keeps the team's manual order.
+			uasort(
+				$tasks[ $stage->slug ]['tasks'],
+				static function ( $a, $b ) {
+					return (int) $b['pinned'] <=> (int) $a['pinned'];
+				}
+			);
 		}
 
 		// What the toolbar can offer is what's actually on this board.

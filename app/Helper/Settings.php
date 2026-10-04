@@ -115,6 +115,20 @@ class Settings {
 				'description' => '',
 				'default'     => true,
 			),
+			'show_target'         => array(
+				'tab'         => 'general',
+				'type'        => 'checkbox',
+				'label'       => __( 'Show an item\'s target date or quarter in its popup', 'niroroadmap' ),
+				'description' => __( 'The target is set on each item. Release date, version and link are always shown when filled in.', 'niroroadmap' ),
+				'default'     => false,
+			),
+			'show_history'        => array(
+				'tab'         => 'general',
+				'type'        => 'checkbox',
+				'label'       => __( 'Show an item\'s status timeline in its popup', 'niroroadmap' ),
+				'description' => __( 'For example "Under Review → Planned (Oct 2) → In Progress (Oct 20)". Shows dates only, never who moved it.', 'niroroadmap' ),
+				'default'     => false,
+			),
 			'show_downvote'       => array(
 				'tab'         => 'general',
 				'type'        => 'checkbox',

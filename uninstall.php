@@ -57,4 +57,8 @@ global $wpdb;
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}niroroadmap_votes" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Our own table, on uninstall.
 delete_option( 'niroroadmap_schema_version' );
 
+// And the status history.
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}niroroadmap_status_log" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Our own table, on uninstall.
+delete_option( 'niroroadmap_status_log_schema' );
+
 delete_option( 'niroroadmap_settings' );

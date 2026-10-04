@@ -610,3 +610,83 @@
 .nr-suggest-login a {
 	color: var(--nr-accent);
 }
+
+/* Item details: pin, cover, facts, timeline */
+.nr-kanban-item {
+	position: relative;
+}
+.nr-task-pin {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	display: inline-flex;
+	color: var(--nr-muted);
+}
+.nr-task-pin svg {
+	width: 14px;
+	height: 14px;
+}
+.nr-kanban-item[data-pinned="1"] .nr-task-title {
+	padding-right: 20px;
+}
+.nr-modal-cover {
+	margin: -28px -28px 18px;
+	overflow: hidden;
+	border-radius: var(--nr-radius) var(--nr-radius) 0 0;
+}
+.nr-modal-cover img {
+	display: block;
+	width: 100%;
+	max-height: 240px;
+	object-fit: cover;
+}
+.nr-modal-facts {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	gap: 6px 14px;
+	margin: 16px 0 0;
+	font-size: 14px;
+	color: var(--nr-text);
+}
+.nr-modal-facts[hidden],
+.nr-modal-history[hidden],
+.nr-modal-cover[hidden] {
+	display: none;
+}
+.nr-modal-facts dt {
+	font-weight: 600;
+	color: var(--nr-muted);
+}
+.nr-modal-facts dd {
+	margin: 0;
+	overflow-wrap: anywhere;
+}
+.nr-modal-facts a {
+	color: var(--nr-accent);
+}
+.nr-modal-history {
+	margin-top: 18px;
+}
+.nr-modal-history h3 {
+	margin: 0 0 8px;
+	font-size: 14px;
+	color: var(--nr-muted);
+}
+.nr-modal-history ol {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 0;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	font-size: 14px;
+	color: var(--nr-text);
+}
+.nr-modal-history li:not(:last-child)::after {
+	content: "\2192";
+	margin: 0 8px;
+	color: var(--nr-muted);
+}
+.nr-history-date {
+	color: var(--nr-muted);
+}

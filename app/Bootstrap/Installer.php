@@ -5,6 +5,7 @@ defined( 'ABSPATH' ) || exit;
 
 use NiroRoadmap\Helper\Settings;
 use NiroRoadmap\Model\Database;
+use NiroRoadmap\Model\Status_Log;
 use NiroRoadmap\Model\Vote;
 
 class Installer {
@@ -19,7 +20,7 @@ class Installer {
 			$installer->update_db_version();
 		}
 
-		Vote::maybe_create_table();
+		self::maybe_upgrade();
 
 		$installer->create_roadmap_page();
 
@@ -35,6 +36,7 @@ class Installer {
 	 */
 	public static function maybe_upgrade() {
 		Vote::maybe_create_table();
+		Status_Log::maybe_create_table();
 	}
 
 	/**

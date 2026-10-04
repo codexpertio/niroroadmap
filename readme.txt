@@ -25,6 +25,8 @@ Visitors can open any item for the full details and upvote or downvote it. You f
 * **Sortable statuses:** Drag statuses into the order you want on the admin screen. The public board uses the same order.
 * **Products:** Run separate roadmaps for several products and show one product per board.
 * **Tags:** Label items (e.g. *Payments*, *Checkout*). Tags are shown on each card.
+* **Item details:** Give an item a target (a date or a quarter like *Q4 2026*), a release date and version, a link, a cover image (its Featured image), an effort size and private notes for your team. Pin an item to the top of its column, or hide its vote counts.
+* **Status history:** See who moved an item to which status and when, and optionally show visitors the path an item took.
 * **Shortcode and block:** Use the `[niroroadmap]` shortcode or the **Roadmap** block.
 * **Responsive:** On phones the columns scroll sideways with snapping.
 * **Accessible:** Cards can be opened with the keyboard, Esc closes the popup, and the animation is replaced by a plain fade for visitors who prefer reduced motion.
@@ -81,6 +83,10 @@ The vote table stores only these hashes, the item, the vote type and the time. T
 When comments are turned on, a comment is a standard WordPress comment. WordPress stores the commenter's name, email address, IP address and browser user agent with it, the same as on any post, and your spam plugin may send these to its own service. The roadmap board never shows email addresses or IP addresses. It does show each commenter's avatar, which for people without a profile picture is a Gravatar image whose address contains a hash of their email; return false from the `niroroadmap_comment_show_avatars` filter to turn avatars off. A hidden form field and a per-IP rate limit (using a hash of the IP address, as for votes) help keep out spam. Comments are deleted with their item, and when you uninstall with "Delete all data" turned on.
 
 When visitors can suggest ideas, an idea is stored as a pending item, like any other. If you ask for a name and email, or the person is logged in, those are stored privately with the idea so you can follow up. They are shown only in the admin Items list, and never on the board or in the public API. The idea itself becomes public only when you publish it. A hidden form field, a minimum fill-in time and a per-IP rate limit (using a hash of the IP address, as for votes) help keep out spam, and a filter lets you add a CAPTCHA. If you turn on the email notification, the idea and the submitter's name and email are sent to the address you choose. Ideas, and the name and email stored with them, are deleted with the item, and when you uninstall with "Delete all data" turned on.
+
+Item details: the target is shown to visitors only if you turn that on in **Settings → General**. The release date, version, link and cover image are shown when filled in. The effort size and the internal notes are for your team only: they are never shown on the board or returned by the public API.
+
+Status history: each time an item moves to another status, the plugin records which status, when, and the ID of the user who moved it (0 when it was done by code or by a visitor's submission). Only your team sees who; the optional timeline shown to visitors has statuses and dates only. The history is deleted with the item, and when you uninstall with "Delete all data" turned on.
 
 == Installation ==
 

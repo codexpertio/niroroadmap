@@ -36,7 +36,7 @@ class Post_Type {
 			'hierarchical'       => false,
 			'menu_position'      => 2,
 			'menu_icon'          => 'dashicons-calendar-alt',
-			'supports'           => array( 'title', 'editor', 'author', 'comments' ),
+			'supports'           => array( 'title', 'editor', 'author', 'comments', 'thumbnail' ),
 			'show_in_rest'       => true, // needed for block editor
 		);
 
