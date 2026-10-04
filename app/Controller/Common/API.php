@@ -4,6 +4,7 @@ namespace NiroRoadmap\Controller\Common;
 defined( 'ABSPATH' ) || exit;
 
 use WP_REST_Server;
+use NiroRoadmap\API\Comment;
 use NiroRoadmap\API\Option;
 use NiroRoadmap\API\Task;
 use NiroRoadmap\API\Stage;
@@ -81,6 +82,69 @@ class API {
 						'required'    => true,
 						'type'        => 'string',
 						'enum'        => array( 'upvote', 'downvote' ),
+					),
+				),
+				'permission_callback' => '__return_true',
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/tasks/(?P<id>\d+)/comments',
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( new Comment(), 'get' ),
+				'args'                => array(
+					'id'       => array(
+						'description' => __( 'The `task` ID', 'niroroadmap' ),
+						'required'    => true,
+					),
+					'page'     => array(
+						'description' => __( 'The page of comments', 'niroroadmap' ),
+						'type'        => 'integer',
+						'default'     => 1,
+					),
+					'per_page' => array(
+						'description' => __( 'Top-level comments per page (1-50)', 'niroroadmap' ),
+						'type'        => 'integer',
+						'default'     => 20,
+					),
+				),
+				'permission_callback' => '__return_true',
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/tasks/(?P<id>\d+)/comments',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( new Comment(), 'create' ),
+				'args'                => array(
+					'id'      => array(
+						'description' => __( 'The `task` ID', 'niroroadmap' ),
+						'required'    => true,
+					),
+					'content' => array(
+						'description' => __( 'The comment text (plain text)', 'niroroadmap' ),
+						'required'    => true,
+						'type'        => 'string',
+					),
+					'parent'  => array(
+						'description' => __( 'The comment being replied to', 'niroroadmap' ),
+						'type'        => 'integer',
+					),
+					'name'    => array(
+						'description' => __( 'The commenter name (guests)', 'niroroadmap' ),
+						'type'        => 'string',
+					),
+					'email'   => array(
+						'description' => __( 'The commenter email (guests)', 'niroroadmap' ),
+						'type'        => 'string',
+					),
+					'website' => array(
+						'description' => __( 'Leave empty. Spam trap.', 'niroroadmap' ),
+						'type'        => 'string',
 					),
 				),
 				'permission_callback' => '__return_true',

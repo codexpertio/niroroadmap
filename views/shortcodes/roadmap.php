@@ -8,6 +8,7 @@ $show_stage_links = $args['show_stage_links'] ?? false;
 $show_vote_counts = $args['show_vote_counts'] ?? true;
 $show_tags        = $args['show_tags'] ?? true;
 $show_downvote    = $args['show_downvote'] ?? true;
+$comments_enabled = $args['comments_enabled'] ?? false;
 
 ?>
 <div class="nr-kanban-columns">
@@ -38,6 +39,14 @@ $show_downvote    = $args['show_downvote'] ?? true;
 										<li class="nr-tag"><?php echo esc_html( $tag ); ?></li>
 									<?php endforeach; ?>
 								</ul>
+							<?php endif; ?>
+
+							<?php if ( $comments_enabled ) : ?>
+								<span class="nr-task-comments" title="<?php esc_attr_e( 'Comments', 'niroroadmap' ); ?>">
+									<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H9l-4 3v-3H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" fill="currentColor"/></svg>
+									<span class="nr-task-comments-count"><?php echo esc_html( $task['comments'] ); ?></span>
+									<span class="screen-reader-text nr-sr-only"><?php esc_html_e( 'comments', 'niroroadmap' ); ?></span>
+								</span>
 							<?php endif; ?>
 
 							<?php if ( $show_vote_counts ) : ?>
@@ -86,6 +95,49 @@ $show_downvote    = $args['show_downvote'] ?? true;
 			<p class="nr-vote-notice" id="nr-vote-notice" role="status" aria-live="polite"></p>
 
 			<div id="nr-modal-description" class="nr-modal-description"></div>
+
+			<?php if ( $comments_enabled ) : ?>
+				<section class="nr-comments" id="nr-comments" aria-labelledby="nr-comments-title" hidden>
+					<h3 class="nr-comments-title" id="nr-comments-title"><?php esc_html_e( 'Comments', 'niroroadmap' ); ?> <span class="nr-comments-count" id="nr-comments-count"></span></h3>
+
+					<p class="nr-sr-only" id="nr-comments-live" role="status" aria-live="polite"></p>
+					<p class="nr-comments-note" id="nr-comments-note"></p>
+
+					<ol class="nr-comments-list" id="nr-comments-list" aria-labelledby="nr-comments-title"></ol>
+					<button type="button" class="nr-comments-more" id="nr-comments-more" hidden><?php esc_html_e( 'Load more comments', 'niroroadmap' ); ?></button>
+
+					<form class="nr-comment-form" id="nr-comment-form" novalidate hidden>
+						<p class="nr-replying" id="nr-replying" hidden>
+							<span id="nr-replying-to"></span>
+							<button type="button" class="nr-link-btn" id="nr-reply-cancel"><?php esc_html_e( 'Cancel', 'niroroadmap' ); ?></button>
+						</p>
+						<input type="hidden" name="parent" id="nr-comment-parent" value="0">
+
+						<div class="nr-field nr-guest-field">
+							<label for="nr-comment-name"><?php esc_html_e( 'Name', 'niroroadmap' ); ?> <span class="nr-required" id="nr-name-required" aria-hidden="true">*</span></label>
+							<input type="text" name="name" id="nr-comment-name" autocomplete="name" maxlength="245">
+						</div>
+						<div class="nr-field nr-guest-field">
+							<label for="nr-comment-email"><?php esc_html_e( 'Email', 'niroroadmap' ); ?> <span class="nr-required" id="nr-email-required" aria-hidden="true">*</span></label>
+							<input type="email" name="email" id="nr-comment-email" autocomplete="email" maxlength="100" aria-describedby="nr-email-hint">
+							<small id="nr-email-hint"><?php esc_html_e( 'Never shown publicly.', 'niroroadmap' ); ?></small>
+						</div>
+						<div class="nr-field">
+							<label for="nr-comment-text"><?php esc_html_e( 'Your comment', 'niroroadmap' ); ?> <span class="nr-required" aria-hidden="true">*</span></label>
+							<textarea name="content" id="nr-comment-text" rows="4" required aria-describedby="nr-comment-error"></textarea>
+						</div>
+
+						<?php // Spam trap: hidden from people, tempting to bots. ?>
+						<div class="nr-hp" aria-hidden="true">
+							<label for="nr-comment-website"><?php esc_html_e( 'Website', 'niroroadmap' ); ?></label>
+							<input type="text" name="website" id="nr-comment-website" tabindex="-1" autocomplete="off">
+						</div>
+
+						<p class="nr-comment-error" id="nr-comment-error" role="alert"></p>
+						<button type="submit" class="nr-comment-submit" id="nr-comment-submit"><?php esc_html_e( 'Post comment', 'niroroadmap' ); ?></button>
+					</form>
+				</section>
+			<?php endif; ?>
 		</div>
 	</div>
 </div>

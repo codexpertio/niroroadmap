@@ -31,6 +31,26 @@ class Front {
 		$vars['settings'] = array(
 			'allow_vote_change' => (bool) niroroadmap_get_setting( 'allow_vote_change' ),
 			'vote_failed'       => __( 'Your vote could not be saved.', 'niroroadmap' ),
+			'login_url'         => wp_login_url(),
+			'comments_newest'   => 'newest' === niroroadmap_get_setting( 'comments_order' ),
+			'comments'          => array(
+				'loading'     => __( 'Loading comments…', 'niroroadmap' ),
+				'load_failed' => __( 'Could not load comments.', 'niroroadmap' ),
+				'none'        => __( 'No comments yet. Be the first to share your thoughts.', 'niroroadmap' ),
+				'closed'      => __( 'Comments are closed for this item.', 'niroroadmap' ),
+				'login'       => __( 'Log in to comment.', 'niroroadmap' ),
+				'team'        => __( 'Team', 'niroroadmap' ),
+				'awaiting'    => __( 'Awaiting moderation', 'niroroadmap' ),
+				'reply'       => __( 'Reply', 'niroroadmap' ),
+				/* translators: %s: name of the person being replied to. */
+				'replying_to' => __( 'Replying to %s', 'niroroadmap' ),
+				'posted'      => __( 'Comment posted.', 'niroroadmap' ),
+				'failed'      => __( 'Your comment could not be posted.', 'niroroadmap' ),
+				'sending'     => __( 'Posting…', 'niroroadmap' ),
+				'submit'      => __( 'Post comment', 'niroroadmap' ),
+				'empty'       => __( 'Please write a comment.', 'niroroadmap' ),
+				'need_name'   => __( 'Please enter your name and email.', 'niroroadmap' ),
+			),
 		);
 
 		return $vars;

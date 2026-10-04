@@ -114,6 +114,243 @@ jQuery(
 			];
 		};
 
+		// Comments. Loaded only when a popup opens; all text is built with .text() except the
+		// comment body, which the server has already escaped and filtered to <a>, <p>, <br>.
+		const commentsBox = $( "#nr-comments" );
+		const C           = NIROROADMAP.settings.comments || {};
+		let commentsState = null; // { taskId, page, totalPages, state }
+
+		const announce = (message) => $( "#nr-comments-live" ).text( "" ).text( message );
+
+		const setCardCount = (taskId, count) => {
+			$( `#nr-task-${taskId} .nr-task-comments-count` ).text( count );
+		};
+
+		const setCommentsCount = (count) => {
+			$( "#nr-comments-count" ).text( count ? `(${count})` : "" );
+		};
+
+		const renderComment = (c) => {
+			const li   = $( "<li class='nr-comment'>" ).attr( "id", `nr-comment-${c.id}` ).attr( "data-id", c.id );
+			const body = $( "<div class='nr-comment-body'>" );
+			const head = $( "<div class='nr-comment-head'>" );
+
+			if (c.avatar) {
+				li.append( $( "<img class='nr-comment-avatar' width='36' height='36' loading='lazy' alt=''>" ).attr( "src", c.avatar ) );
+			}
+
+			head.append( $( "<strong class='nr-comment-author'>" ).text( c.author ) );
+			if (c.team) {
+				head.append( $( "<span class='nr-badge-team'>" ).text( C.team ) );
+			}
+			head.append( $( "<time class='nr-comment-date'>" ).attr( "datetime", c.date ).text( c.date_human ) );
+			if (c.pending) {
+				head.append( $( "<span class='nr-comment-pending'>" ).text( C.awaiting ) );
+			}
+
+			body.append( head, $( "<div class='nr-comment-content'>" ).html( c.content ) );
+
+			// One level of replies only.
+			if ( ! c.parent && commentsState && commentsState.state.can_comment) {
+				body.append( $( "<button type='button' class='nr-link-btn nr-comment-reply'>" ).text( C.reply ).attr( "data-id", c.id ).attr( "data-author", c.author ) );
+			}
+
+			if ( ! c.parent) {
+				body.append( $( "<ol class='nr-comment-replies'>" ).append( (c.replies || []).map( renderComment ) ) );
+			}
+
+			return li.append( body );
+		};
+
+		// Add a comment to the list, unless it's already there (a later page can repeat one we just posted).
+		const insertComment = (c) => {
+			if ($( `#nr-comment-${c.id}` ).length) {
+				return;
+			}
+
+			const li = renderComment( c );
+
+			if (c.parent && $( `#nr-comment-${c.parent}` ).length) {
+				$( `#nr-comment-${c.parent} > .nr-comment-body > .nr-comment-replies` ).append( li );
+			} else if (NIROROADMAP.settings.comments_newest) {
+				$( "#nr-comments-list" ).prepend( li );
+			} else {
+				$( "#nr-comments-list" ).append( li );
+			}
+		};
+
+		const resetReply = () => {
+			$( "#nr-comment-parent" ).val( 0 );
+			$( "#nr-replying" ).prop( "hidden", true );
+		};
+
+		const showCommentForm = (state) => {
+			const form  = $( "#nr-comment-form" );
+			const note  = $( "#nr-comments-note" );
+			const guest = ! state.logged_in;
+
+			form.prop( "hidden", ! state.can_comment );
+			note.text( "" );
+
+			if ( ! state.open) {
+				note.text( C.closed );
+			} else if ( ! state.can_comment) {
+				const login = $( "<a>" ).text( C.login ).attr( "href", NIROROADMAP.settings.login_url + (NIROROADMAP.settings.login_url.indexOf( "?" ) === -1 ? "?" : "&") + "redirect_to=" + encodeURIComponent( window.location.href ) );
+				note.append( login );
+			}
+
+			form.find( ".nr-guest-field" ).prop( "hidden", ! guest );
+			form.find( ".nr-required" ).filter( "#nr-name-required, #nr-email-required" ).prop( "hidden", ! state.require_name_email );
+			$( "#nr-comment-text" ).attr( "maxlength", state.max_length );
+		};
+
+		const loadComments = (taskId, page) => {
+			const first = page === 1;
+
+			if (first) {
+				commentsState = { taskId: taskId, page: 1, totalPages: 1, state: { can_comment: false } };
+				$( "#nr-comments-list" ).empty();
+				$( "#nr-comments-more" ).prop( "hidden", true );
+				$( "#nr-comment-form" ).prop( "hidden", true );
+				$( "#nr-comment-error" ).text( "" );
+				setCommentsCount( 0 );
+				resetReply();
+				commentsBox.prop( "hidden", false );
+				$( "#nr-comments-note" ).text( C.loading );
+			}
+
+			request( `/tasks/${taskId}/comments`, "GET", { page: page } ).done(
+				function (response) {
+					// The popup may have moved on to another card while this was loading.
+					if ($( "#nr-modal-id" ).val() !== String( taskId )) {
+						return;
+					}
+
+					const data = response.data;
+
+					commentsState = { taskId: taskId, page: data.page, totalPages: data.total_pages, state: data.state };
+
+					if (first) {
+						showCommentForm( data.state );
+					}
+
+					data.comments.forEach( (c) => insertComment( c ) );
+					data.pending.forEach( (c) => insertComment( c ) );
+
+					setCommentsCount( data.count );
+					setCardCount( taskId, data.count );
+					$( "#nr-comments-more" ).prop( "hidden", data.page >= data.total_pages );
+
+					if (first && ! data.count && ! data.pending.length) {
+						$( "#nr-comments-note" ).text( data.state.open ? C.none : C.closed );
+					} else if (first && data.state.open && data.state.can_comment) {
+						$( "#nr-comments-note" ).text( "" );
+					}
+				}
+			).fail(
+				function (xhr) {
+					// 404 means comments are off for this item: show nothing at all.
+					if (xhr.status === 404) {
+						commentsBox.prop( "hidden", true );
+					} else if ($( "#nr-modal-id" ).val() === String( taskId )) {
+						$( "#nr-comments-note" ).text( C.load_failed );
+					}
+				}
+			);
+		};
+
+		$( "#nr-comments-more" ).on(
+			"click",
+			function () {
+				if (commentsState && commentsState.page < commentsState.totalPages) {
+					loadComments( commentsState.taskId, commentsState.page + 1 );
+				}
+			}
+		);
+
+		$( "#nr-comments-list" ).on(
+			"click",
+			".nr-comment-reply",
+			function () {
+				$( "#nr-comment-parent" ).val( $( this ).data( "id" ) );
+				$( "#nr-replying-to" ).text( C.replying_to.replace( "%s", $( this ).data( "author" ) ) );
+				$( "#nr-replying" ).prop( "hidden", false );
+				$( "#nr-comment-text" ).trigger( "focus" );
+			}
+		);
+		$( "#nr-reply-cancel" ).on(
+			"click",
+			function () {
+				resetReply();
+				$( "#nr-comment-text" ).trigger( "focus" );
+			}
+		);
+
+		$( "#nr-comment-form" ).on(
+			"submit",
+			function (e) {
+				e.preventDefault();
+
+				const form   = $( this );
+				const error  = $( "#nr-comment-error" );
+				const submit = $( "#nr-comment-submit" );
+				const taskId = commentsState && commentsState.taskId;
+				const state  = commentsState && commentsState.state;
+
+				error.text( "" );
+
+				if ( ! taskId) {
+					return;
+				}
+
+				if ( ! $.trim( $( "#nr-comment-text" ).val() )) {
+					error.text( C.empty );
+					$( "#nr-comment-text" ).trigger( "focus" );
+					return;
+				}
+
+				if (state && ! state.logged_in && state.require_name_email && ( ! $.trim( $( "#nr-comment-name" ).val() ) || ! $.trim( $( "#nr-comment-email" ).val() ) )) {
+					error.text( C.need_name );
+					$( "#nr-comment-name" ).trigger( "focus" );
+					return;
+				}
+
+				submit.prop( "disabled", true ).text( C.sending );
+
+				request( `/tasks/${taskId}/comments`, "POST", form.serialize() ).done(
+					function (response) {
+						const data = response.data;
+
+						if (data.comment) {
+							if ($( "#nr-modal-id" ).val() === String( taskId )) {
+								insertComment( data.comment );
+							}
+						}
+
+						if (data.count !== undefined) {
+							setCommentsCount( data.count );
+							setCardCount( taskId, data.count );
+						}
+
+						$( "#nr-comments-note" ).text( "" );
+						// Keep the guest's name and email for their next comment; clear only what they wrote.
+						$( "#nr-comment-text" ).val( "" );
+						resetReply();
+						announce( data.message || C.posted );
+					}
+				).fail(
+					function (xhr) {
+						const data = xhr.responseJSON && xhr.responseJSON.data;
+						error.text( (data && data.message) || C.failed );
+					}
+				).always(
+					function () {
+						submit.prop( "disabled", false ).text( C.submit );
+					}
+				);
+			}
+		);
+
 		const overlay = $( "#nr-modal-overlay" );
 		let hideTimer;
 
@@ -148,6 +385,10 @@ jQuery(
 				modal.animate( frames, { duration: 380, easing: "cubic-bezier(0.2, 0.9, 0.25, 1)" } );
 			}
 			$( "#nr-close-modal" ).trigger( "focus" );
+
+			if (commentsBox.length) {
+				loadComments( taskId, 1 );
+			}
 
 			request( `/tasks/${taskId}`, "GET" ).done(
 				function (response) {

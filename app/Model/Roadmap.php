@@ -7,6 +7,22 @@ use NiroRoadmap\Helper\Utility;
 
 class Roadmap {
 
+    /**
+     * Only published, non-password-protected roadmap items are public.
+     *
+     * @param int $id Item ID.
+     * @return \WP_Post|null
+     */
+    public static function get_public_item( $id ) {
+        $item = get_post( (int) $id );
+
+        if ( ! $item || 'niroroadmap_item' !== $item->post_type || 'publish' !== $item->post_status || '' !== $item->post_password ) {
+            return null;
+        }
+
+        return $item;
+    }
+
     public static function get_roadmap( $product = null ) {
         // The shortcode / block can name a product; otherwise use the one chosen in Settings.
         if ( is_null( $product ) && niroroadmap_get_setting( 'default_product' ) ) {
@@ -61,6 +77,7 @@ class Roadmap {
 				$tasks[ $stage->slug ]['tasks'][ $task_id ] = array(
 					'title'   => $task_title,
 					'upvotes' => (int) get_post_meta( $task_id, 'upvote', true ),
+					'comments' => (int) get_comments_number( $task_id ),
 					'tags'    => is_array( $tags ) ? wp_list_pluck( $tags, 'name' ) : array(),
 				);
 			}
@@ -75,6 +92,7 @@ class Roadmap {
 			'show_vote_counts' => niroroadmap_get_setting( 'show_vote_counts' ),
 			'show_tags'        => niroroadmap_get_setting( 'show_tags' ),
 			'show_downvote'    => niroroadmap_get_setting( 'show_downvote' ),
+			'comments_enabled' => Comment::enabled(),
 		) );
     }
 }

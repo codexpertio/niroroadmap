@@ -5,6 +5,7 @@ defined( 'ABSPATH' ) || exit;
 
 use NiroRoadmap\Helper\Rate_Limit;
 use NiroRoadmap\Helper\Voter;
+use NiroRoadmap\Model\Roadmap;
 use NiroRoadmap\Model\Vote;
 use NiroRoadmap\Trait\Rest;
 
@@ -34,9 +35,9 @@ class Task {
 	 * @return WP_Post
 	 */
 	private function get_public_task( $id ) {
-		$task = get_post( (int) $id );
+		$task = Roadmap::get_public_item( $id );
 
-		if ( ! $task || 'niroroadmap_item' !== $task->post_type || 'publish' !== $task->post_status || '' !== $task->post_password ) {
+		if ( ! $task ) {
 			$this->response_error( array( 'message' => __( 'Task not found', 'niroroadmap' ) ), 404 );
 		}
 

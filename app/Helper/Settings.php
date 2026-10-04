@@ -24,6 +24,7 @@ class Settings {
 		return array(
 			'general'    => __( 'General', 'niroroadmap' ),
 			'voting'     => __( 'Voting', 'niroroadmap' ),
+			'comments'   => __( 'Comments', 'niroroadmap' ),
 			'appearance' => __( 'Appearance', 'niroroadmap' ),
 			'advanced'   => __( 'Advanced', 'niroroadmap' ),
 		);
@@ -151,6 +152,40 @@ class Settings {
 						'admins'   => __( 'Administrators only', 'niroroadmap' ),
 					);
 				},
+			),
+			'comments_enabled'    => array(
+				'tab'         => 'comments',
+				'type'        => 'checkbox',
+				'label'       => __( 'Let visitors comment on items', 'niroroadmap' ),
+				'description' => __( 'Comments appear in the item popup and are moderated like any WordPress comment (Settings → Discussion, Comments screen, spam plugins). To close one item, use its "Discussion" box on the edit screen.', 'niroroadmap' ),
+				'default'     => false,
+			),
+			'comments_login'      => array(
+				'tab'         => 'comments',
+				'type'        => 'checkbox',
+				'label'       => __( 'Require login to comment', 'niroroadmap' ),
+				'description' => __( 'Also on when Settings → Discussion requires registered users.', 'niroroadmap' ),
+				'default'     => false,
+			),
+			'comments_order'      => array(
+				'tab'         => 'comments',
+				'type'        => 'select',
+				'label'       => __( 'Comment order', 'niroroadmap' ),
+				'description' => '',
+				'default'     => 'oldest',
+				'options'     => function () {
+					return array(
+						'oldest' => __( 'Oldest first', 'niroroadmap' ),
+						'newest' => __( 'Newest first', 'niroroadmap' ),
+					);
+				},
+			),
+			'comments_auto_close' => array(
+				'tab'         => 'comments',
+				'type'        => 'checkbox',
+				'label'       => __( 'Close comments when an item is moved to Completed', 'niroroadmap' ),
+				'description' => __( 'Comments are not reopened if the item is moved back.', 'niroroadmap' ),
+				'default'     => false,
 			),
 			'color_scheme'        => array(
 				'tab'         => 'appearance',
