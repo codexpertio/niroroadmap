@@ -26,6 +26,7 @@ class Settings {
 			'voting'     => __( 'Voting', 'niroroadmap' ),
 			'comments'   => __( 'Comments', 'niroroadmap' ),
 			'submissions' => __( 'Submissions', 'niroroadmap' ),
+			'toolbar'    => __( 'Toolbar', 'niroroadmap' ),
 			'appearance' => __( 'Appearance', 'niroroadmap' ),
 			'advanced'   => __( 'Advanced', 'niroroadmap' ),
 		);
@@ -265,6 +266,44 @@ class Settings {
 				'label'       => __( 'Send those emails to', 'niroroadmap' ),
 				'description' => __( 'Leave empty to use the site\'s admin email address.', 'niroroadmap' ),
 				'default'     => '',
+			),
+			'toolbar_enabled'     => array(
+				'tab'         => 'toolbar',
+				'type'        => 'checkbox',
+				'label'       => __( 'Show a search, sort and filter toolbar above boards', 'niroroadmap' ),
+				'description' => __( 'The default for every board. Override it per board with [niroroadmap toolbar="yes"] or [niroroadmap toolbar="no"], or with the block\'s sidebar. A board without a toolbar loads no extra script or styles.', 'niroroadmap' ),
+				'default'     => false,
+			),
+			'toolbar_sort'        => array(
+				'tab'         => 'toolbar',
+				'type'        => 'select',
+				'label'       => __( 'Initial sort', 'niroroadmap' ),
+				'description' => __( 'Sorting applies inside each column. "Most votes" needs vote counts to be shown, and "Most commented" needs comments turned on; otherwise the board falls back to manual order. Editors can\'t drag cards while a sort or filter is active.', 'niroroadmap' ),
+				'default'     => 'manual',
+				'options'     => function () {
+					return \NiroRoadmap\Model\Toolbar::sort_labels();
+				},
+			),
+			'toolbar_filter_search' => array(
+				'tab'         => 'toolbar',
+				'type'        => 'checkbox',
+				'label'       => __( 'Offer a search box', 'niroroadmap' ),
+				'description' => '',
+				'default'     => true,
+			),
+			'toolbar_filter_tag'  => array(
+				'tab'         => 'toolbar',
+				'type'        => 'checkbox',
+				'label'       => __( 'Offer a tag filter', 'niroroadmap' ),
+				'description' => __( 'Not shown when tags are hidden on the board.', 'niroroadmap' ),
+				'default'     => true,
+			),
+			'toolbar_filter_product' => array(
+				'tab'         => 'toolbar',
+				'type'        => 'checkbox',
+				'label'       => __( 'Offer a product filter', 'niroroadmap' ),
+				'description' => __( 'Only when the board has items from more than one product and isn\'t limited to one.', 'niroroadmap' ),
+				'default'     => true,
 			),
 			'color_scheme'        => array(
 				'tab'         => 'appearance',
@@ -519,7 +558,7 @@ class Settings {
 		$accent = $accent ? $accent : self::DEFAULT_ACCENT;
 		$radius = max( 0, min( 32, (int) self::get( 'card_radius' ) ) );
 		$scheme = self::get( 'color_scheme' );
-		$root   = '.nr-kanban-columns,.nr-modal-overlay';
+		$root   = '.nr-board,.nr-kanban-columns,.nr-modal-overlay';
 		$dark   = $root . '{--nr-bg:#111827;--nr-card:#1f2937;--nr-border:#374151;--nr-text:#f3f4f6;--nr-muted:#9ca3af}';
 
 		$css = $root . '{--nr-accent:' . $accent . ';--nr-radius:' . $radius . 'px}';

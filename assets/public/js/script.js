@@ -241,10 +241,20 @@ jQuery(
 					setCardCount( taskId, data.count );
 					$( "#nr-comments-more" ).prop( "hidden", data.page >= data.total_pages );
 
-					if (first && ! data.count && ! data.pending.length) {
-						$( "#nr-comments-note" ).text( data.state.open ? C.none : C.closed );
-					} else if (first && data.state.open && data.state.can_comment) {
-						$( "#nr-comments-note" ).text( "" );
+					if (first) {
+						const empty = ! data.count && ! data.pending.length;
+						const note  = $( "#nr-comments-note" );
+
+						if ( ! data.state.open) {
+							note.text( C.closed );
+						} else if ( ! data.state.can_comment) {
+							// Needs a login. Keep the link showCommentForm() put here, or the visitor has no way forward.
+							if (empty) {
+								note.prepend( document.createTextNode( C.none + " " ) );
+							}
+						} else {
+							note.text( empty ? C.none : "" );
+						}
 					}
 				}
 			).fail(

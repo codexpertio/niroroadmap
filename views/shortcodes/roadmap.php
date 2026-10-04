@@ -11,8 +11,12 @@ $show_downvote    = $args['show_downvote'] ?? true;
 $comments_enabled = $args['comments_enabled'] ?? false;
 $submissions_enabled = $args['submissions_enabled'] ?? false;
 $submission_product  = $args['submission_product'] ?? 0;
+$toolbar             = $args['toolbar'] ?? array();
+$toolbar_on          = ! empty( $toolbar['enabled'] );
+$board_id            = $args['board_id'] ?? 'nr-board';
 
 ?>
+<div class="nr-board<?php echo $toolbar_on ? ' nr-has-toolbar' : ''; ?>"<?php echo $toolbar_on ? ' data-nr-toolbar data-nr-default-sort="' . esc_attr( $toolbar['sort'] ) . '"' : ''; ?>>
 <?php if ( $submissions_enabled ) : ?>
 	<div class="nr-board-toolbar">
 		<button type="button" class="nr-suggest-btn" aria-haspopup="dialog" data-product="<?php echo esc_attr( $submission_product ); ?>">
@@ -20,6 +24,10 @@ $submission_product  = $args['submission_product'] ?? 0;
 			<?php esc_html_e( 'Suggest an idea', 'niroroadmap' ); ?>
 		</button>
 	</div>
+<?php endif; ?>
+
+<?php if ( $toolbar_on ) : ?>
+	<?php echo \NiroRoadmap\Helper\Utility::get_template( 'shortcodes/toolbar.php', $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The template escapes its own output. ?>
 <?php endif; ?>
 
 <div class="nr-kanban-columns">
@@ -38,9 +46,9 @@ $submission_product  = $args['submission_product'] ?? 0;
 				<span class="nr-stage-count"><?php echo esc_html( count( $column['tasks'] ) ); ?></span>
 			</header>
 
-			<div class="nr-kanban-list" data-empty="<?php esc_attr_e( 'Nothing here yet', 'niroroadmap' ); ?>">
+			<div class="nr-kanban-list" data-empty="<?php esc_attr_e( 'Nothing here yet', 'niroroadmap' ); ?>"<?php echo $toolbar_on ? ' data-nomatch="' . esc_attr__( 'No matching items', 'niroroadmap' ) . '"' : ''; ?>>
 				<?php foreach ( $column['tasks'] as $task_id => $task ) : ?>
-					<article class="nr-kanban-item" id="nr-task-<?php echo esc_attr( $task_id ); ?>" tabindex="0" role="button" aria-haspopup="dialog" data-tags="<?php echo esc_attr( wp_json_encode( $show_tags ? $task['tags'] : array() ) ); ?>">
+					<article class="nr-kanban-item" id="nr-task-<?php echo esc_attr( $task_id ); ?>" tabindex="0" role="button" aria-haspopup="dialog" data-tags="<?php echo esc_attr( wp_json_encode( $show_tags ? $task['tags'] : array() ) ); ?>"<?php if ( $toolbar_on ) : ?> data-date="<?php echo esc_attr( $task['date'] ); ?>" data-product-ids="<?php echo esc_attr( implode( ' ', array_keys( $task['products'] ) ) ); ?>"<?php if ( $show_tags ) : ?> data-tag-slugs="<?php echo esc_attr( implode( ' ', $task['tag_slugs'] ) ); ?>"<?php endif; ?><?php endif; ?>>
 						<h4 class="nr-task-title"><?php echo esc_html( $task['title'] ); ?></h4>
 
 						<div class="nr-task-meta">
@@ -73,6 +81,7 @@ $submission_product  = $args['submission_product'] ?? 0;
 		</section>
 	<?php endforeach; ?>
 </div>
+</div><!-- .nr-board -->
 
 <?php if ( ! did_action( 'niroroadmap_modal_rendered' ) ) : ?>
 <?php do_action( 'niroroadmap_modal_rendered' ); ?>

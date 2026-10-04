@@ -23,12 +23,23 @@ class Shortcode {
 			array(
 				'product'     => null,
 				'submissions' => '', // yes | no. Anything else follows Settings -> Submissions.
+				'toolbar'     => '', // yes | no. Anything else follows Settings -> Toolbar.
+				'sort'        => '', // manual | votes | newest | oldest | commented.
+				'filters'     => '', // Comma list of search, tag, product; "none" for no filters.
 			),
 			$atts,
 			'roadmap'
 		);
 		$product = $atts[ 'product' ] ?? null;
 
-		return Roadmap::get_roadmap( $product, array( 'submissions' => $atts['submissions'] ) );
+		return Roadmap::get_roadmap(
+			$product,
+			array(
+				'submissions' => $atts['submissions'],
+				'toolbar'     => $atts['toolbar'],
+				'sort'        => $atts['sort'],
+				'filters'     => $atts['filters'],
+			)
+		);
 	}
 }

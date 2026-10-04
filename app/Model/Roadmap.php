@@ -27,7 +27,8 @@ class Roadmap {
      * Render the board.
      *
      * @param int|string|null $product Product term ID to show, or null for the site default.
-     * @param array           $args    `submissions`: `yes` / `no` to override the "Suggest an idea" setting.
+     * @param array           $args    `submissions`, `toolbar`: `yes` / `no` to override the site setting.
+     *                                 `sort`, `filters`: the toolbar's initial sort and which filters it offers.
      * @return string
      */
     public static function get_roadmap( $product = null, $args = array() ) {
@@ -35,6 +36,9 @@ class Roadmap {
         if ( is_null( $product ) && niroroadmap_get_setting( 'default_product' ) ) {
             $product = niroroadmap_get_setting( 'default_product' );
         }
+
+        // Decided up front: what the toolbar needs is only fetched when there is a toolbar.
+        $toolbar = Toolbar::config( $args );
 
         $tasks  = array();
 		$stages = get_terms(
@@ -86,8 +90,39 @@ class Roadmap {
 					'upvotes' => (int) get_post_meta( $task_id, 'upvote', true ),
 					'comments' => (int) get_comments_number( $task_id ),
 					'tags'    => is_array( $tags ) ? wp_list_pluck( $tags, 'name' ) : array(),
+					'tag_slugs' => is_array( $tags ) ? wp_list_pluck( $tags, 'slug' ) : array(),
+					'products'  => array(),
+					'date'      => 0,
 				);
+
+				if ( $toolbar['enabled'] ) {
+					$products = get_the_terms( $task_id, 'niroroadmap_product' );
+
+					$tasks[ $stage->slug ]['tasks'][ $task_id ]['products'] = is_array( $products ) ? wp_list_pluck( $products, 'name', 'term_id' ) : array();
+					$tasks[ $stage->slug ]['tasks'][ $task_id ]['date']     = (int) get_post_time( 'U', true, $task_id );
+				}
 			}
+		}
+
+		// What the toolbar can offer is what's actually on this board.
+		$filter_tags     = array();
+		$filter_products = array();
+
+		if ( $toolbar['enabled'] ) {
+			Toolbar::enqueue();
+
+			foreach ( $tasks as $column ) {
+				foreach ( $column['tasks'] as $task ) {
+					foreach ( $task['tag_slugs'] as $i => $slug ) {
+						$filter_tags[ $slug ] = $task['tags'][ $i ] ?? $slug;
+					}
+
+					$filter_products += $task['products'];
+				}
+			}
+
+			asort( $filter_tags, SORT_NATURAL | SORT_FLAG_CASE );
+			asort( $filter_products, SORT_NATURAL | SORT_FLAG_CASE );
 		}
 
 		// The filter keeps working and overrides the setting.
@@ -103,6 +138,12 @@ class Roadmap {
 			'submissions_enabled' => Submission::enabled( $args['submissions'] ?? '' ),
 			// A board that shows one product files its ideas under that product.
 			'submission_product' => $product ? (int) $product : 0,
+			'toolbar'         => $toolbar,
+			'filter_tags'     => $filter_tags,
+			'filter_products' => $filter_products,
+			// A board that shows one product has nothing to filter by product.
+			'product_locked'  => (bool) $product,
+			'board_id'        => wp_unique_id( 'nr-board-' ),
 		) );
     }
 }

@@ -16,7 +16,7 @@ import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 /**
  * Sidebar controls.
  */
-import { PanelBody, SelectControl } from '@wordpress/components';
+import { PanelBody, SelectControl, ToggleControl, CheckboxControl } from '@wordpress/components';
 
 /**
  * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
@@ -34,10 +34,68 @@ import './editor.scss';
  *
  * @return {Element} Element to render.
  */
+const FILTERS = [
+	{ key: 'search', label: __( 'Search box', 'niroroadmap' ) },
+	{ key: 'tag', label: __( 'Tags', 'niroroadmap' ) },
+	{ key: 'product', label: __( 'Product', 'niroroadmap' ) },
+];
+
 export default function Edit( { attributes, setAttributes } ) {
+	// '' follows the site setting; otherwise a comma list, or 'none'.
+	const customFilters = '' !== attributes.filters;
+	const activeFilters = 'none' === attributes.filters ? [] : attributes.filters.split( ',' ).filter( Boolean );
+
+	const toggleFilter = ( key, on ) => {
+		const next = FILTERS.map( ( f ) => f.key ).filter( ( k ) => ( k === key ? on : activeFilters.includes( k ) ) );
+		setAttributes( { filters: next.length ? next.join( ',' ) : 'none' } );
+	};
+
 	return (
 		<>
 			<InspectorControls>
+				<PanelBody title={ __( 'Search, sort and filter', 'niroroadmap' ) } initialOpen={ false }>
+					<SelectControl
+						label={ __( 'Toolbar', 'niroroadmap' ) }
+						value={ attributes.toolbar }
+						options={ [
+							{ label: __( 'Use the site setting', 'niroroadmap' ), value: '' },
+							{ label: __( 'Show', 'niroroadmap' ), value: 'yes' },
+							{ label: __( 'Hide', 'niroroadmap' ), value: 'no' },
+						] }
+						onChange={ ( toolbar ) => setAttributes( { toolbar } ) }
+						__nextHasNoMarginBottom
+					/>
+					<SelectControl
+						label={ __( 'Initial sort', 'niroroadmap' ) }
+						value={ attributes.sort }
+						options={ [
+							{ label: __( 'Use the site setting', 'niroroadmap' ), value: '' },
+							{ label: __( 'Manual order', 'niroroadmap' ), value: 'manual' },
+							{ label: __( 'Most votes', 'niroroadmap' ), value: 'votes' },
+							{ label: __( 'Newest', 'niroroadmap' ), value: 'newest' },
+							{ label: __( 'Oldest', 'niroroadmap' ), value: 'oldest' },
+							{ label: __( 'Most commented', 'niroroadmap' ), value: 'commented' },
+						] }
+						onChange={ ( sort ) => setAttributes( { sort } ) }
+						__nextHasNoMarginBottom
+					/>
+					<ToggleControl
+						label={ __( 'Choose the filters for this board', 'niroroadmap' ) }
+						checked={ customFilters }
+						onChange={ ( on ) => setAttributes( { filters: on ? 'search,tag,product' : '' } ) }
+						__nextHasNoMarginBottom
+					/>
+					{ customFilters &&
+						FILTERS.map( ( f ) => (
+							<CheckboxControl
+								key={ f.key }
+								label={ f.label }
+								checked={ activeFilters.includes( f.key ) }
+								onChange={ ( on ) => toggleFilter( f.key, on ) }
+								__nextHasNoMarginBottom
+							/>
+						) ) }
+				</PanelBody>
 				<PanelBody title={ __( 'Suggestions', 'niroroadmap' ) }>
 					<SelectControl
 						label={ __( '"Suggest an idea" button', 'niroroadmap' ) }

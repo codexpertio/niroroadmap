@@ -21,6 +21,12 @@ class CommentTest extends TestCase {
 		add_filter( 'wp_is_comment_flood', '__return_false', 99 ); // WordPress adds its own check lazily, so go after it.
 		add_filter( 'pre_option_comment_previously_approved', '__return_zero' );
 		add_filter( 'niroroadmap_setting_comments_enabled', '__return_true' );
+
+		// The site's saved settings must not decide these tests: pin the rest to the shipped defaults.
+		// (A test that needs another value adds its own filter after these, which wins.)
+		add_filter( 'niroroadmap_setting_comments_login', '__return_false' );
+		add_filter( 'niroroadmap_setting_comments_auto_close', '__return_false' );
+		add_filter( 'niroroadmap_setting_comments_order', static fn() => 'oldest' );
 	}
 
 	protected function tearDown(): void {

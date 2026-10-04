@@ -1,4 +1,5 @@
-/* Themes can override any of these on .nr-kanban-columns / .nr-modal-overlay */
+/* Themes can override any of these on .nr-board / .nr-kanban-columns / .nr-modal-overlay */
+.nr-board,
 .nr-kanban-columns,
 .nr-modal-overlay {
 	--nr-bg: #f6f7f9;
@@ -14,6 +15,9 @@
 
 /* Board */
 .nr-kanban-columns {
+	/* A positioning context, so the visually-hidden labels inside cards are clipped with the
+	   scroller. Without it they sit at the page level and make the whole page scroll sideways. */
+	position: relative;
 	display: flex;
 	gap: 16px;
 	margin: 32px 0;
@@ -98,7 +102,7 @@
 	min-height: 120px;
 	padding: 4px 12px 14px;
 }
-.nr-kanban-list:not(:has(.nr-kanban-item))::before {
+.nr-kanban-list:not(:has(.nr-kanban-item:not([hidden])))::before {
 	content: attr(data-empty);
 	display: block;
 	padding: 24px 12px;

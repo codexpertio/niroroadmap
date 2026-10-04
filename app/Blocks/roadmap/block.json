@@ -13,6 +13,20 @@
 			"type": "string",
 			"enum": [ "", "yes", "no" ],
 			"default": ""
+		},
+		"toolbar": {
+			"type": "string",
+			"enum": [ "", "yes", "no" ],
+			"default": ""
+		},
+		"sort": {
+			"type": "string",
+			"enum": [ "", "manual", "votes", "newest", "oldest", "commented" ],
+			"default": ""
+		},
+		"filters": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"supports": {

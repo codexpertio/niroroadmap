@@ -45,6 +45,10 @@ On activation, NiroRoadmap creates a **Roadmap** page and four statuses (Under R
 
 `[niroroadmap product="12"]` shows only the items of one product. Use the term ID from **NiroRoadmap → Products**.
 
+`[niroroadmap toolbar="yes" sort="votes" filters="search,tag"]` adds a search, sort and filter toolbar. `toolbar` is `yes` or `no`; `sort` is `manual`, `votes`, `newest`, `oldest` or `commented`; `filters` is a comma list of `search`, `tag` and `product` (or `none`). Without these options a board follows **Settings → Toolbar**. The Roadmap block has the same options in its sidebar.
+
+`[niroroadmap submissions="yes"]` shows a "Suggest an idea" button on that board even when it is off site-wide; `submissions="no"` hides it.
+
 The older `[roadmap]` shortcode still works.
 
 = For developers =
