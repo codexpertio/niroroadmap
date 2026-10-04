@@ -8,15 +8,15 @@ Stable tag: 0.9.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Share a public product roadmap as a clean Kanban board. Visitors browse what's planned, in progress and shipped, vote, comment and suggest ideas.
+Share a public product roadmap as a Kanban board, a list or a timeline. Visitors see what's planned and shipped, vote, comment and suggest ideas.
 
 == Description ==
 
-**NiroRoadmap** turns your WordPress site into a public product roadmap. Add roadmap items, group them into statuses such as *Planned*, *In Progress* and *Completed*, and publish the board on any page with a shortcode or block.
+**NiroRoadmap** turns your WordPress site into a public product roadmap. Add roadmap items, group them into statuses such as *Planned*, *In Progress* and *Completed*, and publish the roadmap on any page with a shortcode or block, as a Kanban board, a sortable list or a timeline by quarter.
 
 Visitors can open any item for the full details, upvote or downvote it, join the discussion and suggest ideas of their own. You find out what your users care about most, and they can see what you're working on.
 
-Everything is optional and off by default where it matters: comments, idea submissions and the search toolbar are switched on from **NiroRoadmap → Settings**, and each board can override them with a shortcode attribute or block option.
+Everything is optional and off by default where it matters: comments, idea submissions, the search toolbar and the view switcher are switched on from **NiroRoadmap → Settings**, and each board can override them with a shortcode attribute or block option.
 
 = Features =
 
@@ -303,7 +303,7 @@ Yes. It ignores accents and capital letters, so "cafe" finds "Café".
 
 = Can I share a link to a filtered board? =
 
-Yes. The search, sort and filters are kept in the page address, so copy the address from your browser.
+Yes. The search, sort, filters and the chosen view (Board, List or Timeline) are kept in the page address, so copy the address from your browser.
 
 = Why can't I drag items while a sort or search is active? =
 
@@ -311,7 +311,7 @@ A sorted or filtered view doesn't show every item in its manual order, so saving
 
 = Does the board work on phones? =
 
-Yes. The columns scroll sideways with snapping, and the toolbar collapses into a **Sort & filter** button.
+Yes. The columns scroll sideways with snapping, and the toolbar collapses into a **Sort & filter** button. The list and timeline views stack to fit a narrow screen, and **Settings → Views → Open boards as a list on narrow screens** makes the list the first thing phone visitors see.
 
 = Is it accessible? =
 
@@ -363,13 +363,16 @@ By default, nothing but a few internal options is removed: your roadmap items (w
 
 == Screenshots ==
 
-1. The public roadmap board, with status columns, tags, comment and vote counts, a search and sort toolbar and the "Suggest an idea" button.
-2. The item popup with status, tags, voting, the full description and the discussion.
-3. Comments in the item popup, with a Team badge on staff comments, and the comment form.
-4. The "Suggest an idea" form. Similar existing items are listed while the visitor types a title, to catch duplicates.
-5. Searching the board. Matches are highlighted and empty columns say so.
-6. The board on a phone: columns scroll sideways and the toolbar collapses.
-7. Managing statuses. Drag the rows to reorder the columns and pick a color for each.
+1. The public roadmap board, with status columns, tags, comment and vote counts, a search and sort toolbar, the Board / List / Timeline switcher and the "Suggest an idea" button.
+2. The list view: a compact table of ideas with status, tags, comments, votes and target. Click a heading to sort.
+3. The timeline view, with items grouped by the quarter they are planned for and the unscheduled ones last.
+4. The item popup with status, tags, voting, the full description, the target and the discussion.
+5. Comments in the item popup, with a Team badge on staff comments, and the comment form.
+6. The "Suggest an idea" form. Similar existing items are listed while the visitor types a title, to catch duplicates.
+7. Searching the board. Matches are highlighted and empty columns say so.
+8. The board on a phone: the view switcher sits under the search, and columns scroll sideways.
+9. The list view on a phone.
+10. Managing statuses. Drag the rows to reorder the columns and pick a color for each.
 
 == Changelog ==
 
