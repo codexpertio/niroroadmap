@@ -8,6 +8,7 @@ use NiroRoadmap\API\Comment;
 use NiroRoadmap\API\Option;
 use NiroRoadmap\API\Task;
 use NiroRoadmap\API\Stage;
+use NiroRoadmap\API\Submission;
 use NiroRoadmap\Trait\Hook;
 use NiroRoadmap\Trait\Auth;
 use NiroRoadmap\Trait\Rest;
@@ -144,6 +145,64 @@ class API {
 					),
 					'website' => array(
 						'description' => __( 'Leave empty. Spam trap.', 'niroroadmap' ),
+						'type'        => 'string',
+					),
+				),
+				'permission_callback' => '__return_true',
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/tasks/submit',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( new Submission(), 'create' ),
+				'args'                => array(
+					'title'       => array(
+						'description' => __( 'The idea title', 'niroroadmap' ),
+						'required'    => true,
+						'type'        => 'string',
+					),
+					'description' => array(
+						'description' => __( 'The idea description (plain text)', 'niroroadmap' ),
+						'type'        => 'string',
+					),
+					'product'     => array(
+						'description' => __( 'The product (term ID)', 'niroroadmap' ),
+						'type'        => 'integer',
+					),
+					'name'        => array(
+						'description' => __( 'The submitter name', 'niroroadmap' ),
+						'type'        => 'string',
+					),
+					'email'       => array(
+						'description' => __( 'The submitter email (kept private)', 'niroroadmap' ),
+						'type'        => 'string',
+					),
+					'elapsed'     => array(
+						'description' => __( 'Milliseconds the form was open. Sent by the form.', 'niroroadmap' ),
+						'type'        => 'integer',
+					),
+					'website'     => array(
+						'description' => __( 'Leave empty. Spam trap.', 'niroroadmap' ),
+						'type'        => 'string',
+					),
+				),
+				'permission_callback' => '__return_true',
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/tasks/search',
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( new Submission(), 'search' ),
+				'args'                => array(
+					'q' => array(
+						'description' => __( 'The text to look for', 'niroroadmap' ),
+						'required'    => true,
 						'type'        => 'string',
 					),
 				),

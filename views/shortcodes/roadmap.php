@@ -9,8 +9,19 @@ $show_vote_counts = $args['show_vote_counts'] ?? true;
 $show_tags        = $args['show_tags'] ?? true;
 $show_downvote    = $args['show_downvote'] ?? true;
 $comments_enabled = $args['comments_enabled'] ?? false;
+$submissions_enabled = $args['submissions_enabled'] ?? false;
+$submission_product  = $args['submission_product'] ?? 0;
 
 ?>
+<?php if ( $submissions_enabled ) : ?>
+	<div class="nr-board-toolbar">
+		<button type="button" class="nr-suggest-btn" aria-haspopup="dialog" data-product="<?php echo esc_attr( $submission_product ); ?>">
+			<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3a1 1 0 0 1 1 1v5h5a1 1 0 1 1 0 2h-5v5a1 1 0 1 1-2 0v-5H4a1 1 0 1 1 0-2h5V4a1 1 0 0 1 1-1z" fill="currentColor"/></svg>
+			<?php esc_html_e( 'Suggest an idea', 'niroroadmap' ); ?>
+		</button>
+	</div>
+<?php endif; ?>
+
 <div class="nr-kanban-columns">
 	<?php foreach ( $tasks as $slug => $column ) : ?>
 		<section class="nr-kanban-column" id="nr-stage-<?php echo esc_attr( $column['id'] ); ?>" data-stage="<?php echo esc_attr( $column['id'] ); ?>" style="--nr-stage-color: <?php echo esc_attr( sanitize_hex_color( $column['color'] ) ?: '#94a3b8' ); ?>;">
@@ -141,4 +152,9 @@ $comments_enabled = $args['comments_enabled'] ?? false;
 		</div>
 	</div>
 </div>
+<?php endif; ?>
+
+<?php if ( $submissions_enabled && ! did_action( 'niroroadmap_suggest_rendered' ) ) : ?>
+<?php do_action( 'niroroadmap_suggest_rendered' ); ?>
+<?php echo \NiroRoadmap\Helper\Utility::get_template( 'shortcodes/suggest.php' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The template escapes its own output. ?>
 <?php endif; ?>

@@ -11,7 +11,12 @@ import { __ } from '@wordpress/i18n';
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
-import { useBlockProps } from '@wordpress/block-editor';
+import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
+
+/**
+ * Sidebar controls.
+ */
+import { PanelBody, SelectControl } from '@wordpress/components';
 
 /**
  * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
@@ -29,10 +34,28 @@ import './editor.scss';
  *
  * @return {Element} Element to render.
  */
-export default function Edit() {
+export default function Edit( { attributes, setAttributes } ) {
 	return (
-		<p { ...useBlockProps() }>
-			{ __( 'Roadmap – choose a product in the settings if you want', 'niroroadmap' ) }
-		</p>
+		<>
+			<InspectorControls>
+				<PanelBody title={ __( 'Suggestions', 'niroroadmap' ) }>
+					<SelectControl
+						label={ __( '"Suggest an idea" button', 'niroroadmap' ) }
+						value={ attributes.submissions }
+						options={ [
+							{ label: __( 'Use the site setting', 'niroroadmap' ), value: '' },
+							{ label: __( 'Show', 'niroroadmap' ), value: 'yes' },
+							{ label: __( 'Hide', 'niroroadmap' ), value: 'no' },
+						] }
+						onChange={ ( submissions ) => setAttributes( { submissions } ) }
+						help={ __( 'Visitors’ ideas stay pending until you publish them.', 'niroroadmap' ) }
+						__nextHasNoMarginBottom
+					/>
+				</PanelBody>
+			</InspectorControls>
+			<p { ...useBlockProps() }>
+				{ __( 'Roadmap – choose a product in the settings if you want', 'niroroadmap' ) }
+			</p>
+		</>
 	);
 }

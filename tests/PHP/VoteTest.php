@@ -269,6 +269,25 @@ class VoteTest extends TestCase {
 		$this->assertSame( '', Voter::identify()['hash'] );
 	}
 
+	public function test_rate_limit_key_groups_ipv6_by_its_64_block_and_keeps_ipv4_apart() {
+		$key = function ( $ip ) {
+			$_SERVER['REMOTE_ADDR'] = $ip;
+
+			return Voter::ip_hash();
+		};
+
+		// Same /64: one visitor stepping through their own addresses.
+		$this->assertSame( $key( '2001:db8:abcd:12::1' ), $key( '2001:db8:abcd:12:ffff:ffff:ffff:ffff' ) );
+		// Different /64: different customers.
+		$this->assertNotSame( $key( '2001:db8:abcd:12::1' ), $key( '2001:db8:abcd:13::1' ) );
+		// IPv4 is per address, as written plainly or as an IPv4-mapped IPv6 address.
+		$this->assertNotSame( $key( '203.0.113.7' ), $key( '203.0.113.8' ) );
+		$this->assertSame( $key( '203.0.113.7' ), $key( '::ffff:203.0.113.7' ) );
+		$this->assertNotSame( $key( '::ffff:203.0.113.7' ), $key( '::ffff:203.0.113.8' ) );
+		// Unknown stays unknown.
+		$this->assertSame( '', $key( 'not-an-ip' ) );
+	}
+
 	public function test_rate_limit_blocks_after_the_limit_and_isolates_subjects() {
 		$subject = hash( 'sha256', wp_generate_password() );
 		$other   = hash( 'sha256', wp_generate_password() );

@@ -23,7 +23,14 @@ class Roadmap {
         return $item;
     }
 
-    public static function get_roadmap( $product = null ) {
+    /**
+     * Render the board.
+     *
+     * @param int|string|null $product Product term ID to show, or null for the site default.
+     * @param array           $args    `submissions`: `yes` / `no` to override the "Suggest an idea" setting.
+     * @return string
+     */
+    public static function get_roadmap( $product = null, $args = array() ) {
         // The shortcode / block can name a product; otherwise use the one chosen in Settings.
         if ( is_null( $product ) && niroroadmap_get_setting( 'default_product' ) ) {
             $product = niroroadmap_get_setting( 'default_product' );
@@ -93,6 +100,9 @@ class Roadmap {
 			'show_tags'        => niroroadmap_get_setting( 'show_tags' ),
 			'show_downvote'    => niroroadmap_get_setting( 'show_downvote' ),
 			'comments_enabled' => Comment::enabled(),
+			'submissions_enabled' => Submission::enabled( $args['submissions'] ?? '' ),
+			// A board that shows one product files its ideas under that product.
+			'submission_product' => $product ? (int) $product : 0,
 		) );
     }
 }

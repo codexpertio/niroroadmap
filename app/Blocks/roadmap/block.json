@@ -8,6 +8,13 @@
 	"icon": "calendar-alt",
 	"description": "Roadmap block",
 	"example": {},
+	"attributes": {
+		"submissions": {
+			"type": "string",
+			"enum": [ "", "yes", "no" ],
+			"default": ""
+		}
+	},
 	"supports": {
 		"html": false
 	},

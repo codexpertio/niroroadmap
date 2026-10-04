@@ -30,6 +30,58 @@ class Rate_Limit {
 			return true;
 		}
 
+		return self::locked(
+			$bucket,
+			$subject,
+			static function ( $key ) use ( $limit, $window ) {
+				return self::count( $key, $limit, $window );
+			},
+			false
+		);
+	}
+
+	/**
+	 * Give back a slot taken by allow(), for a request that turned out not to count.
+	 *
+	 * For limits that exist to cap what gets stored: a request rejected by validation stored
+	 * nothing, so it shouldn't use up a visitor's allowance. Safe under parallel requests.
+	 *
+	 * @param string $bucket  Same as for allow().
+	 * @param string $subject Same as for allow().
+	 * @param int    $window  Same as for allow().
+	 */
+	public static function release( $bucket, $subject, $window ) {
+		if ( '' === $subject ) {
+			return;
+		}
+
+		self::locked(
+			$bucket,
+			$subject,
+			static function ( $key ) use ( $window ) {
+				$state = get_transient( $key );
+
+				if ( is_array( $state ) && isset( $state['count'], $state['start'] ) && $state['count'] > 0 ) {
+					--$state['count'];
+					set_transient( $key, $state, max( 1, $window - ( time() - $state['start'] ) ) );
+				}
+
+				return true;
+			},
+			true
+		);
+	}
+
+	/**
+	 * Run something on a subject's counter while holding that subject's lock.
+	 *
+	 * @param string   $bucket  What is limited.
+	 * @param string   $subject Hash identifying the requester.
+	 * @param callable $run     Receives the transient key, returns the result.
+	 * @param bool     $default What to return if the lock can't be had.
+	 * @return bool
+	 */
+	private static function locked( $bucket, $subject, $run, $default ) {
 		global $wpdb;
 
 		$key  = 'niroroadmap_rl_' . md5( $bucket . '|' . $subject );
@@ -40,11 +92,11 @@ class Rate_Limit {
 
 		// Couldn't get in line: this requester is already hammering us. Deny rather than skip counting.
 		if ( '1' !== $locked ) {
-			return false;
+			return $default;
 		}
 
 		try {
-			return self::count( $key, $limit, $window );
+			return $run( $key );
 		} finally {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Named lock, no table involved.
 			$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK( %s )', $lock ) );

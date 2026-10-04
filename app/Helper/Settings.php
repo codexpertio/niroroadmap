@@ -25,6 +25,7 @@ class Settings {
 			'general'    => __( 'General', 'niroroadmap' ),
 			'voting'     => __( 'Voting', 'niroroadmap' ),
 			'comments'   => __( 'Comments', 'niroroadmap' ),
+			'submissions' => __( 'Submissions', 'niroroadmap' ),
 			'appearance' => __( 'Appearance', 'niroroadmap' ),
 			'advanced'   => __( 'Advanced', 'niroroadmap' ),
 		);
@@ -33,7 +34,7 @@ class Settings {
 	/**
 	 * The settings schema.
 	 *
-	 * Keys per field: `tab`, `type` (checkbox|select|color|number|textarea), `label`,
+	 * Keys per field: `tab`, `type` (checkbox|select|color|number|textarea|email), `label`,
 	 * `description`, `default` (value or Closure), `options` (array or Closure, selects only),
 	 * `cast` (`int` for selects holding IDs), `min` / `max` (numbers only).
 	 *
@@ -187,6 +188,84 @@ class Settings {
 				'description' => __( 'Comments are not reopened if the item is moved back.', 'niroroadmap' ),
 				'default'     => false,
 			),
+			'submissions_enabled' => array(
+				'tab'         => 'submissions',
+				'type'        => 'checkbox',
+				'label'       => __( 'Show a "Suggest an idea" button on boards', 'niroroadmap' ),
+				'description' => __( 'The default for every board. Override it per board with [niroroadmap submissions="yes"] or [niroroadmap submissions="no"], or with the block\'s sidebar option. Ideas are stored as Pending and stay hidden until you publish them.', 'niroroadmap' ),
+				'default'     => false,
+			),
+			'submissions_login'   => array(
+				'tab'         => 'submissions',
+				'type'        => 'checkbox',
+				'label'       => __( 'Only logged-in users can suggest ideas', 'niroroadmap' ),
+				'description' => '',
+				'default'     => false,
+			),
+			'submissions_identity' => array(
+				'tab'         => 'submissions',
+				'type'        => 'select',
+				'label'       => __( 'Ask visitors for their name and email', 'niroroadmap' ),
+				'description' => __( 'Logged-in users are never asked. The email is kept private: it is never shown on the board or in the public API.', 'niroroadmap' ),
+				'default'     => 'optional',
+				'options'     => function () {
+					return array(
+						'off'      => __( 'Don\'t ask', 'niroroadmap' ),
+						'optional' => __( 'Ask, but optional', 'niroroadmap' ),
+						'required' => __( 'Ask, and require both', 'niroroadmap' ),
+					);
+				},
+			),
+			'submissions_status'  => array(
+				'tab'         => 'submissions',
+				'type'        => 'select',
+				'cast'        => 'int',
+				'label'       => __( 'Status for new ideas', 'niroroadmap' ),
+				'description' => __( 'Applied when an idea is submitted, so it lands in the right column once you publish it.', 'niroroadmap' ),
+				'default'     => function () {
+					$term = get_term_by( 'slug', 'under-review', 'niroroadmap_status' );
+
+					return $term ? (int) $term->term_id : 0;
+				},
+				'options'     => function () {
+					$options = array( 0 => __( '— None (unassigned) —', 'niroroadmap' ) );
+					$terms   = get_terms(
+						array(
+							'taxonomy'   => 'niroroadmap_status',
+							'hide_empty' => false,
+						)
+					);
+
+					if ( is_array( $terms ) ) {
+						foreach ( $terms as $term ) {
+							$options[ $term->term_id ] = $term->name;
+						}
+					}
+
+					return $options;
+				},
+			),
+			'submissions_auto_vote' => array(
+				'tab'         => 'submissions',
+				'type'        => 'checkbox',
+				'label'       => __( 'Count the submitter\'s own upvote', 'niroroadmap' ),
+				'description' => __( 'Skipped when voting needs a login and the submitter isn\'t logged in.', 'niroroadmap' ),
+				'default'     => true,
+			),
+			'submissions_notify'  => array(
+				'tab'         => 'submissions',
+				'type'        => 'checkbox',
+				'label'       => __( 'Email me when an idea is submitted', 'niroroadmap' ),
+				'description' => '',
+				'default'     => true,
+			),
+			'submissions_email'   => array(
+				'tab'         => 'submissions',
+				'type'        => 'email',
+				'label'       => __( 'Send those emails to', 'niroroadmap' ),
+				'description' => __( 'Leave empty to use the site\'s admin email address.', 'niroroadmap' ),
+				'default'     => '',
+			),
 			'color_scheme'        => array(
 				'tab'         => 'appearance',
 				'type'        => 'select',
@@ -334,6 +413,12 @@ class Settings {
 	 * @return array The option value to store.
 	 */
 	public static function sanitize( $input ) {
+		// The settings-error functions live in an admin include. On the settings page they're
+		// already loaded; anywhere else (WP-CLI, tests, a plugin saving a setting) they're not.
+		if ( ! function_exists( 'add_settings_error' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/template.php';
+		}
+
 		$current = get_option( self::OPTION, array() );
 		$current = is_array( $current ) ? $current : array();
 		$input   = is_array( $input ) ? $input : array();
@@ -401,6 +486,12 @@ class Settings {
 				$color = sanitize_hex_color( $value );
 
 				return $color ? $color : null;
+
+			case 'email':
+				// Empty is valid: it means "use the admin email".
+				$email = '' === trim( $value ) ? '' : sanitize_email( $value );
+
+				return '' === $email || is_email( $email ) ? $email : null;
 
 			case 'number':
 				if ( ! preg_match( '/^\d+$/', $value ) ) {

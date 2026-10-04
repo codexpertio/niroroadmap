@@ -19,9 +19,16 @@ class Shortcode {
 	}
 
 	public function callback_roadmap( $atts ) {
-		$atts = shortcode_atts( array( 'product' => null ), $atts, 'roadmap' );
+		$atts = shortcode_atts(
+			array(
+				'product'     => null,
+				'submissions' => '', // yes | no. Anything else follows Settings -> Submissions.
+			),
+			$atts,
+			'roadmap'
+		);
 		$product = $atts[ 'product' ] ?? null;
-		
-		return Roadmap::get_roadmap( $product );
+
+		return Roadmap::get_roadmap( $product, array( 'submissions' => $atts['submissions'] ) );
 	}
 }

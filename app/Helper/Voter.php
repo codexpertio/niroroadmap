@@ -47,10 +47,27 @@ class Voter {
 	/**
 	 * Hash of the visitor's IP address. The key for rate limiting. Empty if the IP is unknown.
 	 *
+	 * An IPv6 visitor is keyed on their /64, the smallest block an ISP hands to one customer.
+	 * Keyed on the full address, anyone could step through the billions of addresses in their own
+	 * block and never meet a limit.
+	 *
 	 * @return string
 	 */
 	public static function ip_hash() {
 		$ip = self::ip();
+
+		if ( $ip && false !== strpos( $ip, ':' ) ) {
+			$packed = inet_pton( $ip );
+
+			if ( false !== $packed && 16 === strlen( $packed ) ) {
+				if ( 0 === strncmp( $packed, str_repeat( "\0", 10 ) . "\xff\xff", 12 ) ) {
+					// IPv4 written as IPv6 (::ffff:203.0.113.7): it's an IPv4 visitor, keep it per address.
+					$ip = inet_ntop( substr( $packed, 12 ) );
+				} else {
+					$ip = bin2hex( substr( $packed, 0, 8 ) ) . '::/64';
+				}
+			}
+		}
 
 		return $ip ? self::hash( 'ip|' . $ip ) : '';
 	}

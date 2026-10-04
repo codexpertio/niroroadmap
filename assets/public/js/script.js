@@ -351,6 +351,224 @@ jQuery(
 			}
 		);
 
+		// Suggest an idea. The dialog exists only when a board on this page offers it.
+		const suggestOverlay = $( "#nr-suggest-overlay" );
+
+		if (suggestOverlay.length) {
+			const S         = NIROROADMAP.settings.suggest || {};
+			const suggest   = $( "#nr-suggest" );
+			const sForm     = $( "#nr-suggest-form" );
+			const sError    = $( "#nr-suggest-error" );
+			const sTitle    = $( "#nr-suggest-name-title" );
+			let sOpener     = null;
+			let sOpenedAt   = 0;
+			let sHideTimer  = null;
+			let sSearchTimer = null;
+			let sQuery      = "";
+
+			// Everything keyboard-focusable inside the dialog, for the focus trap.
+			const sFocusable = () => suggest.find( "button, input, select, textarea, a[href]" ).filter(
+				function () {
+					return ! this.disabled && this.type !== "hidden" && this.tabIndex !== -1 && $( this ).is( ":visible" );
+				}
+			);
+
+			const openSuggest = (button) => {
+				sOpener = button;
+				clearTimeout( sHideTimer );
+
+				if (sForm.length) {
+					sForm[0].reset();
+					sForm.prop( "hidden", false );
+
+					// A board that shows one product files ideas under it; otherwise the visitor picks.
+					const product = String( button.attr( "data-product" ) || "" );
+					const fixed   = product !== "" && product !== "0";
+					$( "#nr-suggest-product-fixed" ).val( fixed ? product : "" ).prop( "disabled", ! fixed );
+					$( "#nr-suggest-product" ).prop( "disabled", fixed );
+					$( "#nr-suggest-product-field" ).prop( "hidden", fixed );
+				}
+
+				sError.text( "" );
+				$( "#nr-suggest-similar" ).prop( "hidden", true );
+				$( "#nr-suggest-done" ).prop( "hidden", true );
+				sOpenedAt = Date.now();
+
+				suggestOverlay.show();
+				suggestOverlay[0].offsetWidth; // Commit display before the backdrop transition starts.
+				suggestOverlay.addClass( "nr-open" );
+				$( "body" ).addClass( "nr-modal-scroll-lock" );
+
+				( sForm.length ? sTitle : $( "#nr-suggest-close" ) ).trigger( "focus" );
+			};
+
+			const closeSuggest = () => {
+				if ( ! suggestOverlay.hasClass( "nr-open" )) {
+					return;
+				}
+
+				clearTimeout( sSearchTimer );
+				suggestOverlay.removeClass( "nr-open" );
+				sHideTimer = setTimeout( () => suggestOverlay.hide(), 280 );
+				$( "body" ).removeClass( "nr-modal-scroll-lock" );
+
+				if (sOpener) {
+					sOpener.trigger( "focus" );
+				}
+			};
+
+			$( document ).on(
+				"click",
+				".nr-suggest-btn",
+				function () {
+					openSuggest( $( this ) );
+				}
+			);
+
+			$( "#nr-suggest-close, #nr-suggest-done-close" ).on( "click", closeSuggest );
+			suggestOverlay.on(
+				"click",
+				function (e) {
+					if (e.target.id === "nr-suggest-overlay") {
+						closeSuggest();
+					}
+				}
+			);
+
+			// Escape closes; Tab stays inside the dialog while it's open.
+			suggestOverlay.on(
+				"keydown",
+				function (e) {
+					if (e.key === "Escape") {
+						e.stopPropagation();
+						closeSuggest();
+						return;
+					}
+
+					if (e.key !== "Tab") {
+						return;
+					}
+
+					const items = sFocusable();
+					if ( ! items.length) {
+						e.preventDefault();
+						return;
+					}
+
+					const first = items.first()[0];
+					const last  = items.last()[0];
+
+					if (e.shiftKey && (document.activeElement === first || ! suggest[0].contains( document.activeElement ))) {
+						e.preventDefault();
+						last.focus();
+					} else if ( ! e.shiftKey && document.activeElement === last) {
+						e.preventDefault();
+						first.focus();
+					}
+				}
+			);
+
+			// While typing a title, point at ideas that already exist.
+			const showSimilar = (items) => {
+				const list = $( "#nr-suggest-similar-list" ).empty();
+
+				items.forEach(
+					(item) => {
+						const card = $( `#nr-task-${item.id}` );
+						const row  = $( "<li>" );
+
+						if (card.length) {
+							row.append( $( "<button type='button' class='nr-link-btn'>" ).text( item.title ).on(
+								"click",
+								function () {
+									closeSuggest();
+									setTimeout( () => card.trigger( "click" ), 320 );
+								}
+							) );
+						} else {
+							row.text( item.title );
+						}
+
+						list.append( row );
+					}
+				);
+
+				$( "#nr-suggest-similar" ).prop( "hidden", ! items.length );
+			};
+
+			sTitle.on(
+				"input",
+				function () {
+					const query = $.trim( this.value );
+					clearTimeout( sSearchTimer );
+
+					if (query.length < 3) {
+						sQuery = "";
+						showSimilar( [] );
+						return;
+					}
+
+					sSearchTimer = setTimeout(
+						() => {
+							sQuery = query;
+							request( "/tasks/search", "GET", { q: query } ).done(
+								function (response) {
+									// Ignore answers to an older query, or after the dialog closed.
+									if (sQuery === query && suggestOverlay.hasClass( "nr-open" )) {
+										showSimilar( response.data.items || [] );
+									}
+								}
+							);
+						},
+						400
+					);
+				}
+			);
+
+			sForm.on(
+				"submit",
+				function (e) {
+					e.preventDefault();
+
+					const submit = $( "#nr-suggest-submit" );
+					sError.text( "" );
+
+					if ($.trim( sTitle.val() ).length < 3) {
+						sError.text( S.need_title );
+						sTitle.trigger( "focus" );
+						return;
+					}
+
+					const who = $( "#nr-suggest-name, #nr-suggest-email" ).filter( function () { return $( this ).data( "required" ) === 1; } );
+					if (who.length && who.filter( function () { return ! $.trim( this.value ); } ).length) {
+						sError.text( S.need_identity );
+						who.filter( function () { return ! $.trim( this.value ); } ).first().trigger( "focus" );
+						return;
+					}
+
+					submit.prop( "disabled", true ).text( S.sending );
+
+					// `elapsed` is how long the dialog was open: a script posting straight to the API sends none.
+					request( "/tasks/submit", "POST", sForm.serialize() + "&elapsed=" + ( Date.now() - sOpenedAt ) ).done(
+						function (response) {
+							sForm.prop( "hidden", true );
+							$( "#nr-suggest-done-message" ).text( response.data.message );
+							$( "#nr-suggest-done" ).prop( "hidden", false ).trigger( "focus" );
+						}
+					).fail(
+						function (xhr) {
+							const data = xhr.responseJSON && xhr.responseJSON.data;
+							sError.text( (data && data.message) || S.failed );
+						}
+					).always(
+						function () {
+							submit.prop( "disabled", false ).text( S.send );
+						}
+					);
+				}
+			);
+		}
+
 		const overlay = $( "#nr-modal-overlay" );
 		let hideTimer;
 

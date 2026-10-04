@@ -10,6 +10,9 @@ use NiroRoadmap\Model\Roadmap;
 
 //TODO: add product attribute
 //echo get_block_wrapper_attributes();
+
+// '' follows Settings -> Submissions; 'yes' / 'no' override it for this block.
+$niroroadmap_submissions = isset( $attributes['submissions'] ) ? sanitize_key( $attributes['submissions'] ) : '';
 ?>
 
-<?php echo Roadmap::get_roadmap(); ?>
+<?php echo Roadmap::get_roadmap( null, array( 'submissions' => $niroroadmap_submissions ) ); ?>
