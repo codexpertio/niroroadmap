@@ -61,7 +61,7 @@ jQuery(
 			$( "#nr-upvote-count" ).text( data.upvotes || 0 ).toggle( data.upvotes !== undefined );
 			$( "#nr-downvote-count" ).text( data.downvotes || 0 ).toggle( data.downvotes !== undefined );
 			if (data.upvotes !== undefined) {
-				$( `#nr-task-${taskId} .nr-task-votes-count` ).text( data.upvotes );
+				$( `[data-task="${taskId}"] .nr-task-votes-count` ).text( data.upvotes );
 			}
 		};
 
@@ -123,7 +123,7 @@ jQuery(
 		const announce = (message) => $( "#nr-comments-live" ).text( "" ).text( message );
 
 		const setCardCount = (taskId, count) => {
-			$( `#nr-task-${taskId} .nr-task-comments-count` ).text( count );
+			$( `[data-task="${taskId}"] .nr-task-comments-count` ).text( count );
 		};
 
 		const setCommentsCount = (count) => {
@@ -484,7 +484,9 @@ jQuery(
 
 				items.forEach(
 					(item) => {
-						const card = $( `#nr-task-${item.id}` );
+						// The item as the visitor sees it now; if its view is hidden, any copy will do.
+						const copies = $( `[data-task="${item.id}"]` );
+						const card   = copies.filter( ":visible" ).first().length ? copies.filter( ":visible" ).first() : copies.first();
 						const row  = $( "<li>" );
 
 						if (card.length) {
@@ -625,14 +627,17 @@ jQuery(
 		const overlay = $( "#nr-modal-overlay" );
 		let hideTimer;
 
+		// `card` is an item in any view: a board card, a list row or a timeline entry.
 		const openModal = (card) => {
-			const taskId = card.attr( "id" ).replace( "nr-task-", "" );
+			const taskId = String( card.attr( "data-task" ) );
 			const column = card.closest( ".nr-kanban-column" );
 			const tags   = card.data( "tags" ) || [];
 
+			// A board card knows its status from the column it is in (it may have just been dragged);
+			// the other views carry it on the item.
 			$( "#nr-modal-id" ).val( taskId );
-			$( "#nr-modal-stage" ).css( "--nr-stage-color", column.css( "--nr-stage-color" ) );
-			$( "#nr-modal-stage-name" ).text( $.trim( column.find( ".nr-stage-name" ).text() ) );
+			$( "#nr-modal-stage" ).css( "--nr-stage-color", column.length ? column.css( "--nr-stage-color" ) : card.attr( "data-stage-color" ) );
+			$( "#nr-modal-stage-name" ).text( column.length ? $.trim( column.find( ".nr-stage-name" ).text() ) : card.attr( "data-stage-name" ) );
 			$( "#nr-modal-title" ).text( card.find( ".nr-task-title" ).text() );
 			$( "#nr-modal-tags" ).empty().append( tags.map( (tag) => $( "<li class='nr-tag'>" ).text( tag ) ) );
 			$( "#nr-upvote-count" ).text( card.find( ".nr-task-votes-count" ).text() );
@@ -696,6 +701,9 @@ jQuery(
 			$( "#nr-modal-overlay" ).data( "opener", card );
 		};
 
+		// Where focus returns when the popup closes: the card itself, or the button inside a list row.
+		const focusTarget = (card) => ( card.is( "[tabindex]" ) ? card : card.find( ".nr-open-btn" ).first() );
+
 		const closeModal = () => {
 			if ( ! overlay.hasClass( "nr-open" )) {
 				return;
@@ -712,14 +720,15 @@ jQuery(
 			hideTimer = setTimeout( () => overlay.hide(), 280 );
 			$( "body" ).removeClass( "nr-modal-scroll-lock" );
 			if (opener) {
-				opener.trigger( "focus" );
+				focusTarget( opener ).trigger( "focus" );
 			}
 		};
 
-		// Open modal
-		$( ".nr-kanban-columns" ).on(
+		// Open modal. One handler for every view. A list row or timeline entry holds a real button,
+		// so Enter and Space reach it as a click; only the board's cards need a key handler.
+		$( ".nr-board" ).on(
 			"click",
-			".nr-kanban-item",
+			".nr-kanban-item, .nr-view-item",
 			function () {
 				if ( ! $( this ).hasClass( "ui-sortable-helper" )) {
 					openModal( $( this ) );

@@ -53,6 +53,44 @@ export default function Edit( { attributes, setAttributes } ) {
 	return (
 		<>
 			<InspectorControls>
+				<PanelBody title={ __( 'Views', 'niroroadmap' ) } initialOpen={ false }>
+					<SelectControl
+						label={ __( 'Opens in', 'niroroadmap' ) }
+						value={ attributes.view }
+						options={ [
+							{ label: __( 'Use the site setting', 'niroroadmap' ), value: '' },
+							{ label: __( 'Board', 'niroroadmap' ), value: 'board' },
+							{ label: __( 'List', 'niroroadmap' ), value: 'list' },
+							{ label: __( 'Timeline', 'niroroadmap' ), value: 'timeline' },
+						] }
+						onChange={ ( view ) => setAttributes( { view } ) }
+						help={ __( 'The timeline needs "Show an item\'s target date or quarter" in the settings.', 'niroroadmap' ) }
+						__nextHasNoMarginBottom
+					/>
+					<SelectControl
+						label={ __( 'View switcher', 'niroroadmap' ) }
+						value={ attributes.switcher }
+						options={ [
+							{ label: __( 'Use the site setting', 'niroroadmap' ), value: '' },
+							{ label: __( 'Show', 'niroroadmap' ), value: 'yes' },
+							{ label: __( 'Hide', 'niroroadmap' ), value: 'no' },
+						] }
+						onChange={ ( switcher ) => setAttributes( { switcher } ) }
+						__nextHasNoMarginBottom
+					/>
+					<SelectControl
+						label={ __( 'Group the timeline', 'niroroadmap' ) }
+						value={ attributes.group }
+						options={ [
+							{ label: __( 'Use the site setting', 'niroroadmap' ), value: '' },
+							{ label: __( 'By quarter', 'niroroadmap' ), value: 'quarter' },
+							{ label: __( 'By month', 'niroroadmap' ), value: 'month' },
+							{ label: __( 'Now / Next / Later', 'niroroadmap' ), value: 'nownext' },
+						] }
+						onChange={ ( group ) => setAttributes( { group } ) }
+						__nextHasNoMarginBottom
+					/>
+				</PanelBody>
 				<PanelBody title={ __( 'Search, sort and filter', 'niroroadmap' ) } initialOpen={ false }>
 					<SelectControl
 						label={ __( 'Toolbar', 'niroroadmap' ) }

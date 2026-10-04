@@ -26,6 +26,7 @@ Everything is optional and off by default where it matters: comments, idea submi
 * **Comments:** Visitors discuss an item right in its popup, with threaded replies and a *Team* badge on staff replies. Comments are normal WordPress comments, so your moderation tools and spam plugins apply. Require a login, choose the order, and close comments automatically when an item is completed.
 * **Suggest an idea:** A *Suggest an idea* button opens a short form. While the visitor types a title, similar existing items are listed so duplicates are caught early. Ideas arrive as *Pending* items, are never public until you approve them, and can notify you by email. A one-click **Approve** action is added to the Items list.
 * **Search, sort and filter toolbar:** Visitors search the board and sort by most votes, newest, oldest or most commented. They can filter by tag and product too. The toolbar loads no extra script or styles on boards that don't use it.
+* **Board, List and Timeline views:** Show the roadmap as Kanban columns, a compact sortable table, or a timeline grouped by quarter, month or *Now / Next / Later*. A switcher lets visitors choose, and their choice is remembered and can be shared in the page address. Boards that don't use the extra views load no extra script or styles.
 * **Drag and drop:** Editors and administrators can drag items between columns and reorder them right on the public board.
 * **Sortable statuses:** Drag statuses into the order you want on the admin screen. The public board uses the same order.
 * **Products:** Run separate roadmaps for several products and show one product per board.
@@ -33,9 +34,9 @@ Everything is optional and off by default where it matters: comments, idea submi
 * **Item details:** Give an item a target (a date or a quarter like *Q4 2026*), a release date and version, a link, a cover image (its Featured image), an effort size and private notes for your team. Pin an item to the top of its column, or hide its vote counts.
 * **Status history:** See who moved an item to which status and when, and optionally show visitors the path an item took.
 * **Shortcode and block:** Use the `[niroroadmap]` shortcode or the **Roadmap** block.
-* **Settings page:** Seven tabs (General, Voting, Comments, Submissions, Toolbar, Appearance, Advanced) control everything without code.
+* **Settings page:** Eight tabs (General, Voting, Comments, Submissions, Toolbar, Views, Appearance, Advanced) control everything without code.
 * **Appearance:** Light, dark or automatic color scheme, an accent color, the corner radius and your own custom CSS.
-* **Responsive:** On phones the columns scroll sideways with snapping and the toolbar collapses into a *Sort & filter* button.
+* **Responsive:** On phones the columns scroll sideways with snapping and the toolbar collapses into a *Sort & filter* button. The list view can be the default on narrow screens.
 * **Accessible:** Cards can be opened with the keyboard, Esc closes the popup, and the animation is replaced by a plain fade for visitors who prefer reduced motion.
 * **Theme-friendly:** Colors, borders and spacing are CSS custom properties you can override from your theme.
 * **Developer-friendly:** A REST API under `niroroadmap/v1`, a dozen filters and actions, and a regular custom post type.
@@ -66,6 +67,10 @@ The button opens a dialog with a title, optional details, an optional product an
 
 The toolbar searches card titles (ignoring accents and capital letters) and highlights the match. Visitors can sort inside each column and filter by tag and product. The current search, sort and filters are kept in the page address, so a filtered board can be bookmarked or shared. Editors can't drag cards while a sort or filter is active, so a view never saves a wrong order by accident.
 
+**Board, List and Timeline**
+
+The **Board** is the Kanban view. The **List** is a compact table of title, status, tags, comments, votes and target, and its headings sort it. The **Timeline** groups items by their target: by quarter (Q4 2026, Q1 2027 …), by month, or as *Now / Next / Later*. Items without a target are listed last under *Later / Unscheduled*, and a group with no items is left out. All three views show the same items, honor the same search and filters, and open the same popup, so voting and comments work everywhere. Dragging stays on the Board. The timeline needs **Show an item's target date or quarter** (General tab), because it would otherwise reveal targets you keep private.
+
 **Roadmap details on each item**
 
 Target (a date such as *2026-12-31* or a quarter such as *Q4 2026*), release date, version, link, effort (XS, S, M, L, XL), private notes, *Pin to the top of its column* and *Hide votes*. The target is shown only if you turn it on. Effort and notes are only for your team.
@@ -76,7 +81,7 @@ Whenever an item changes status, from the edit screen or by dragging on the boar
 
 **Blocks and shortcodes**
 
-The **Roadmap** block and the `[niroroadmap]` shortcode take the same options: product, toolbar, sort, filters and submissions. You can place several boards on one site, each with its own settings.
+The **Roadmap** block and the `[niroroadmap]` shortcode take the same options: product, toolbar, sort, filters, view, switcher, group and submissions. You can place several boards on one site, each with its own settings.
 
 = Getting started =
 
@@ -97,6 +102,7 @@ Find them under **NiroRoadmap → Settings**.
 * **Comments:** turn comments on, require login, choose the order, and close comments when an item is moved to *Completed*.
 * **Submissions:** turn the *Suggest an idea* button on, require login, ask for name and email (not asked, optional or required), pick the status new ideas start in, count the submitter's own upvote, and set the notification email.
 * **Toolbar:** turn the toolbar on, pick the initial sort and which filters to offer (search, tag, product).
+* **Views:** the default view, whether visitors get the Board / List / Timeline switcher, opening boards as a list on narrow screens, and how the timeline groups items.
 * **Appearance:** light, dark or auto color scheme, accent color, corner radius and custom CSS.
 * **Advanced:** delete all plugin data on uninstall, and reset every setting to its default.
 
@@ -114,6 +120,8 @@ Find them under **NiroRoadmap → Settings**.
 `[niroroadmap product="12"]` shows only the items of one product. Use the term ID from **NiroRoadmap → Products**.
 
 `[niroroadmap toolbar="yes" sort="votes" filters="search,tag"]` adds a search, sort and filter toolbar. `toolbar` is `yes` or `no`; `sort` is `manual`, `votes`, `newest`, `oldest` or `commented`; `filters` is a comma list of `search`, `tag` and `product` (or `none`). Without these options a board follows **Settings → Toolbar**. The Roadmap block has the same options in its sidebar.
+
+`[niroroadmap view="timeline" switcher="yes" group="month"]` opens the board as a timeline and lets visitors switch views. `view` is `board`, `list` or `timeline`; `switcher` is `yes` or `no`; `group` is `quarter`, `month` or `nownext` (Now / Next / Later). Without these options a board follows **Settings → Views**. Visitors can share a link to a view with `?nr_view=list` in the address. The Roadmap block has the same options in its sidebar.
 
 `[niroroadmap submissions="yes"]` shows a "Suggest an idea" button on that board even when it is off site-wide; `submissions="no"` hides it.
 
@@ -333,6 +341,10 @@ Yes, under `/wp-json/niroroadmap/v1/`. See "For developers" for the routes.
 
 It uses your theme's fonts and a neutral design. To adjust the colors, override the CSS custom properties listed under "For developers".
 
+= Can I show the roadmap as a list or a timeline? =
+
+Yes. Turn on **Settings → Views → Let visitors switch between Board, List and Timeline**, or use `[niroroadmap switcher="yes"]` on one board. To show a view without a switcher, use `[niroroadmap view="list"]` or `view="timeline"`. The timeline groups items by their target, so turn on **Show an item's target date or quarter** in the General tab first.
+
 = Can I add a search box and sorting to the board? =
 
 Yes. Turn on **Settings → Toolbar**, or use `[niroroadmap toolbar="yes"]` on one board. Visitors can then search, sort by votes, newest, oldest or most commented, and filter by tag and product.
@@ -362,6 +374,8 @@ By default, nothing but a few internal options is removed: your roadmap items (w
 == Changelog ==
 
 = Unreleased =
+* New: List and Timeline views alongside the Kanban board, with a view switcher, a remembered choice, shareable `?nr_view=` links, and `view`, `switcher` and `group` shortcode attributes and block options.
+* New: Views tab in the settings: default view, switcher, list on narrow screens, and timeline grouping (quarter, month or Now / Next / Later).
 * New: Settings page with General, Voting, Comments, Submissions, Toolbar, Appearance and Advanced tabs.
 * New: comments in the item popup, with threaded replies, moderation, rate limiting and auto-close on completion.
 * New: "Suggest an idea" form with similar-item suggestions, pending review, one-click approval and email notification.

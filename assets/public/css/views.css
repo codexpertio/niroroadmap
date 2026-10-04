@@ -1,0 +1,360 @@
+/* The view switcher, the List view and the Timeline view. Loaded only on boards that use them. */
+
+/* A view that isn't current. Its own display rule (flex, grid, ...) would otherwise win over [hidden]. */
+.nr-board [data-nr-view][hidden],
+.nr-view-item[hidden],
+.nr-timeline-group[hidden],
+.nr-view-empty[hidden],
+.nr-view-switch[hidden] {
+	display: none !important;
+}
+
+/* Switcher */
+.nr-view-switch {
+	display: inline-flex;
+	gap: 2px;
+	margin: 24px 0 0;
+	padding: 3px;
+	background: var(--nr-bg);
+	border: 1px solid var(--nr-border);
+	border-radius: calc(var(--nr-radius) / 2 + 3px);
+}
+.nr-view-btn {
+	margin: 0;
+	padding: 6px 14px;
+	font: inherit;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.4;
+	color: var(--nr-muted);
+	background: transparent;
+	border: 0;
+	border-radius: calc(var(--nr-radius) / 2);
+	cursor: pointer;
+}
+.nr-view-btn:hover {
+	color: var(--nr-text);
+}
+.nr-view-btn[aria-pressed="true"] {
+	color: var(--nr-text);
+	background: var(--nr-card);
+	box-shadow: var(--nr-shadow);
+}
+.nr-view-btn:focus-visible {
+	outline: 2px solid var(--nr-accent);
+	outline-offset: 2px;
+}
+.nr-view-switch + .nr-toolbar {
+	margin-top: 16px;
+}
+
+/* Shared by the list and the timeline */
+.nr-list-view,
+.nr-timeline {
+	margin: 32px 0;
+	color: var(--nr-text);
+}
+.nr-list-view .nr-tags,
+.nr-timeline .nr-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.nr-list-view .nr-task-votes,
+.nr-timeline .nr-task-votes {
+	margin-left: 0;
+}
+.nr-view-stage {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	color: var(--nr-text);
+	white-space: nowrap;
+}
+.nr-board .nr-open-btn {
+	margin: 0;
+	padding: 0;
+	font: inherit;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.4;
+	text-align: left;
+	text-decoration: none;
+	text-transform: none;
+	letter-spacing: normal;
+	color: var(--nr-text);
+	background: none;
+	border: 0;
+	border-radius: 4px;
+	box-shadow: none;
+	cursor: pointer;
+}
+.nr-board .nr-open-btn:focus-visible,
+.nr-board .nr-sort-btn:focus-visible {
+	outline: 2px solid var(--nr-accent);
+	outline-offset: 2px;
+}
+.nr-view-empty {
+	margin: 16px 0;
+	padding: 24px 12px;
+	font-size: 13px;
+	text-align: center;
+	color: var(--nr-muted);
+	border: 1px dashed var(--nr-border);
+	border-radius: 8px;
+}
+
+/* List */
+.nr-list-scroll {
+	overflow-x: auto;
+	background: var(--nr-card);
+	border: 1px solid var(--nr-border);
+	border-radius: var(--nr-radius);
+	box-shadow: var(--nr-shadow);
+}
+.nr-list-view .nr-list-table {
+	width: 100%;
+	margin: 0;
+	font-size: 14px;
+	border: 0;
+	border-collapse: collapse;
+}
+.nr-list-view .nr-list-table th,
+.nr-list-view .nr-list-table td {
+	padding: 10px 14px;
+	font-weight: 400;
+	text-align: left;
+	vertical-align: middle;
+	background: none;
+	border: 0;
+	border-bottom: 1px solid var(--nr-border);
+}
+.nr-list-view .nr-list-table thead th {
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	white-space: nowrap;
+	color: var(--nr-muted);
+	background: var(--nr-bg);
+}
+.nr-list-view .nr-list-table tbody tr:last-child > * {
+	border-bottom: 0;
+}
+.nr-list-view .nr-list-table tbody th {
+	min-width: 180px;
+}
+.nr-list-view .nr-list-table .nr-col-target {
+	white-space: nowrap;
+}
+.nr-list-view .nr-list-table .nr-col-votes,
+.nr-list-view .nr-list-table .nr-col-comments {
+	width: 1%;
+	white-space: nowrap;
+}
+.nr-list-table .nr-view-item {
+	cursor: pointer;
+}
+.nr-list-table .nr-view-item:hover > * {
+	background: color-mix(in srgb, var(--nr-accent) 6%, transparent);
+}
+.nr-board .nr-sort-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin: 0;
+	padding: 0;
+	font: inherit;
+	letter-spacing: inherit;
+	text-transform: inherit;
+	color: inherit;
+	background: none;
+	border: 0;
+	border-radius: 4px;
+	box-shadow: none;
+	cursor: pointer;
+}
+.nr-board .nr-sort-btn:hover {
+	color: var(--nr-text);
+}
+th[aria-sort="ascending"] .nr-sort-btn::after {
+	content: "\2191";
+}
+th[aria-sort="descending"] .nr-sort-btn::after {
+	content: "\2193";
+}
+th[aria-sort="ascending"],
+th[aria-sort="descending"] {
+	color: var(--nr-text);
+}
+
+/* Timeline */
+.nr-timeline {
+	position: relative;
+	padding-left: 28px;
+}
+.nr-timeline::before {
+	content: "";
+	position: absolute;
+	top: 8px;
+	bottom: 8px;
+	left: 6px;
+	width: 2px;
+	background: var(--nr-border);
+}
+.nr-timeline-group {
+	position: relative;
+	margin: 0 0 28px;
+}
+.nr-timeline-group:last-of-type {
+	margin-bottom: 0;
+}
+.nr-timeline-group::before {
+	content: "";
+	position: absolute;
+	top: 7px;
+	left: -28px;
+	width: 14px;
+	height: 14px;
+	box-sizing: border-box;
+	background: var(--nr-card);
+	border: 3px solid var(--nr-accent);
+	border-radius: 50%;
+}
+.nr-timeline-heading {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+.nr-timeline .nr-timeline-heading h3 {
+	margin: 0;
+	padding: 0;
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 1.3;
+	color: var(--nr-text);
+}
+.nr-group-count {
+	min-width: 24px;
+	padding: 2px 8px;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 18px;
+	text-align: center;
+	color: var(--nr-muted);
+	background: var(--nr-card);
+	border: 1px solid var(--nr-border);
+	border-radius: 999px;
+}
+.nr-timeline .nr-timeline-items {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 12px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.nr-timeline-item {
+	--nr-stage-color: #94a3b8;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+	padding: 12px 14px;
+	background: var(--nr-card);
+	border: 1px solid var(--nr-border);
+	border-radius: 8px;
+	box-shadow: var(--nr-shadow);
+	cursor: pointer;
+	transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.nr-timeline-item:hover {
+	transform: translateY(-1px);
+	border-color: var(--nr-accent);
+	box-shadow: var(--nr-shadow-hover);
+}
+.nr-timeline-item .nr-task-title {
+	align-self: flex-start;
+}
+.nr-timeline-meta,
+.nr-timeline-item .nr-task-meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 12px;
+}
+.nr-timeline-item .nr-task-meta {
+	margin-top: auto;
+}
+.nr-timeline-target {
+	font-size: 12px;
+	color: var(--nr-muted);
+}
+
+@media (max-width: 640px) {
+	.nr-view-switch {
+		display: flex;
+	}
+	.nr-view-btn {
+		flex: 1;
+	}
+
+	/* Tags and comment counts are in the popup; the rest of the row stays readable without sideways scrolling. */
+	.nr-list-view .nr-list-table .nr-col-tags,
+	.nr-list-view .nr-list-table .nr-col-comments {
+		display: none;
+	}
+	.nr-list-view .nr-list-table {
+		font-size: 13px;
+	}
+	.nr-list-view .nr-list-table th,
+	.nr-list-view .nr-list-table td {
+		padding: 10px 6px;
+	}
+	.nr-list-view .nr-list-table th:first-child,
+	.nr-list-view .nr-list-table td:first-child {
+		padding-left: 12px;
+	}
+	.nr-list-view .nr-list-table th:last-child,
+	.nr-list-view .nr-list-table td:last-child {
+		padding-right: 12px;
+	}
+	.nr-board .nr-list-table .nr-open-btn {
+		font-size: 13px;
+	}
+	.nr-list-view .nr-task-votes {
+		padding-right: 6px;
+	}
+	.nr-list-view .nr-list-table tbody th {
+		min-width: 0;
+	}
+	/* Let the status and target wrap rather than push the target off the edge. */
+	.nr-list-view .nr-view-stage,
+	.nr-list-view .nr-list-table .nr-col-target {
+		white-space: normal;
+	}
+
+	.nr-timeline {
+		padding-left: 22px;
+	}
+	.nr-timeline-group::before {
+		left: -22px;
+	}
+	.nr-timeline .nr-timeline-items {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.nr-timeline-item {
+		transition: none;
+	}
+	.nr-timeline-item:hover {
+		transform: none;
+	}
+}

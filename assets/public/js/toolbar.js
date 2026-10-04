@@ -1,8 +1,9 @@
 /**
  * Search, sort and filter toolbar for roadmap boards.
  *
- * Works on the cards already in the page; nothing is fetched. Each board with a toolbar is handled
- * on its own, so several boards on one page don't affect each other. State lives in the URL
+ * Works on the items already in the page; nothing is fetched. An item is a board card, a list row
+ * or a timeline entry, so the same search and filters apply in every view. Each board with a
+ * toolbar is handled on its own, so several boards on one page don't affect each other. State lives in the URL
  * (nr_q, nr_sort, nr_tag, nr_product; a second board adds _2, and so on).
  */
 ( function ( $ ) {
@@ -55,13 +56,15 @@
 		var tagsPanel = tagsWrap ? tagsWrap.querySelector( '.nr-tags-panel' ) : null;
 		var tagsCount = el.querySelector( '[data-nr-tags-count]' );
 		var toolbar = el.querySelector( '.nr-toolbar' );
-		var lists = slice.call( el.querySelectorAll( '.nr-kanban-list' ) );
+		// Where items are sorted: a board column, the list's body, or one group of the timeline.
+		var lists = slice.call( el.querySelectorAll( '.nr-kanban-list, .nr-list-body, .nr-timeline-items' ) );
 		var defaultSort = el.getAttribute( 'data-nr-default-sort' ) || 'manual';
 		var isEditor = document.body.classList.contains( 'task-editor' );
 		var timer = null;
 		var announced = false;
+		var appliedSort; // The sort the items are in now, so the list can tell a new sort from a new search.
 
-		var cards = slice.call( el.querySelectorAll( '.nr-kanban-item' ) ).map(
+		var cards = slice.call( el.querySelectorAll( '.nr-kanban-item, .nr-view-item' ) ).map(
 			function ( node, i ) {
 				var title = node.querySelector( '.nr-task-title' );
 				var text = title ? title.textContent : '';
@@ -75,6 +78,7 @@
 					node: node,
 					title: title,
 					text: text,
+					id: node.getAttribute( 'data-task' ),
 					index: i, // Manual order: where the server put it.
 					foldedTitle: fold( text ),
 					foldedAll: fold( text + ' ' + names.join( ' ' ) ).text,
@@ -221,7 +225,8 @@
 
 		function apply() {
 			var terms = fold( state.q.trim() ).text.split( /\s+/ ).filter( Boolean );
-			var shown = 0;
+			var shownIds = {};
+			var allIds = {};
 
 			cards.forEach(
 				function ( card ) {
@@ -238,8 +243,9 @@
 					}
 
 					card.node.hidden = ! ok;
+					allIds[ card.id ] = true;
 					if ( ok ) {
-						shown++;
+						shownIds[ card.id ] = true;
 					}
 					highlight( card, ok ? terms : [] );
 				}
@@ -264,8 +270,32 @@
 					if ( badge ) {
 						badge.textContent = visible;
 					}
+
+					// A timeline group with nothing left to show goes away, with its heading.
+					var group = list.closest( '[data-nr-group]' );
+					if ( group ) {
+						group.hidden = ! visible;
+						group.querySelector( '.nr-group-count' ).textContent = visible;
+					}
 				}
 			);
+
+			// The list and the timeline say so themselves when a search leaves nothing.
+			slice.call( el.querySelectorAll( '[data-nr-nomatch]' ) ).forEach(
+				function ( note ) {
+					var panel = note.closest( '[data-nr-view]' );
+
+					note.hidden = ! ( panel.querySelector( '.nr-view-item' ) && ! panel.querySelector( '.nr-view-item:not([hidden])' ) );
+				}
+			);
+
+			// An item appears once in every view, so count each only once.
+			var shown = Object.keys( shownIds ).length;
+			var total = Object.keys( allIds ).length;
+
+			// Tells the list whether its column sorting still describes the order: a search leaves it alone, a new sort replaces it.
+			el.dispatchEvent( new CustomEvent( 'nr:sorted', { detail: { changed: appliedSort !== state.sort } } ) );
+			appliedSort = state.sort;
 
 			var filtered = terms.length > 0 || state.tags.length > 0 || state.product !== '';
 			var reorderOff = filtered || state.sort !== 'manual';
@@ -285,7 +315,7 @@
 			if ( status ) {
 				status.textContent = filtered && shown === 0
 					? ( i18n.no_match || 'No matching items' )
-					: ( i18n.showing || 'Showing %1$s of %2$s' ).replace( '%1$s', shown ).replace( '%2$s', cards.length );
+					: ( i18n.showing || 'Showing %1$s of %2$s' ).replace( '%1$s', shown ).replace( '%2$s', total );
 
 				// Only now does it become a live region: the first count, written at load, isn't announced.
 				if ( ! announced ) {
@@ -446,6 +476,7 @@
 				'click',
 				function () {
 					state = { q: '', sort: defaultSort, tags: [], product: '' };
+					appliedSort = null;
 					syncControls();
 					changed();
 					( search || sortSelect ).focus();
@@ -473,7 +504,7 @@
 				var byNode = new Map();
 
 				cards.forEach( function ( c ) { byNode.set( c.node, c ); } );
-				slice.call( el.querySelectorAll( '.nr-kanban-item' ) ).forEach(
+				slice.call( el.querySelectorAll( '.nr-kanban-item, .nr-view-item' ) ).forEach(
 					function ( node, i ) {
 						if ( byNode.has( node ) ) {
 							byNode.get( node ).index = i;

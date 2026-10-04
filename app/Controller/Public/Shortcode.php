@@ -26,6 +26,9 @@ class Shortcode {
 				'toolbar'     => '', // yes | no. Anything else follows Settings -> Toolbar.
 				'sort'        => '', // manual | votes | newest | oldest | commented.
 				'filters'     => '', // Comma list of search, tag, product; "none" for no filters.
+				'view'        => '', // board | list | timeline. Anything else follows Settings -> Views.
+				'switcher'    => '', // yes | no. Anything else follows Settings -> Views.
+				'group'       => '', // quarter | month | nownext: how the timeline groups items.
 			),
 			$atts,
 			'roadmap'
@@ -39,6 +42,9 @@ class Shortcode {
 				'toolbar'     => $atts['toolbar'],
 				'sort'        => $atts['sort'],
 				'filters'     => $atts['filters'],
+				'view'        => $atts['view'],
+				'switcher'    => $atts['switcher'],
+				'group'       => $atts['group'],
 			)
 		);
 	}

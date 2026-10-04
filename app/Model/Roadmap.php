@@ -27,8 +27,9 @@ class Roadmap {
      * Render the board.
      *
      * @param int|string|null $product Product term ID to show, or null for the site default.
-     * @param array           $args    `submissions`, `toolbar`: `yes` / `no` to override the site setting.
+     * @param array           $args    `submissions`, `toolbar`, `switcher`: `yes` / `no` to override the site setting.
      *                                 `sort`, `filters`: the toolbar's initial sort and which filters it offers.
+     *                                 `view`, `group`: the view a board opens in and how its timeline groups items.
      * @return string
      */
     public static function get_roadmap( $product = null, $args = array() ) {
@@ -39,6 +40,10 @@ class Roadmap {
 
         // Decided up front: what the toolbar needs is only fetched when there is a toolbar.
         $toolbar = Toolbar::config( $args );
+        $views   = Views::config( $args );
+
+        // Targets are only read for the views that show them, and only when the site shows targets.
+        $with_target = niroroadmap_get_setting( 'show_target' ) && array_intersect( array( 'list', 'timeline' ), $views['render'] );
 
         $tasks  = array();
 		$stages = get_terms(
@@ -93,9 +98,16 @@ class Roadmap {
 					'tag_slugs' => is_array( $tags ) ? wp_list_pluck( $tags, 'slug' ) : array(),
 					'products'  => array(),
 					'date'      => 0,
+					'target'      => '',
+					'target_sort' => '',
 					'pinned'     => Fields::is_pinned( $task_id ),
 					'hide_votes' => Fields::votes_hidden( $task_id ),
 				);
+
+				if ( $with_target ) {
+					$tasks[ $stage->slug ]['tasks'][ $task_id ]['target']      = (string) get_post_meta( $task_id, Fields::TARGET, true );
+					$tasks[ $stage->slug ]['tasks'][ $task_id ]['target_sort'] = (string) get_post_meta( $task_id, Fields::TARGET_SORT, true );
+				}
 
 				if ( $toolbar['enabled'] ) {
 					$products = get_the_terms( $task_id, 'niroroadmap_product' );
@@ -135,6 +147,30 @@ class Roadmap {
 			asort( $filter_products, SORT_NATURAL | SORT_FLAG_CASE );
 		}
 
+		// The list and the timeline take the same items as the board, in one flat list.
+		$items    = array();
+		$timeline = array();
+
+		if ( array_intersect( array( 'list', 'timeline' ), $views['render'] ) ) {
+			Views::enqueue();
+
+			foreach ( $tasks as $column ) {
+				foreach ( $column['tasks'] as $task_id => $task ) {
+					$items[] = array(
+						'id'          => $task_id,
+						'index'       => count( $items ),
+						'stage_id'    => $column['id'],
+						'stage_name'  => $column['name'],
+						'stage_color' => $column['color'],
+					) + $task;
+				}
+			}
+
+			if ( in_array( 'timeline', $views['render'], true ) ) {
+				$timeline = Views::timeline_groups( $items, $views['group'], wp_date( 'Y-m-d' ) );
+			}
+		}
+
 		// The filter keeps working and overrides the setting.
 		$show_links = apply_filters( 'niroroadmap_show_stage_links', niroroadmap_get_setting( 'stage_links' ) );
 
@@ -149,6 +185,10 @@ class Roadmap {
 			// A board that shows one product files its ideas under that product.
 			'submission_product' => $product ? (int) $product : 0,
 			'toolbar'         => $toolbar,
+			'views'           => $views,
+			'items'           => $items,
+			'timeline'        => $timeline,
+			'show_target'     => (bool) niroroadmap_get_setting( 'show_target' ),
 			'filter_tags'     => $filter_tags,
 			'filter_products' => $filter_products,
 			// A board that shows one product has nothing to filter by product.

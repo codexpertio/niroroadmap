@@ -27,6 +27,21 @@
 		"filters": {
 			"type": "string",
 			"default": ""
+		},
+		"view": {
+			"type": "string",
+			"enum": [ "", "board", "list", "timeline" ],
+			"default": ""
+		},
+		"switcher": {
+			"type": "string",
+			"enum": [ "", "yes", "no" ],
+			"default": ""
+		},
+		"group": {
+			"type": "string",
+			"enum": [ "", "quarter", "month", "nownext" ],
+			"default": ""
 		}
 	},
 	"supports": {

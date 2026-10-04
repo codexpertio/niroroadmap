@@ -27,6 +27,7 @@ class Settings {
 			'comments'   => __( 'Comments', 'niroroadmap' ),
 			'submissions' => __( 'Submissions', 'niroroadmap' ),
 			'toolbar'    => __( 'Toolbar', 'niroroadmap' ),
+			'views'      => __( 'Views', 'niroroadmap' ),
 			'appearance' => __( 'Appearance', 'niroroadmap' ),
 			'advanced'   => __( 'Advanced', 'niroroadmap' ),
 		);
@@ -119,7 +120,7 @@ class Settings {
 				'tab'         => 'general',
 				'type'        => 'checkbox',
 				'label'       => __( 'Show an item\'s target date or quarter in its popup', 'niroroadmap' ),
-				'description' => __( 'The target is set on each item. Release date, version and link are always shown when filled in.', 'niroroadmap' ),
+				'description' => __( 'The target is set on each item. It also appears in the List and Timeline views, and the Timeline is only offered when this is on. Release date, version and link are always shown when filled in.', 'niroroadmap' ),
 				'default'     => false,
 			),
 			'show_history'        => array(
@@ -318,6 +319,40 @@ class Settings {
 				'label'       => __( 'Offer a product filter', 'niroroadmap' ),
 				'description' => __( 'Only when the board has items from more than one product and isn\'t limited to one.', 'niroroadmap' ),
 				'default'     => true,
+			),
+			'view_default'        => array(
+				'tab'         => 'views',
+				'type'        => 'select',
+				'label'       => __( 'Default view', 'niroroadmap' ),
+				'description' => __( 'The view a board opens in. Override it per board with [niroroadmap view="list"], or with the block\'s sidebar. The timeline needs "Show an item\'s target date or quarter" (General tab) to be on; without it the board falls back to the Board.', 'niroroadmap' ),
+				'default'     => 'board',
+				'options'     => function () {
+					return \NiroRoadmap\Model\Views::view_labels();
+				},
+			),
+			'view_switcher'       => array(
+				'tab'         => 'views',
+				'type'        => 'checkbox',
+				'label'       => __( 'Let visitors switch between Board, List and Timeline', 'niroroadmap' ),
+				'description' => __( 'The default for every board. Override it per board with [niroroadmap switcher="yes"] or [niroroadmap switcher="no"]. The visitor\'s last choice is remembered, and the address (?nr_view=timeline) can be shared. A board without a switcher only puts its own view in the page.', 'niroroadmap' ),
+				'default'     => false,
+			),
+			'view_mobile_list'    => array(
+				'tab'         => 'views',
+				'type'        => 'checkbox',
+				'label'       => __( 'Open boards as a list on narrow screens', 'niroroadmap' ),
+				'description' => __( 'Recommended: a list is easier to read on a phone than many columns. A visitor who picked a view themselves keeps it.', 'niroroadmap' ),
+				'default'     => false,
+			),
+			'view_timeline_group' => array(
+				'tab'         => 'views',
+				'type'        => 'select',
+				'label'       => __( 'Group the timeline', 'niroroadmap' ),
+				'description' => __( 'Override it per board with [niroroadmap group="month"]. Items without a target are listed last, under "Later / Unscheduled".', 'niroroadmap' ),
+				'default'     => 'quarter',
+				'options'     => function () {
+					return \NiroRoadmap\Model\Views::group_labels();
+				},
 			),
 			'color_scheme'        => array(
 				'tab'         => 'appearance',

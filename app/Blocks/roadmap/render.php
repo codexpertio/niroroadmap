@@ -20,6 +20,13 @@ $niroroadmap_toolbar = array(
 	'sort'    => isset( $attributes['sort'] ) ? sanitize_key( $attributes['sort'] ) : '',
 	'filters' => isset( $attributes['filters'] ) ? preg_replace( '/[^a-z,]/', '', strtolower( $attributes['filters'] ) ) : '',
 );
+
+// And the views: which one opens first, whether visitors can switch, how the timeline groups items.
+$niroroadmap_views = array(
+	'view'     => isset( $attributes['view'] ) ? sanitize_key( $attributes['view'] ) : '',
+	'switcher' => isset( $attributes['switcher'] ) ? sanitize_key( $attributes['switcher'] ) : '',
+	'group'    => isset( $attributes['group'] ) ? sanitize_key( $attributes['group'] ) : '',
+);
 ?>
 
-<?php echo Roadmap::get_roadmap( null, array( 'submissions' => $niroroadmap_submissions ) + $niroroadmap_toolbar ); ?>
+<?php echo Roadmap::get_roadmap( null, array( 'submissions' => $niroroadmap_submissions ) + $niroroadmap_toolbar + $niroroadmap_views ); ?>
