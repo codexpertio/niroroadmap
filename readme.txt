@@ -4,7 +4,7 @@ Tags: roadmap, kanban, feedback, voting, feature requests
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 0.9.2
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -376,18 +376,76 @@ By default, nothing but a few internal options is removed: your roadmap items (w
 
 == Changelog ==
 
-= Unreleased =
-* New: List and Timeline views alongside the Kanban board, with a view switcher, a remembered choice, shareable `?nr_view=` links, and `view`, `switcher` and `group` shortcode attributes and block options.
-* New: Views tab in the settings: default view, switcher, list on narrow screens, and timeline grouping (quarter, month or Now / Next / Later).
-* New: Settings page with General, Voting, Comments, Submissions, Toolbar, Appearance and Advanced tabs.
-* New: comments in the item popup, with threaded replies, moderation, rate limiting and auto-close on completion.
-* New: "Suggest an idea" form with similar-item suggestions, pending review, one-click approval and email notification.
-* New: search, sort and filter toolbar, also available as shortcode attributes and block options.
-* New: item details (target, release date and version, link, effort, private notes, pin, hide votes) and a status change history with an optional visitor timeline.
+= 1.0.0 - 2026-10-04 =
+A big release: three ways to view the roadmap, a settings page, comments, visitor submissions and much stronger voting.
+
+**Views**
+* New: List and Timeline views alongside the Kanban board, with an optional view switcher, a remembered choice, and shareable `?nr_view=` links.
+* New: List view is a compact table, sortable by title, status, comments, votes and target.
+* New: Timeline view groups items by quarter, month or Now / Next / Later, with undated items listed last. It is offered only when targets are shown, so private targets never leak.
+* New: Settings > Views tab: default view, switcher, list on narrow screens and timeline grouping.
+* New: `view`, `switcher` and `group` shortcode attributes and matching block sidebar options.
+* New: all three views share the same items, toolbar search and filters, and popup. View assets load only on boards that use them.
+
+**Settings**
+* New: Settings page (NiroRoadmap > Settings) with General, Voting, Comments, Submissions, Toolbar, Views, Appearance and Advanced tabs. Invalid values are rejected with a message and the saved value is kept.
+* New: choose the roadmap page and default product, show or hide vote counts, tags, status archive links and the downvote button, and decide who can vote and who sees downvote counts.
 * New: light, dark and auto color schemes, accent color, corner radius and custom CSS.
-* Improved: one vote per visitor per item is now enforced on the server.
+* New: "Delete all data on uninstall" option (off by default) and a reset to defaults.
+
+**Voting**
+* New: one vote per visitor per item is now enforced on the server, not only in the browser. Logged-in users are identified by user ID, anonymous visitors by a first-party cookie plus a salted hash, so clearing cookies does not reset a vote. Raw IP addresses and user agents are never stored.
+* New: "Let voters change their vote" setting (off by default).
+* New: vote rate limit per visitor (default 30 votes per 10 minutes).
+* Improved: the popup shows the visitor's real recorded vote instead of trusting local storage.
+* Improved: hidden vote counts are left out of API responses, not just hidden with CSS.
+* Existing vote counts are kept as they are.
+
+**Comments**
+* New: visitors can discuss an item in its popup, with threaded replies, a "Team" badge, "Load more" and comment counts on the cards. Off by default.
+* New: built on native WordPress comments, so moderation, spam plugins, the disallowed words list and flood control keep working. Held comments are shown only to their author, labeled "Awaiting moderation".
+* New: require login, set the order, and automatically close comments when an item moves to Completed.
+* New: rate limit per visitor (default 5 comments per 10 minutes, moderators exempt). Emails and IP addresses are never returned.
+
+**Suggest an idea**
+* New: "Suggest an idea" button and dialog. Ideas are saved as pending items, so nothing appears on the board or in the public API until you publish it. Off by default.
+* New: similar existing ideas are suggested while the visitor types a title, to cut down duplicates.
+* New: optional name and email (off, optional or required), the submitter's own upvote counted automatically, and a status for new ideas (default Under Review).
+* New: email notification for each submission, a "Submitted by" column and an Approve row action in the Items list.
+* New: spam protection with a honeypot, minimum fill-in time, rate limit per visitor, login-only mode and a `niroroadmap_submission_verify` filter for CAPTCHA. Works on cached pages.
+* New: `submissions` shortcode attribute and block option.
+* New: accessible dialog with focus trapping, Escape to close and screen reader announcements.
+
+**Toolbar**
+* New: search, sort and filter toolbar above the board. Live search over title and tags with highlighted matches, sort by most votes, newest, oldest or most commented, and filter by tag or product.
+* New: shows "Showing X of Y", live column counts and a Reset button. State is kept in the URL (`nr_q`, `nr_sort`, `nr_tag`, `nr_product`), so filtered boards can be shared.
+* New: `toolbar`, `sort` and `filters` shortcode attributes and block options. Several boards on one page work independently.
+* Improved: on narrow screens the search stays and the rest folds behind a button.
+* Improved: editors cannot drag cards while a filter or sort is active, so the saved order never goes wrong.
+
+**Item details and history**
+* New: "Roadmap details" box on the item edit screen: target (a date or a quarter such as "Q4 2026"), release date, version and link, shown in the popup when filled in.
+* New: team-only effort (XS to XL) and private notes, never shown on the board or returned by any API.
+* New: pin an item to the top of its column, and hide an item's vote counts.
+* New: cover image from the item's featured image, shown at the top of the popup.
+* New: status change history recording from, to, who and when for every change, including drag and drop, Quick and bulk edit and imports. Shown in a "Status history" box on the edit screen.
+* New: optional public timeline of status changes in the popup (statuses and dates only, never who).
+* New: sortable Target and Votes columns in the Items list.
+
+**Developers**
+* New: hooks `niroroadmap_vote_fingerprint`, `niroroadmap_vote_rate_limit`, `niroroadmap_comment_created`, `niroroadmap_comment_max_length`, `niroroadmap_comment_rate_limit`, `niroroadmap_comment_show_avatars`, `niroroadmap_completed_status_slugs` and `niroroadmap_submission_verify`.
+* New: REST routes for the visitor's own vote, comments (`GET/POST /tasks/{id}/comments`), idea submission (`POST /tasks/submit`) and similar ideas (`GET /tasks/search`).
+* New: integration tests, run with `composer test`.
+* New: database tables for votes and status history, created on activation and on update.
+
+**Fixes**
+* Fixed: on phones the whole page scrolled sideways when comments were on.
+* Fixed: a guest who must log in to comment saw no form and no login link on an item without comments.
 
 = 0.9 - 2026-09-26 =
 * Initial release with Kanban board, task voting, shortcode support, REST API integration, and customizable taxonomy columns.
 
 == Upgrade Notice ==
+
+= 1.0.0 =
+Major release: new List and Timeline views, a settings page, comments, visitor idea submissions, a search and filter toolbar, and server-side one-vote-per-visitor enforcement. Two database tables are added automatically on update. Existing vote counts are kept. Comments, idea submissions and the toolbar are off by default; turn them on under NiroRoadmap > Settings.
