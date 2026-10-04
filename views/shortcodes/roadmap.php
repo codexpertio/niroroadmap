@@ -17,22 +17,18 @@ $views_on = $views['switcher'] || count( $views['render'] ) > 1;
 
 ?>
 <div class="nr-board<?php echo $toolbar_on ? ' nr-has-toolbar' : ''; ?>"<?php echo $toolbar_on ? ' data-nr-toolbar data-nr-default-sort="' . esc_attr( $toolbar['sort'] ) . '"' : ''; ?><?php echo $views_on ? ' data-nr-views data-nr-default-view="' . esc_attr( $views['default'] ) . '"' . ( $views['mobile'] ? ' data-nr-mobile-view="' . esc_attr( $views['mobile'] ) . '"' : '' ) . ( $views['switcher'] ? ' data-nr-switcher' : '' ) : ''; ?>>
-<?php if ( $submissions_enabled && ! $toolbar_on ) : ?>
-	<?php // With a toolbar, the button sits in its row instead. ?>
+<?php if ( ( $submissions_enabled || $views['switcher'] ) && ! $toolbar_on ) : ?>
+	<?php // With a toolbar, the switcher and the button sit in its row instead. ?>
 	<div class="nr-board-toolbar">
-		<button type="button" class="nr-suggest-btn" aria-haspopup="dialog" data-product="<?php echo esc_attr( $submission_product ); ?>">
-			<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3a1 1 0 0 1 1 1v5h5a1 1 0 1 1 0 2h-5v5a1 1 0 1 1-2 0v-5H4a1 1 0 1 1 0-2h5V4a1 1 0 0 1 1-1z" fill="currentColor"/></svg>
-			<?php esc_html_e( 'Suggest an idea', 'niroroadmap' ); ?>
-		</button>
-	</div>
-<?php endif; ?>
-
-<?php if ( $views['switcher'] ) : ?>
-	<?php // Hidden until the script is running: without it the buttons would do nothing. ?>
-	<div class="nr-view-switch" role="group" aria-label="<?php esc_attr_e( 'Choose a view', 'niroroadmap' ); ?>" data-nr-switch hidden>
-		<?php foreach ( $views['views'] as $slug => $label ) : ?>
-			<button type="button" class="nr-view-btn" data-nr-view-btn="<?php echo esc_attr( $slug ); ?>" aria-pressed="<?php echo $slug === $views['default'] ? 'true' : 'false'; ?>"><?php echo esc_html( $label ); ?></button>
-		<?php endforeach; ?>
+		<?php if ( $views['switcher'] ) : ?>
+			<?php echo \NiroRoadmap\Helper\Utility::get_template( 'shortcodes/switcher.php', $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The template escapes its own output. ?>
+		<?php endif; ?>
+		<?php if ( $submissions_enabled ) : ?>
+			<button type="button" class="nr-suggest-btn" aria-haspopup="dialog" data-product="<?php echo esc_attr( $submission_product ); ?>">
+				<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3a1 1 0 0 1 1 1v5h5a1 1 0 1 1 0 2h-5v5a1 1 0 1 1-2 0v-5H4a1 1 0 1 1 0-2h5V4a1 1 0 0 1 1-1z" fill="currentColor"/></svg>
+				<?php esc_html_e( 'Suggest an idea', 'niroroadmap' ); ?>
+			</button>
+		<?php endif; ?>
 	</div>
 <?php endif; ?>
 

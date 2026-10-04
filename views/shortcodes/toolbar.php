@@ -16,6 +16,7 @@ $filters         = $toolbar['filters'] ?? array();
 
 $submissions_enabled = $args['submissions_enabled'] ?? false;
 $submission_product  = $args['submission_product'] ?? 0;
+$views               = $args['views'];
 
 $show_search  = ! empty( $filters['search'] );
 $show_tags    = ! empty( $filters['tag'] ) && $filter_tags;
@@ -76,11 +77,19 @@ $show_product = ! empty( $filters['product'] ) && ! $product_locked && count( $f
 			<button type="button" class="nr-toolbar-reset" data-nr-reset hidden><?php esc_html_e( 'Reset', 'niroroadmap' ); ?></button>
 		</div>
 
-		<?php if ( $submissions_enabled ) : ?>
-			<button type="button" class="nr-suggest-btn" aria-haspopup="dialog" data-product="<?php echo esc_attr( $submission_product ); ?>">
-				<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3a1 1 0 0 1 1 1v5h5a1 1 0 1 1 0 2h-5v5a1 1 0 1 1-2 0v-5H4a1 1 0 1 1 0-2h5V4a1 1 0 0 1 1-1z" fill="currentColor"/></svg>
-				<?php esc_html_e( 'Suggest an idea', 'niroroadmap' ); ?>
-			</button>
+		<?php if ( $submissions_enabled || $views['switcher'] ) : ?>
+			<?php // The view switcher sits just left of the Suggest button, both closing the row on the right. ?>
+			<div class="nr-toolbar-end">
+				<?php if ( $views['switcher'] ) : ?>
+					<?php echo \NiroRoadmap\Helper\Utility::get_template( 'shortcodes/switcher.php', $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The template escapes its own output. ?>
+				<?php endif; ?>
+				<?php if ( $submissions_enabled ) : ?>
+					<button type="button" class="nr-suggest-btn" aria-haspopup="dialog" data-product="<?php echo esc_attr( $submission_product ); ?>">
+						<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3a1 1 0 0 1 1 1v5h5a1 1 0 1 1 0 2h-5v5a1 1 0 1 1-2 0v-5H4a1 1 0 1 1 0-2h5V4a1 1 0 0 1 1-1z" fill="currentColor"/></svg>
+						<?php esc_html_e( 'Suggest an idea', 'niroroadmap' ); ?>
+					</button>
+				<?php endif; ?>
+			</div>
 		<?php endif; ?>
 	</div>
 
