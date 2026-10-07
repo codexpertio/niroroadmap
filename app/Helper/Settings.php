@@ -55,7 +55,7 @@ class Settings {
 				'type'        => 'select',
 				'cast'        => 'int',
 				'label'       => __( 'Roadmap page', 'niroroadmap' ),
-				'description' => __( 'The page that shows your roadmap.', 'niroroadmap' ),
+				'description' => __( 'The page that shows your roadmap. NiroRoadmap created one when you activated the plugin. A board appears on any page that has the Roadmap block or the [niroroadmap] shortcode, so you can also use your own page.', 'niroroadmap' ),
 				// Installs from before the Settings page stored this in a hidden option.
 				'default'     => function () {
 					return (int) get_option( 'niroroadmap_page_id' );
@@ -75,7 +75,7 @@ class Settings {
 				'type'        => 'select',
 				'cast'        => 'int',
 				'label'       => __( 'Default product', 'niroroadmap' ),
-				'description' => __( 'The product shown on the board when the shortcode or block does not name one.', 'niroroadmap' ),
+				'description' => __( 'The product shown on the board when the shortcode or block does not name one. Choose All products to show every item. Products are managed under NiroRoadmap → Products.', 'niroroadmap' ),
 				'default'     => 0,
 				'options'     => function () {
 					$options = array( 0 => __( 'All products', 'niroroadmap' ) );
@@ -99,21 +99,21 @@ class Settings {
 				'tab'         => 'general',
 				'type'        => 'checkbox',
 				'label'       => __( 'Link status names to their archive page', 'niroroadmap' ),
-				'description' => '',
+				'description' => __( 'Turns each column title into a link to a page listing the items with that status. Off by default; the board itself looks the same either way.', 'niroroadmap' ),
 				'default'     => false,
 			),
 			'show_vote_counts'    => array(
 				'tab'         => 'general',
 				'type'        => 'checkbox',
 				'label'       => __( 'Show vote counts', 'niroroadmap' ),
-				'description' => '',
+				'description' => __( 'Shows the number of votes on each card and in the item popup. When off, counts are also left out of the public API and the "Most votes" sort is not offered. Voting still works. You can also hide the counts of a single item from its Roadmap details box.', 'niroroadmap' ),
 				'default'     => true,
 			),
 			'show_tags'           => array(
 				'tab'         => 'general',
 				'type'        => 'checkbox',
 				'label'       => __( 'Show tags', 'niroroadmap' ),
-				'description' => '',
+				'description' => __( 'Shows an item\'s tags on its card and in its popup. When off, the tag filter in the toolbar is not offered either.', 'niroroadmap' ),
 				'default'     => true,
 			),
 			'show_target'         => array(
@@ -141,7 +141,7 @@ class Settings {
 				'tab'         => 'voting',
 				'type'        => 'select',
 				'label'       => __( 'Who can vote', 'niroroadmap' ),
-				'description' => '',
+				'description' => __( 'Everyone: no account needed, and each visitor gets one vote per item. Logged-in users only: votes from visitors who are not logged in are rejected by the server.', 'niroroadmap' ),
 				'default'     => 'everyone',
 				'options'     => function () {
 					return array(
@@ -161,7 +161,7 @@ class Settings {
 				'tab'         => 'voting',
 				'type'        => 'select',
 				'label'       => __( 'Show downvote counts to', 'niroroadmap' ),
-				'description' => '',
+				'description' => __( 'Only affects the downvote count, not the button. With "Administrators only", visitors can still downvote but never see the number. Has no effect when the downvote button or vote counts are turned off (General tab).', 'niroroadmap' ),
 				'default'     => 'everyone',
 				'options'     => function () {
 					return array(
@@ -188,7 +188,7 @@ class Settings {
 				'tab'         => 'comments',
 				'type'        => 'select',
 				'label'       => __( 'Comment order', 'niroroadmap' ),
-				'description' => '',
+				'description' => __( 'The order of comments in an item\'s popup. Replies stay under the comment they answer.', 'niroroadmap' ),
 				'default'     => 'oldest',
 				'options'     => function () {
 					return array(
@@ -215,7 +215,7 @@ class Settings {
 				'tab'         => 'submissions',
 				'type'        => 'checkbox',
 				'label'       => __( 'Only logged-in users can suggest ideas', 'niroroadmap' ),
-				'description' => '',
+				'description' => __( 'When off, anyone can suggest an idea, with spam protection (a hidden field, a minimum fill-in time and a rate limit). When on, visitors who are not logged in are asked to log in first.', 'niroroadmap' ),
 				'default'     => false,
 			),
 			'submissions_identity' => array(
@@ -272,7 +272,7 @@ class Settings {
 				'tab'         => 'submissions',
 				'type'        => 'checkbox',
 				'label'       => __( 'Email me when an idea is submitted', 'niroroadmap' ),
-				'description' => '',
+				'description' => __( 'Sends an email with the idea and, if the visitor gave them, their name and email address. Choose where it goes in the next setting.', 'niroroadmap' ),
 				'default'     => true,
 			),
 			'submissions_email'   => array(
@@ -303,7 +303,7 @@ class Settings {
 				'tab'         => 'toolbar',
 				'type'        => 'checkbox',
 				'label'       => __( 'Offer a search box', 'niroroadmap' ),
-				'description' => '',
+				'description' => __( 'Lets visitors type to find items by title. Matching words are highlighted.', 'niroroadmap' ),
 				'default'     => true,
 			),
 			'toolbar_filter_tag'  => array(
@@ -372,14 +372,14 @@ class Settings {
 				'tab'         => 'appearance',
 				'type'        => 'color',
 				'label'       => __( 'Accent color', 'niroroadmap' ),
-				'description' => '',
+				'description' => __( 'Used for buttons, active votes, links and highlights on the board. Column colors are set per status under NiroRoadmap → Statuses.', 'niroroadmap' ),
 				'default'     => self::DEFAULT_ACCENT,
 			),
 			'card_radius'         => array(
 				'tab'         => 'appearance',
 				'type'        => 'number',
 				'label'       => __( 'Corner radius (px)', 'niroroadmap' ),
-				'description' => __( 'Between 0 and 32.', 'niroroadmap' ),
+				'description' => __( 'How rounded the corners of cards and the popup are, in pixels. Between 0 (square) and 32. The default is 12.', 'niroroadmap' ),
 				'default'     => 12,
 				'min'         => 0,
 				'max'         => 32,
@@ -388,7 +388,7 @@ class Settings {
 				'tab'         => 'appearance',
 				'type'        => 'textarea',
 				'label'       => __( 'Custom CSS', 'niroroadmap' ),
-				'description' => __( 'Loaded on pages that show the roadmap. HTML tags are removed.', 'niroroadmap' ),
+				'description' => __( 'Extra CSS for the board, loaded only on pages that show the roadmap. HTML tags are removed. To restyle the board, override the CSS variables such as --nr-accent and --nr-radius on .nr-kanban-columns.', 'niroroadmap' ),
 				'default'     => '',
 			),
 			'delete_on_uninstall' => array(

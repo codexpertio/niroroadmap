@@ -1,0 +1,18 @@
+.nr-start { max-width: 760px; }
+.nr-start-lead { font-size: 15px; color: #50575e; }
+.nr-start-card { background: #fff; border: 1px solid #dcdcde; border-radius: 6px; padding: 8px 24px 20px; margin: 16px 0; }
+.nr-start-card > h2 { font-size: 16px; margin: 16px 0 8px; }
+.nr-start-progress { color: #646970; font-weight: 600; margin: 0; }
+.nr-start-steps { list-style: none; margin: 0; padding: 0; }
+.nr-start-steps li { display: flex; gap: 14px; padding: 18px 0; border-bottom: 1px solid #f0f0f1; }
+.nr-start-steps li:last-child { border-bottom: 0; }
+.nr-start-steps h3 { font-size: 15px; margin: 0 0 4px; }
+.nr-start-steps p { margin: 0 0 10px; color: #50575e; }
+.nr-start-check { flex: none; width: 24px; height: 24px; border-radius: 50%; border: 2px solid #c3c4c7; color: #fff; text-align: center; line-height: 20px; font-size: 14px; }
+.nr-start-steps li.is-done .nr-start-check { background: #00a32a; border-color: #00a32a; }
+.nr-start code { font-size: 13px; padding: 4px 8px; user-select: all; }
+.nr-start-try { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-bottom: 8px; }
+.nr-start-try > div { flex: 1 1 320px; }
+.nr-start-try h2 { margin-top: 8px; }
+.nr-start-try p { margin: 4px 0 8px; color: #50575e; }
+.nr-start-try form { margin: 0 0 8px; }

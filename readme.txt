@@ -43,7 +43,7 @@ Everything is optional and off by default where it matters: comments, idea submi
 
 = Getting started =
 
-On activation, NiroRoadmap creates a **Roadmap** page and four statuses (Under Review, Planned, In Progress, Completed), so the board works straight away.
+On activation, NiroRoadmap creates a **Roadmap** page and four statuses (Under Review, Planned, In Progress, Completed), so the board works straight away, and opens a **Getting Started** screen with a checklist (until you finish it, it also stays under **NiroRoadmap → Getting Started**). It can also add example content (items, products, tags and votes) so you see a working board in one click, and remove it again.
 
 1. Adjust the columns under **NiroRoadmap → Statuses** if you like. Rename them, pick colors, and drag them into order.
 2. Optionally add your products under **NiroRoadmap → Products** and your labels under **NiroRoadmap → Tags**.

@@ -24,6 +24,9 @@ class Installer {
 
 		$installer->create_roadmap_page();
 
+		// Take the person who activated the plugin to the Getting Started screen, once.
+		set_transient( 'niroroadmap_activation_redirect', 1, 60 );
+
 		// Statuses need the taxonomy, which isn't registered yet during activation.
 		// Flag them here; `seed_statuses()` runs on the next `init`. Only ever once per site.
 		if ( ! get_option( 'niroroadmap_statuses_seeded' ) ) {
@@ -37,6 +40,26 @@ class Installer {
 	public static function maybe_upgrade() {
 		Vote::maybe_create_table();
 		Status_Log::maybe_create_table();
+	}
+
+	/**
+	 * Make sure the board has its columns, adding the defaults when there are none. Safe to call
+	 * more than once. Used by the Getting Started screen when it fills the board with examples.
+	 */
+	public static function ensure_statuses() {
+		if ( ! taxonomy_exists( 'niroroadmap_status' ) ) {
+			return;
+		}
+
+		update_option( 'niroroadmap_statuses_seeded', 'pending' );
+		self::seed_statuses();
+	}
+
+	/**
+	 * Make sure there is a Roadmap page, creating or finding one as on activation.
+	 */
+	public static function ensure_roadmap_page() {
+		( new self() )->create_roadmap_page();
 	}
 
 	/**

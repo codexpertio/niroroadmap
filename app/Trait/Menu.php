@@ -48,6 +48,7 @@ trait Menu {
 	 * @param string   $menu_slug   The slug name to refer to this submenu by (should be unique for this submenu).
 	 * @param callable $callback    Optional. The function to be called to output the content for this page.
 	 * @param int      $position    Optional. The position in the menu order this item should appear.
+	 * @return string|false The resulting page's hook suffix, or false if the user lacks the capability.
 	 */
 	public function add_submenu( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback = '', $position = null ) {
 
@@ -63,6 +64,6 @@ trait Menu {
 
 		$niroroadmap_menus[ $parent_slug ][] = $menu_slug;
 
-		add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback, $position );
+		return add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback, $position );
 	}
 }
