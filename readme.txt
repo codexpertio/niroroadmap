@@ -338,6 +338,24 @@ By default, nothing but a few internal options is removed: your roadmap items (w
 
 == Changelog ==
 
+= 1.1.0 - 2026-10-07 =
+Setup is now guided: a Getting Started screen walks new sites from activation to a working public roadmap, and one click fills the board with example content.
+
+**Getting started**
+* New: Getting Started screen (NiroRoadmap > Getting Started) with a four-step checklist: set up your columns, add your first item, see your public roadmap and choose what visitors can do. Each step ticks off by itself, based on what the site actually has.
+* New: the screen opens once each time the plugin is activated. It is skipped for bulk activation and in the network admin.
+* New: "New here? Follow the Getting Started guide" reminder on every NiroRoadmap screen until all four steps are done. Sites that are already set up never see it. The menu entry is hidden at the same point; the screen stays reachable from the Plugins list.
+* New: "Add example content" adds seven example items with votes and targets, two products and a few tags, and makes sure the statuses and the Roadmap page exist. "Remove example content" deletes only what it added. Statuses and the Roadmap page are kept, and a product or tag your own items now use is kept too.
+* New: example items never count towards the checklist, so it still reflects your own roadmap.
+* New: the screen also explains the `[niroroadmap]` shortcode and the Roadmap block, and links to the website and the support forum.
+* New: Getting Started, Documentation and Support links on the Plugins screen.
+
+**Settings**
+* Improved: every setting now has a description. Ten settings had none, and the Roadmap page, Default product, Corner radius and Custom CSS descriptions say more.
+
+**Developers**
+* New: filters `niroroadmap_docs_url` and `niroroadmap_support_url` change where the Documentation and Support links point.
+
 = 1.0.0.1 - 2026-10-04 =
 A big release: three ways to view the roadmap, a settings page, comments, visitor submissions and much stronger voting.
 
@@ -408,6 +426,9 @@ A big release: three ways to view the roadmap, a settings page, comments, visito
 * Initial release with Kanban board, task voting, shortcode support, REST API integration, and customizable taxonomy columns.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Adds a Getting Started screen with a setup checklist and one-click example content. It opens when you activate the plugin, and a reminder shows on NiroRoadmap screens until the checklist is done (sites that are already set up don't see it). No settings or data change.
 
 = 1.0.0 =
 Major release: new List and Timeline views, a settings page, comments, visitor idea submissions, a search and filter toolbar, and server-side one-vote-per-visitor enforcement. Two database tables are added automatically on update. Existing vote counts are kept. Comments, idea submissions and the toolbar are off by default; turn them on under NiroRoadmap > Settings.

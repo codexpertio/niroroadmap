@@ -89,6 +89,12 @@ class Getting_Started {
 		) {
 			return;
 		}
+
+		// A site that was already set up before this screen existed has nothing left to be told.
+		if ( ! in_array( false, wp_list_pluck( $this->steps(), 'done' ), true ) ) {
+			update_option( self::DONE, 1 );
+			return;
+		}
 		?>
 		<div class="notice notice-info">
 			<p>
