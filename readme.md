@@ -6,7 +6,8 @@
 
 **[Try the live demo](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/codexpertio/niroroadmap/master/svn-assets/blueprints/blueprint.json)** in WordPress Playground, with sample items, votes and comments.
 
-![NiroRoadmap Kanban board](https://github.com/user-attachments/assets/3f7a882a-794b-4ad8-830f-037dbfb91e4a)
+<img width="1544" height="500" alt="image" src="https://github.com/user-attachments/assets/c1286850-393b-4a28-9ff9-2f61eacfe864" />
+
 
 ## 📌 Features
 
