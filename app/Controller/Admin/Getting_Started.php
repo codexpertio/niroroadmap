@@ -116,14 +116,14 @@ class Getting_Started {
 	}
 
 	/**
-	 * Where visitors of the docs and the support forum land. Filterable so a site can point elsewhere.
+	 * Where the Documentation and Support links land. Filterable so a site can point elsewhere.
 	 */
 	public static function docs_url() {
 		return apply_filters( 'niroroadmap_docs_url', 'https://nirosuite.com/niroroadmap' );
 	}
 
 	public static function support_url() {
-		return apply_filters( 'niroroadmap_support_url', 'https://wordpress.org/support/plugin/niroroadmap/' );
+		return apply_filters( 'niroroadmap_support_url', 'https://support.nirosuite.com' );
 	}
 
 	public static function page_url() {
@@ -342,7 +342,9 @@ class Getting_Started {
 				<p>
 					<a href="<?php echo esc_url( self::docs_url() ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Visit our website', 'niroroadmap' ); ?></a>
 					&middot;
-					<a href="<?php echo esc_url( self::support_url() ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Ask in the support forum', 'niroroadmap' ); ?></a>
+					<a href="<?php echo esc_url( self::support_url() ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Get support', 'niroroadmap' ); ?></a>
+					&middot;
+					<a href="mailto:niro@nirosuite.com">niro@nirosuite.com</a>
 				</p>
 			</div>
 		</div>

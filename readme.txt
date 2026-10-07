@@ -4,13 +4,17 @@ Tags: roadmap, kanban, feedback, voting, feature requests
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.1.0
+Stable tag: 1.1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Share a public product roadmap as a Kanban board, a list or a timeline. Visitors see what's planned and shipped, vote, comment and suggest ideas.
 
 == Description ==
+
+[Homepage](https://nirosuite.com/niroroadmap) · [GitHub](https://github.com/codexpertio/niroroadmap) · [Support](https://support.nirosuite.com)
+
+Also from NiroSuite: [NiroHelp](https://nirohelp.com) · [NiroCache](https://nirosuite.com/nirocache) · [NiroSitemap](https://nirosuite.com/nirositemap)
 
 **NiroRoadmap** turns your WordPress site into a public product roadmap. Add roadmap items, group them into statuses such as *Planned*, *In Progress* and *Completed*, and publish the roadmap on any page with a shortcode or block, as a Kanban board, a sortable list or a timeline by quarter.
 
@@ -146,6 +150,10 @@ Status history: each time an item moves to another status, the plugin records wh
 3. Add items under **NiroRoadmap → Add New**.
 
 == Frequently Asked Questions ==
+
+= Where can I get help? =
+
+Visit [support.nirosuite.com](https://support.nirosuite.com) or email niro@nirosuite.com. New to the plugin? The **Getting Started** screen under **NiroRoadmap** walks you through the setup.
 
 = Do visitors need an account to vote? =
 
@@ -347,7 +355,7 @@ Setup is now guided: a Getting Started screen walks new sites from activation to
 * New: "New here? Follow the Getting Started guide" reminder on every NiroRoadmap screen until all four steps are done. Sites that are already set up never see it. The menu entry is hidden at the same point; the screen stays reachable from the Plugins list.
 * New: "Add example content" adds seven example items with votes and targets, two products and a few tags, and makes sure the statuses and the Roadmap page exist. "Remove example content" deletes only what it added. Statuses and the Roadmap page are kept, and a product or tag your own items now use is kept too.
 * New: example items never count towards the checklist, so it still reflects your own roadmap.
-* New: the screen also explains the `[niroroadmap]` shortcode and the Roadmap block, and links to the website and the support forum.
+* New: the screen also explains the `[niroroadmap]` shortcode and the Roadmap block, and links to the website, the support site and the support email.
 * New: Getting Started, Documentation and Support links on the Plugins screen.
 
 **Settings**
