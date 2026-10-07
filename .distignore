@@ -79,3 +79,6 @@ Thumbs.db
 /.cursor/
 /.cursorrules
 /GEMINI.md
+
+# Local database dumps
+*.sql
