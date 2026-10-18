@@ -30,6 +30,7 @@ class Roadmap {
      * @param array           $args    `submissions`, `toolbar`, `switcher`: `yes` / `no` to override the site setting.
      *                                 `sort`, `filters`: the toolbar's initial sort and which filters it offers.
      *                                 `view`, `group`: the view a board opens in and how its timeline groups items.
+     *                                 `per_column`: items a Board column shows before "Load more".
      * @return string
      */
     public static function get_roadmap( $product = null, $args = array() ) {

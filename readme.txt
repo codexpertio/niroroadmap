@@ -64,7 +64,7 @@ Find them under **NiroRoadmap → Settings**.
 * **Comments:** turn comments on, require login, choose the order, and close comments when an item is moved to *Completed*.
 * **Submissions:** turn the *Suggest an idea* button on, require login, ask for name and email (not asked, optional or required), pick the status new ideas start in, count the submitter's own upvote, and set the notification email.
 * **Toolbar:** turn the toolbar on, pick the initial sort and which filters to offer (search, tag, product).
-* **Views:** the default view, whether visitors get the Board / List / Timeline switcher, opening boards as a list on narrow screens, and how the timeline groups items.
+* **Views:** the default view, whether visitors get the Board / List / Timeline switcher, opening boards as a list on narrow screens, how the timeline groups items, and how many items each Board column shows before "Load more".
 * **Appearance:** light, dark or auto color scheme, accent color, corner radius and custom CSS.
 * **Advanced:** delete all plugin data on uninstall, and reset every setting to its default.
 
@@ -84,6 +84,8 @@ Find them under **NiroRoadmap → Settings**.
 `[niroroadmap toolbar="yes" sort="votes" filters="search,tag"]` adds a search, sort and filter toolbar. `toolbar` is `yes` or `no`; `sort` is `manual`, `votes`, `newest`, `oldest` or `commented`; `filters` is a comma list of `search`, `tag` and `product` (or `none`). Without these options a board follows **Settings → Toolbar**. The Roadmap block has the same options in its sidebar.
 
 `[niroroadmap view="timeline" switcher="yes" group="month"]` opens the board as a timeline and lets visitors switch views. `view` is `board`, `list` or `timeline`; `switcher` is `yes` or `no`; `group` is `quarter`, `month` or `nownext` (Now / Next / Later). Without these options a board follows **Settings → Views**. Visitors can share a link to a view with `?nr_view=list` in the address. The Roadmap block has the same options in its sidebar.
+
+`[niroroadmap per_column="20"]` shows 20 items in each Board column, with a **Load more** button for the rest. The number at the top of a column always counts every item. The default is 10 (**Settings → Views**); `0` shows every item. The Roadmap block has the same option in its sidebar.
 
 `[niroroadmap submissions="yes"]` shows a "Suggest an idea" button on that board even when it is off site-wide; `submissions="no"` hides it.
 

@@ -26,6 +26,7 @@ class ViewsTest extends TestCase {
 			'view_switcher'       => false,
 			'view_mobile_list'    => false,
 			'view_timeline_group' => 'quarter',
+			'board_per_column'    => 10,
 			'show_target'         => true,
 			'show_tags'           => true,
 			'show_vote_counts'    => true,
@@ -404,5 +405,57 @@ class ViewsTest extends TestCase {
 		$this->assertStringContainsString( 'data-nr-default-view="timeline"', $html );
 		$this->assertStringContainsString( 'data-nr-switcher', $html );
 		$this->assertStringContainsString( 'November 2026', $html );
+	}
+
+	// --- Max items per column ----------------------------------------------------------------------
+
+	public function test_a_column_shows_ten_items_by_default_and_the_board_can_override_it() {
+		$this->assertSame( 10, Settings::default_for( 'board_per_column' ) );
+		$this->assertSame( 10, Views::config()['per_column'] );
+		$this->assertSame( 3, Views::config( array( 'per_column' => '3' ) )['per_column'] );
+		$this->assertSame( 0, Views::config( array( 'per_column' => '0' ) )['per_column'], '0 shows every item.' );
+		$this->assertSame( 10, Views::config( array( 'per_column' => 'lots' ) )['per_column'], 'Anything else follows the site setting.' );
+		$this->assertSame( 500, Views::config( array( 'per_column' => '9999' ) )['per_column'] );
+
+		$this->set( 'board_per_column', 4 );
+		$this->assertSame( 4, Views::config()['per_column'] );
+	}
+
+	public function test_items_past_the_limit_are_marked_and_the_count_stays_the_total() {
+		for ( $i = 1; $i <= 5; $i++ ) {
+			$this->item( "Overflow {$i}", '', 'planned' );
+		}
+
+		$html = $this->board( array( 'per_column' => '2' ) );
+
+		$this->assertStringContainsString( 'data-nr-per-column="2"', $html );
+		$this->assertSame( 3, substr_count( $html, ' data-nr-over' ), 'Everything past the first two is held back.' );
+		$this->assertStringContainsString( 'data-nr-load-more>', $html );
+		$this->assertMatchesRegularExpression( '/nr-stage-count">[^<]*5</', $html, 'The count is every item, not the visible ones.' );
+	}
+
+	public function test_a_column_within_the_limit_has_no_load_more_to_show() {
+		$this->item( 'Only one', '', 'planned' );
+
+		$html = $this->board( array( 'per_column' => '2' ) );
+
+		$this->assertStringNotContainsString( ' data-nr-over', $html );
+		$this->assertStringContainsString( 'data-nr-load-more hidden>', $html );
+	}
+
+	public function test_zero_renders_no_limit_at_all() {
+		$this->item( 'Unlimited', '', 'planned' );
+
+		$html = $this->board( array( 'per_column' => '0' ) );
+
+		$this->assertStringNotContainsString( 'data-nr-per-column', $html );
+		$this->assertStringNotContainsString( 'data-nr-load-more', $html );
+	}
+
+	public function test_the_shortcode_takes_per_column() {
+		$this->item( 'Shortcode limit', '', 'planned' );
+		unset( $GLOBALS['wp_actions']['niroroadmap_modal_rendered'] );
+
+		$this->assertStringContainsString( 'data-nr-per-column="7"', do_shortcode( '[niroroadmap per_column="7"]' ) );
 	}
 }

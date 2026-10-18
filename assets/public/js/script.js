@@ -1,3 +1,70 @@
+/**
+ * "Load more" for Board columns. A column shows `data-nr-per-column` cards, and each click reveals
+ * that many more. Cards past the limit are in the page, marked `data-nr-over`; a card hidden by the
+ * toolbar (`hidden`) never counts toward it, so search and filters still reach every item.
+ * The toolbar and drag and drop call refresh() whenever the cards of a column change.
+ */
+window.NiroRoadmapPaging = ( function () {
+	'use strict';
+
+	function refresh( column ) {
+		var board = column && column.closest( '[data-nr-per-column]' );
+		var list  = column && column.querySelector( '.nr-kanban-list' );
+
+		if ( ! board || ! list ) {
+			return;
+		}
+
+		var limit  = parseInt( board.getAttribute( 'data-nr-per-column' ), 10 );
+		var shown  = parseInt( list.getAttribute( 'data-nr-shown' ), 10 ) || limit;
+		var button = column.querySelector( '[data-nr-load-more]' );
+		var count  = 0;
+
+		Array.prototype.forEach.call(
+			list.querySelectorAll( '.nr-kanban-item' ),
+			function ( card ) {
+				if ( ! card.hidden && ++count > shown ) {
+					card.setAttribute( 'data-nr-over', '' );
+				} else {
+					card.removeAttribute( 'data-nr-over' );
+				}
+			}
+		);
+
+		if ( button ) {
+			button.hidden = count <= shown;
+		}
+	}
+
+	document.addEventListener(
+		'click',
+		function ( e ) {
+			var button = e.target.closest ? e.target.closest( '[data-nr-load-more]' ) : null;
+
+			if ( ! button ) {
+				return;
+			}
+
+			var column = button.closest( '.nr-kanban-column' );
+			var board  = button.closest( '[data-nr-per-column]' );
+			var list   = column.querySelector( '.nr-kanban-list' );
+			var limit  = parseInt( board.getAttribute( 'data-nr-per-column' ), 10 );
+			var shown  = parseInt( list.getAttribute( 'data-nr-shown' ), 10 ) || limit;
+			var first  = list.querySelector( '.nr-kanban-item[data-nr-over]:not([hidden])' );
+
+			list.setAttribute( 'data-nr-shown', shown + limit );
+			refresh( column );
+
+			// The button may have just gone away, so keep keyboard focus on the first new card.
+			if ( first && button.hidden ) {
+				first.focus();
+			}
+		}
+	);
+
+	return { refresh: refresh };
+}() );
+
 jQuery(
 	function ($) {
 
@@ -15,7 +82,8 @@ jQuery(
 		const updateCounts = () => {
 			$( ".nr-kanban-column" ).each(
 				function () {
-					$( ".nr-stage-count", this ).text( $( ".nr-kanban-item", this ).length );
+					// Cards past the "Load more" limit are still counted; only a toolbar filter hides one.
+					$( ".nr-stage-count", this ).text( $( ".nr-kanban-item:not([hidden])", this ).length );
 				}
 			);
 		};
@@ -86,6 +154,7 @@ jQuery(
 					request( "/tasks/order", "POST", { order: list.sortable( "toArray", { attribute: "id" } ) } );
 
 					updateCounts();
+					$( ".nr-kanban-column" ).each( function () { window.NiroRoadmapPaging.refresh( this ); } );
 				}
 			}
 		);

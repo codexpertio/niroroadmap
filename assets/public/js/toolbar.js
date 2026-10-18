@@ -266,6 +266,10 @@
 						}
 					);
 
+					if ( window.NiroRoadmapPaging ) {
+						window.NiroRoadmapPaging.refresh( list.closest( '.nr-kanban-column' ) );
+					}
+
 					var badge = list.parentNode.querySelector( '.nr-stage-count' );
 					if ( badge ) {
 						badge.textContent = visible;
