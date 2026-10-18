@@ -15,6 +15,8 @@ class ViewsTest extends TestCase {
 
 	private $overrides = array();
 
+	private $term_ids = array();
+
 	protected function setUp(): void {
 		unset( $GLOBALS['wp_actions']['niroroadmap_suggest_rendered'], $GLOBALS['wp_actions']['niroroadmap_modal_rendered'] );
 		wp_dequeue_script( 'niroroadmap-views' );
@@ -26,6 +28,7 @@ class ViewsTest extends TestCase {
 			'view_switcher'       => false,
 			'view_mobile_list'    => false,
 			'view_timeline_group' => 'quarter',
+			'board_per_column'    => 10,
 			'show_target'         => true,
 			'show_tags'           => true,
 			'show_vote_counts'    => true,
@@ -42,6 +45,10 @@ class ViewsTest extends TestCase {
 		foreach ( $this->item_ids as $id ) {
 			wp_delete_post( $id, true );
 		}
+		foreach ( $this->term_ids as $term_id ) {
+			wp_delete_term( $term_id, 'niroroadmap_product' );
+		}
+		$this->term_ids = array();
 		foreach ( $this->overrides as $hook => $callback ) {
 			remove_filter( $hook, $callback );
 		}
@@ -404,5 +411,67 @@ class ViewsTest extends TestCase {
 		$this->assertStringContainsString( 'data-nr-default-view="timeline"', $html );
 		$this->assertStringContainsString( 'data-nr-switcher', $html );
 		$this->assertStringContainsString( 'November 2026', $html );
+	}
+
+	// --- Max items per column ----------------------------------------------------------------------
+
+	public function test_a_column_shows_ten_items_by_default_and_the_board_can_override_it() {
+		$this->assertSame( 10, Settings::default_for( 'board_per_column' ) );
+		$this->assertSame( 10, Views::config()['per_column'] );
+		$this->assertSame( 3, Views::config( array( 'per_column' => '3' ) )['per_column'] );
+		$this->assertSame( 0, Views::config( array( 'per_column' => '0' ) )['per_column'], '0 shows every item.' );
+		$this->assertSame( 10, Views::config( array( 'per_column' => 'lots' ) )['per_column'], 'Anything else follows the site setting.' );
+		$this->assertSame( 500, Views::config( array( 'per_column' => '9999' ) )['per_column'] );
+
+		$this->set( 'board_per_column', 4 );
+		$this->assertSame( 4, Views::config()['per_column'] );
+	}
+
+	/**
+	 * A board of its own product holding $count Planned items, so the site's other items can't interfere.
+	 */
+	private function product_board( $count, $args ) {
+		$product = wp_insert_term( 'Limit test ' . wp_generate_password( 6, false ), 'niroroadmap_product' );
+		$this->term_ids[] = $product['term_id'];
+
+		for ( $i = 1; $i <= $count; $i++ ) {
+			wp_set_object_terms( $this->item( "Overflow {$i}", '', 'planned' ), array( (int) $product['term_id'] ), 'niroroadmap_product' );
+		}
+
+		unset( $GLOBALS['wp_actions']['niroroadmap_modal_rendered'] );
+
+		return Roadmap::get_roadmap( $product['term_id'], $args );
+	}
+
+	public function test_items_past_the_limit_are_marked_and_the_count_stays_the_total() {
+		$html = $this->product_board( 5, array( 'per_column' => '2' ) );
+
+		$this->assertStringContainsString( 'data-nr-per-column="2"', $html );
+		$this->assertSame( 3, substr_count( $html, ' data-nr-over' ), 'Everything past the first two is held back.' );
+		$this->assertStringContainsString( 'data-nr-load-more>', $html );
+		$this->assertMatchesRegularExpression( '/nr-stage-count">[^<]*5</', $html, 'The count is every item, not the visible ones.' );
+	}
+
+	public function test_a_column_within_the_limit_has_no_load_more_to_show() {
+		$html = $this->product_board( 1, array( 'per_column' => '2' ) );
+
+		$this->assertStringNotContainsString( ' data-nr-over', $html );
+		$this->assertStringContainsString( 'data-nr-load-more hidden>', $html );
+	}
+
+	public function test_zero_renders_no_limit_at_all() {
+		$this->item( 'Unlimited', '', 'planned' );
+
+		$html = $this->board( array( 'per_column' => '0' ) );
+
+		$this->assertStringNotContainsString( 'data-nr-per-column', $html );
+		$this->assertStringNotContainsString( 'data-nr-load-more', $html );
+	}
+
+	public function test_the_shortcode_takes_per_column() {
+		$this->item( 'Shortcode limit', '', 'planned' );
+		unset( $GLOBALS['wp_actions']['niroroadmap_modal_rendered'] );
+
+		$this->assertStringContainsString( 'data-nr-per-column="7"', do_shortcode( '[niroroadmap per_column="7"]' ) );
 	}
 }

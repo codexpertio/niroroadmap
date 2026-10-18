@@ -29,6 +29,7 @@ class Shortcode {
 				'view'        => '', // board | list | timeline. Anything else follows Settings -> Views.
 				'switcher'    => '', // yes | no. Anything else follows Settings -> Views.
 				'group'       => '', // quarter | month | nownext: how the timeline groups items.
+				'per_column'  => '', // Items per Board column before "Load more"; 0 shows all. Anything else follows Settings -> Views.
 			),
 			$atts,
 			'roadmap'
@@ -45,6 +46,7 @@ class Shortcode {
 				'view'        => $atts['view'],
 				'switcher'    => $atts['switcher'],
 				'group'       => $atts['group'],
+				'per_column'  => $atts['per_column'],
 			)
 		);
 	}

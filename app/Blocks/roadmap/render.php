@@ -26,6 +26,7 @@ $niroroadmap_views = array(
 	'view'     => isset( $attributes['view'] ) ? sanitize_key( $attributes['view'] ) : '',
 	'switcher' => isset( $attributes['switcher'] ) ? sanitize_key( $attributes['switcher'] ) : '',
 	'group'    => isset( $attributes['group'] ) ? sanitize_key( $attributes['group'] ) : '',
+	'per_column' => isset( $attributes['perColumn'] ) ? preg_replace( '/\D/', '', $attributes['perColumn'] ) : '',
 );
 ?>
 

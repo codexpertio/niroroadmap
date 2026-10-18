@@ -112,6 +112,33 @@
 	border: 1px dashed var(--nr-border);
 	border-radius: 8px;
 }
+.nr-kanban-item[data-nr-over] {
+	display: none;
+}
+.nr-load-more {
+	display: block;
+	margin: 0 12px 14px;
+	padding: 8px 12px;
+	font: inherit;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--nr-accent);
+	background: var(--nr-card);
+	border: 1px solid var(--nr-border);
+	border-radius: 8px;
+	cursor: pointer;
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.nr-load-more:hover {
+	border-color: var(--nr-accent);
+}
+.nr-load-more:focus-visible {
+	outline: 2px solid var(--nr-accent);
+	outline-offset: 2px;
+}
+.nr-load-more[hidden] {
+	display: none;
+}
 .nr-kanban-item {
 	padding: 12px 14px;
 	background: var(--nr-card);

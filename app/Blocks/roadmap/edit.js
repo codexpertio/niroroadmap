@@ -16,7 +16,7 @@ import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 /**
  * Sidebar controls.
  */
-import { PanelBody, SelectControl, ToggleControl, CheckboxControl } from '@wordpress/components';
+import { PanelBody, SelectControl, ToggleControl, CheckboxControl, TextControl } from '@wordpress/components';
 
 /**
  * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
@@ -89,6 +89,16 @@ export default function Edit( { attributes, setAttributes } ) {
 						] }
 						onChange={ ( group ) => setAttributes( { group } ) }
 						__nextHasNoMarginBottom
+					/>
+					<TextControl
+						type="number"
+						min={ 0 }
+						label={ __( 'Max items per column', 'niroroadmap' ) }
+						value={ attributes.perColumn }
+						onChange={ ( perColumn ) => setAttributes( { perColumn } ) }
+						help={ __( 'Leave empty to use the site setting. 0 shows every item.', 'niroroadmap' ) }
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
 					/>
 				</PanelBody>
 				<PanelBody title={ __( 'Search, sort and filter', 'niroroadmap' ) } initialOpen={ false }>

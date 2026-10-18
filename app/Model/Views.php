@@ -61,8 +61,8 @@ class Views {
 	 * Work out what a board gets.
 	 *
 	 * @param array $args `view` (`board` / `list` / `timeline`), `switcher` (`yes` / `no`), `group`
-	 *                    (`quarter` / `month` / `nownext`). Empty or missing values follow
-	 *                    Settings -> Views.
+	 *                    (`quarter` / `month` / `nownext`), `per_column` (a number, 0 for no limit).
+	 *                    Empty or missing values follow Settings -> Views.
 	 * @return array {
 	 *     @type string $default  The view shown first.
 	 *     @type array  $views    Views the board can offer, slug => label.
@@ -71,6 +71,7 @@ class Views {
 	 *                            plus the list when it is the default on narrow screens.
 	 *     @type string $mobile   View shown first on narrow screens, or '' for the default.
 	 *     @type string $group    How the timeline groups its items.
+	 *     @type int    $per_column Items a Board column shows before "Load more". 0 shows every item.
 	 * }
 	 */
 	public static function config( $args = array() ) {
@@ -105,13 +106,20 @@ class Views {
 			$group = 'quarter';
 		}
 
+		$per_column = trim( (string) ( $args['per_column'] ?? '' ) );
+		if ( ! preg_match( '/^\d+$/', $per_column ) ) {
+			$per_column = (string) niroroadmap_get_setting( 'board_per_column' );
+		}
+		$per_column = min( 500, max( 0, (int) $per_column ) );
+
 		return array(
-			'default'  => $default,
-			'views'    => $views,
-			'switcher' => $switcher,
-			'render'   => $render,
-			'mobile'   => $mobile,
-			'group'    => $group,
+			'default'    => $default,
+			'views'      => $views,
+			'switcher'   => $switcher,
+			'render'     => $render,
+			'mobile'     => $mobile,
+			'group'      => $group,
+			'per_column' => $per_column,
 		);
 	}
 

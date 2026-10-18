@@ -15,9 +15,11 @@ $show_tags        = $args['show_tags'] ?? true;
 $comments_enabled = $args['comments_enabled'] ?? false;
 $toolbar          = $args['toolbar'] ?? array();
 $toolbar_on       = ! empty( $toolbar['enabled'] );
+// Cards past the limit are in the page but hidden until "Load more"; 0 shows every card.
+$per_column       = (int) ( $views['per_column'] ?? 0 );
 
 ?>
-<div class="nr-kanban-columns" data-nr-view="board"<?php echo 'board' === $views['default'] ? '' : ' hidden'; ?>>
+<div class="nr-kanban-columns" data-nr-view="board"<?php echo 'board' === $views['default'] ? '' : ' hidden'; ?><?php echo $per_column ? ' data-nr-per-column="' . esc_attr( $per_column ) . '"' : ''; ?>>
 	<?php foreach ( $tasks as $slug => $column ) : ?>
 		<section class="nr-kanban-column" id="nr-stage-<?php echo esc_attr( $column['id'] ); ?>" data-stage="<?php echo esc_attr( $column['id'] ); ?>" style="--nr-stage-color: <?php echo esc_attr( sanitize_hex_color( $column['color'] ) ?: '#94a3b8' ); ?>;">
 
@@ -34,8 +36,9 @@ $toolbar_on       = ! empty( $toolbar['enabled'] );
 			</header>
 
 			<div class="nr-kanban-list" data-empty="<?php esc_attr_e( 'Nothing here yet', 'niroroadmap' ); ?>"<?php echo $toolbar_on ? ' data-nomatch="' . esc_attr__( 'No matching items', 'niroroadmap' ) . '"' : ''; ?>>
+				<?php $position = 0; ?>
 				<?php foreach ( $column['tasks'] as $task_id => $task ) : ?>
-					<article class="nr-kanban-item" id="nr-task-<?php echo esc_attr( $task_id ); ?>" data-task="<?php echo esc_attr( $task_id ); ?>" tabindex="0" role="button" aria-haspopup="dialog" data-tags="<?php echo esc_attr( wp_json_encode( $show_tags ? $task['tags'] : array() ) ); ?>"<?php echo $task['pinned'] ? ' data-pinned="1"' : ''; ?><?php if ( $toolbar_on ) : ?> data-date="<?php echo esc_attr( $task['date'] ); ?>" data-product-ids="<?php echo esc_attr( implode( ' ', array_keys( $task['products'] ) ) ); ?>"<?php if ( $show_tags ) : ?> data-tag-slugs="<?php echo esc_attr( implode( ' ', $task['tag_slugs'] ) ); ?>"<?php endif; ?><?php endif; ?>>
+					<article class="nr-kanban-item" id="nr-task-<?php echo esc_attr( $task_id ); ?>" data-task="<?php echo esc_attr( $task_id ); ?>" tabindex="0" role="button" aria-haspopup="dialog" data-tags="<?php echo esc_attr( wp_json_encode( $show_tags ? $task['tags'] : array() ) ); ?>"<?php echo $task['pinned'] ? ' data-pinned="1"' : ''; ?><?php echo $per_column && $position++ >= $per_column ? ' data-nr-over' : ''; ?><?php if ( $toolbar_on ) : ?> data-date="<?php echo esc_attr( $task['date'] ); ?>" data-product-ids="<?php echo esc_attr( implode( ' ', array_keys( $task['products'] ) ) ); ?>"<?php if ( $show_tags ) : ?> data-tag-slugs="<?php echo esc_attr( implode( ' ', $task['tag_slugs'] ) ); ?>"<?php endif; ?><?php endif; ?>>
 						<h4 class="nr-task-title"><?php echo esc_html( $task['title'] ); ?></h4>
 						<?php if ( $task['pinned'] ) : ?>
 							<span class="nr-task-pin" title="<?php esc_attr_e( 'Pinned', 'niroroadmap' ); ?>">
@@ -71,6 +74,10 @@ $toolbar_on       = ! empty( $toolbar['enabled'] );
 					</article>
 				<?php endforeach; ?>
 			</div>
+
+			<?php if ( $per_column ) : ?>
+				<button type="button" class="nr-load-more" data-nr-load-more<?php echo count( $column['tasks'] ) > $per_column ? '' : ' hidden'; ?>><?php esc_html_e( 'Load more', 'niroroadmap' ); ?></button>
+			<?php endif; ?>
 		</section>
 	<?php endforeach; ?>
 </div>

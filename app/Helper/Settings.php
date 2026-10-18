@@ -354,6 +354,15 @@ class Settings {
 					return \NiroRoadmap\Model\Views::group_labels();
 				},
 			),
+			'board_per_column'    => array(
+				'tab'         => 'views',
+				'type'        => 'number',
+				'label'       => __( 'Max items per column', 'niroroadmap' ),
+				'description' => __( 'How many items each Board column shows before a "Load more" button. The number at the top of a column always counts every item. Override it per board with [niroroadmap per_column="20"], or with the block\'s sidebar. Use 0 to show every item.', 'niroroadmap' ),
+				'default'     => 10,
+				'min'         => 0,
+				'max'         => 500,
+			),
 			'color_scheme'        => array(
 				'tab'         => 'appearance',
 				'type'        => 'select',
