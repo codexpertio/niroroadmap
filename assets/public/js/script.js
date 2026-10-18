@@ -36,6 +36,27 @@ window.NiroRoadmapPaging = ( function () {
 		}
 	}
 
+	/**
+	 * Make sure a card an editor just dropped into a column is not hidden by the limit.
+	 */
+	function reveal( card ) {
+		var column = card.closest( '.nr-kanban-column' );
+		var board  = card.closest( '[data-nr-per-column]' );
+		var list   = column && column.querySelector( '.nr-kanban-list' );
+
+		if ( ! board || ! list ) {
+			return;
+		}
+
+		var cards    = Array.prototype.filter.call( list.querySelectorAll( '.nr-kanban-item' ), function ( c ) { return ! c.hidden; } );
+		var position = cards.indexOf( card ) + 1;
+		var shown    = parseInt( list.getAttribute( 'data-nr-shown' ), 10 ) || parseInt( board.getAttribute( 'data-nr-per-column' ), 10 );
+
+		if ( position > shown ) {
+			list.setAttribute( 'data-nr-shown', position );
+		}
+	}
+
 	document.addEventListener(
 		'click',
 		function ( e ) {
@@ -62,7 +83,7 @@ window.NiroRoadmapPaging = ( function () {
 		}
 	);
 
-	return { refresh: refresh };
+	return { refresh: refresh, reveal: reveal };
 }() );
 
 jQuery(
@@ -154,6 +175,7 @@ jQuery(
 					request( "/tasks/order", "POST", { order: list.sortable( "toArray", { attribute: "id" } ) } );
 
 					updateCounts();
+					window.NiroRoadmapPaging.reveal( ui.item[0] );
 					$( ".nr-kanban-column" ).each( function () { window.NiroRoadmapPaging.refresh( this ); } );
 				}
 			}

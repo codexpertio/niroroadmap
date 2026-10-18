@@ -15,6 +15,8 @@ class ViewsTest extends TestCase {
 
 	private $overrides = array();
 
+	private $term_ids = array();
+
 	protected function setUp(): void {
 		unset( $GLOBALS['wp_actions']['niroroadmap_suggest_rendered'], $GLOBALS['wp_actions']['niroroadmap_modal_rendered'] );
 		wp_dequeue_script( 'niroroadmap-views' );
@@ -43,6 +45,10 @@ class ViewsTest extends TestCase {
 		foreach ( $this->item_ids as $id ) {
 			wp_delete_post( $id, true );
 		}
+		foreach ( $this->term_ids as $term_id ) {
+			wp_delete_term( $term_id, 'niroroadmap_product' );
+		}
+		$this->term_ids = array();
 		foreach ( $this->overrides as $hook => $callback ) {
 			remove_filter( $hook, $callback );
 		}
@@ -421,12 +427,24 @@ class ViewsTest extends TestCase {
 		$this->assertSame( 4, Views::config()['per_column'] );
 	}
 
-	public function test_items_past_the_limit_are_marked_and_the_count_stays_the_total() {
-		for ( $i = 1; $i <= 5; $i++ ) {
-			$this->item( "Overflow {$i}", '', 'planned' );
+	/**
+	 * A board of its own product holding $count Planned items, so the site's other items can't interfere.
+	 */
+	private function product_board( $count, $args ) {
+		$product = wp_insert_term( 'Limit test ' . wp_generate_password( 6, false ), 'niroroadmap_product' );
+		$this->term_ids[] = $product['term_id'];
+
+		for ( $i = 1; $i <= $count; $i++ ) {
+			wp_set_object_terms( $this->item( "Overflow {$i}", '', 'planned' ), array( (int) $product['term_id'] ), 'niroroadmap_product' );
 		}
 
-		$html = $this->board( array( 'per_column' => '2' ) );
+		unset( $GLOBALS['wp_actions']['niroroadmap_modal_rendered'] );
+
+		return Roadmap::get_roadmap( $product['term_id'], $args );
+	}
+
+	public function test_items_past_the_limit_are_marked_and_the_count_stays_the_total() {
+		$html = $this->product_board( 5, array( 'per_column' => '2' ) );
 
 		$this->assertStringContainsString( 'data-nr-per-column="2"', $html );
 		$this->assertSame( 3, substr_count( $html, ' data-nr-over' ), 'Everything past the first two is held back.' );
@@ -435,9 +453,7 @@ class ViewsTest extends TestCase {
 	}
 
 	public function test_a_column_within_the_limit_has_no_load_more_to_show() {
-		$this->item( 'Only one', '', 'planned' );
-
-		$html = $this->board( array( 'per_column' => '2' ) );
+		$html = $this->product_board( 1, array( 'per_column' => '2' ) );
 
 		$this->assertStringNotContainsString( ' data-nr-over', $html );
 		$this->assertStringContainsString( 'data-nr-load-more hidden>', $html );

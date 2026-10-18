@@ -19,7 +19,7 @@ $toolbar_on       = ! empty( $toolbar['enabled'] );
 $per_column       = (int) ( $views['per_column'] ?? 0 );
 
 ?>
-<div class="nr-kanban-columns" data-nr-view="board"<?php echo $per_column ? ' data-nr-per-column="' . esc_attr( $per_column ) . '"' : ''; ?><?php echo 'board' === $views['default'] ? '' : ' hidden'; ?>>
+<div class="nr-kanban-columns" data-nr-view="board"<?php echo 'board' === $views['default'] ? '' : ' hidden'; ?><?php echo $per_column ? ' data-nr-per-column="' . esc_attr( $per_column ) . '"' : ''; ?>>
 	<?php foreach ( $tasks as $slug => $column ) : ?>
 		<section class="nr-kanban-column" id="nr-stage-<?php echo esc_attr( $column['id'] ); ?>" data-stage="<?php echo esc_attr( $column['id'] ); ?>" style="--nr-stage-color: <?php echo esc_attr( sanitize_hex_color( $column['color'] ) ?: '#94a3b8' ); ?>;">
 
