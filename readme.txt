@@ -348,6 +348,17 @@ By default, nothing but a few internal options is removed: your roadmap items (w
 
 == Changelog ==
 
+= 1.2.0 - 2026-10-18 =
+Long boards are easier to scan: each Board column now shows its first items, with a Load more button for the rest.
+
+**Board**
+* New: "Max items per column" setting (Settings > Views). Each Board column shows that many items, 10 by default, followed by a **Load more** button that reveals the same number again. Use 0 to show every item.
+* New: `per_column` shortcode attribute, for example `[niroroadmap per_column="20"]`, and a matching "Max items per column" option in the Roadmap block sidebar.
+* Improved: the number at the top of a column always counts every item in it, not just the ones showing. While a toolbar filter is active it counts the matching items.
+* Improved: search, filters and sorting in the toolbar still reach every item, including ones not yet loaded. Matches beyond the limit get their own Load more button.
+* Improved: an item an editor drags into a column stays visible instead of being hidden by the limit.
+* The List and Timeline views are unchanged.
+
 = 1.1.0 - 2026-10-07 =
 Setup is now guided: a Getting Started screen walks new sites from activation to a working public roadmap, and one click fills the board with example content.
 
@@ -436,6 +447,9 @@ A big release: three ways to view the roadmap, a settings page, comments, visito
 * Initial release with Kanban board, task voting, shortcode support, REST API integration, and customizable taxonomy columns.
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+Board columns now show 10 items before a Load more button, so boards with more than 10 items in a column look different after updating. Change it under NiroRoadmap > Settings > Views, or set it to 0 to show every item. No data changes.
 
 = 1.1.0 =
 Adds a Getting Started screen with a setup checklist and one-click example content. It opens when you activate the plugin, and a reminder shows on NiroRoadmap screens until the checklist is done (sites that are already set up don't see it). No settings or data change.
