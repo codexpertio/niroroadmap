@@ -138,6 +138,7 @@ class Settings {
 			</form>
 
 			<?php if ( 'advanced' === $tab ) : ?>
+				<?php Link_Migration::render_tool(); ?>
 				<hr>
 				<h2><?php esc_html_e( 'Reset', 'niroroadmap' ); ?></h2>
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
