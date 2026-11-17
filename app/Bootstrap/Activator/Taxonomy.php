@@ -31,7 +31,7 @@ class Taxonomy {
 			'show_ui'           => true,
 			'show_admin_column' => true,
 			'query_var'         => true,
-			'rewrite'           => array( 'slug' => 'product-cat' ),
+			'rewrite'           => array( 'slug' => 'roadmap-status' ),
 			'show_in_rest'      => true,
 		);
 
@@ -61,7 +61,7 @@ class Taxonomy {
 			'show_ui'           => true,
 			'show_admin_column' => true,
 			'query_var'         => true,
-			'rewrite'           => array( 'slug' => 'product-brand' ),
+			'rewrite'           => array( 'slug' => 'roadmap-product' ),
 			'show_in_rest'      => true,
 		);
 
@@ -96,7 +96,7 @@ class Taxonomy {
 			'show_ui'           => true,
 			'show_admin_column' => true,
 			'query_var'         => true,
-			'rewrite'           => array( 'slug' => 'product-tag' ),
+			'rewrite'           => array( 'slug' => 'roadmap-tag' ),
 			'show_in_rest'      => true,
 		);
 
