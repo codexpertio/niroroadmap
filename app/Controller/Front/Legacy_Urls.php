@@ -29,7 +29,8 @@ class Legacy_Urls {
 	 * Only for a request nothing else answered: another plugin may own these slugs.
 	 */
 	public function redirect() {
-		if ( ! is_404() ) {
+		// Core answers any unknown `<path>/feed/` with an empty comments feed instead of a 404.
+		if ( ! is_404() && ! ( is_feed() && ! get_queried_object() ) ) {
 			return;
 		}
 
