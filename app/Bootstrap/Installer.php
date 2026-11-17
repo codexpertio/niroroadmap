@@ -17,7 +17,7 @@ class Installer {
 		$installer = new self();
 
 		// A fresh install has no old links to migrate.
-		if ( false === get_option( 'niroroadmap_db_version' ) ) {
+		if ( false === get_option( 'niroroadmap_activated' ) ) {
 			update_option( Migrator::OPTION, Migrator::VERSION );
 		}
 
