@@ -56,6 +56,7 @@ class Activator {
 
 	public function migrate() {
 		$this->action( 'init', array( Migrator::class, 'maybe_run' ), 100 );
+		$this->action( Migrator::EVENT, array( Migrator::class, 'run_batch' ) );
 	}
 
 	/**
