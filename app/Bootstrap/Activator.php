@@ -3,7 +3,7 @@ namespace NiroRoadmap\Bootstrap;
 
 defined( 'ABSPATH' ) || exit;
 
-use NiroRoadmap\Trait\Hook;
+use NiroRoadmap\Traits\Hook;
 
 class Activator {
 

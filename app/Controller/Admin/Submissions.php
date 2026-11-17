@@ -4,7 +4,7 @@ namespace NiroRoadmap\Controller\Admin;
 defined( 'ABSPATH' ) || exit;
 
 use NiroRoadmap\Model\Submission;
-use NiroRoadmap\Trait\Hook;
+use NiroRoadmap\Traits\Hook;
 
 /**
  * Items screen helpers for ideas visitors submitted: who sent it, and a one-click Approve.

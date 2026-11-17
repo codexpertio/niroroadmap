@@ -9,9 +9,9 @@ use NiroRoadmap\API\Option;
 use NiroRoadmap\API\Task;
 use NiroRoadmap\API\Stage;
 use NiroRoadmap\API\Submission;
-use NiroRoadmap\Trait\Hook;
-use NiroRoadmap\Trait\Auth;
-use NiroRoadmap\Trait\Rest;
+use NiroRoadmap\Traits\Hook;
+use NiroRoadmap\Traits\Auth;
+use NiroRoadmap\Traits\Rest;
 
 class API {
 

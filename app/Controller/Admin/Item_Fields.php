@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) || exit;
 
 use NiroRoadmap\Model\Fields;
 use NiroRoadmap\Model\Status_Log;
-use NiroRoadmap\Trait\Hook;
+use NiroRoadmap\Traits\Hook;
 
 /**
  * The item edit screen and Items list: the fields box, the status history box, and the Target and

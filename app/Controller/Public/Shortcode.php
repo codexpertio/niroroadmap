@@ -4,7 +4,7 @@ namespace NiroRoadmap\Controller\Public;
 defined( 'ABSPATH' ) || exit;
 
 use NiroRoadmap\Model\Roadmap;
-use NiroRoadmap\Trait\Hook;
+use NiroRoadmap\Traits\Hook;
 
 class Shortcode {
 

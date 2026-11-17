@@ -4,7 +4,7 @@ namespace NiroRoadmap\API;
 defined( 'ABSPATH' ) || exit;
 
 use NiroRoadmap\Helper\Settings;
-use NiroRoadmap\Trait\Rest;
+use NiroRoadmap\Traits\Rest;
 
 class Option {
 
