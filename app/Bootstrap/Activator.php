@@ -10,6 +10,11 @@ class Activator {
 	use Hook;
 
 	/**
+	 * Raise when a rewrite slug changes, so every site flushes its rules once.
+	 */
+	const REWRITE_VERSION = '2';
+
+	/**
 	 * Static method for plugin activation tasks.
 	 */
 	public static function activate() {
@@ -19,6 +24,7 @@ class Activator {
 		$activator->register_post_types();
 		$activator->register_taxonomies();
 		$activator->seed_statuses();
+		$activator->flush_rewrites();
 
 		// Sites that update the plugin don't go through activation, so check the schema on load too.
 		Installer::maybe_upgrade();
@@ -41,5 +47,21 @@ class Activator {
 
 	public function seed_statuses() {
 		$this->action( 'init', array( Installer::class, 'seed_statuses' ), 20 );
+	}
+
+	public function flush_rewrites() {
+		$this->action( 'init', array( self::class, 'maybe_flush_rewrites' ), 99 );
+	}
+
+	/**
+	 * Flush the rewrite rules once per REWRITE_VERSION, after the post type and taxonomies are registered.
+	 */
+	public static function maybe_flush_rewrites() {
+		if ( self::REWRITE_VERSION === get_option( 'niroroadmap_rewrite_version' ) ) {
+			return;
+		}
+
+		flush_rewrite_rules( false );
+		update_option( 'niroroadmap_rewrite_version', self::REWRITE_VERSION );
 	}
 }
