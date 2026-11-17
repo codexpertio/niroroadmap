@@ -2,31 +2,60 @@
 
 **A bugfix changes ONLY the lines that fix the bug.** No restructuring, no renaming, no restyling on the way past, no "refactor" commit inside a bugfix PR.
 
-**Read the function's history first:** `git log --oneline -L <start>,<end>:<file>`. The hot files are `views/shortcodes/roadmap.php` (34 commits), `assets/public/js/script.js` (27), `niroroadmap.php` (18), `app/Model/Roadmap.php` (17), `app/Controller/Common/API.php` (15), `app/Controller/Public/Shortcode.php` (14), `app/Controller/Public/Front.php` (12), `app/API/Task.php` and `app/Controller/Admin/Init.php` (11 each). Existing code holds fixes that are not visible as fixes: `board.php` puts `data-nr-per-column` after `hidden` so the markup the tests match keeps its shape, and `NiroRoadmapPaging.reveal()` keeps a dropped card visible (`94ea24f`); `Getting_Started::show_help_notice()` marks the checklist done for sites that were already set up (`eb050b5`); `Admin\Init::save_add_taxo_fields()` never calls `wp_die()` because statuses are also created in code. Treat existing code as accumulated fixes; the code IS the spec.
+**Read the function's history first:** `git log --oneline -L <start>,<end>:<file>`. The hot code gets edited over and over, and the fixes it holds are not visible in the code itself. The drag-and-drop block in `assets/public/js/script.js` carries 17 commits, `Controller\Common\API::register_endpoints()` 14, `openModal()` in `script.js` 13, `Shortcode::callback_roadmap()` 11, `Model\Roadmap::get_roadmap()` 10 (plus 5 more before it was extracted, see below), `API\Task::get()` 8. Examples of fixes you can't see:
 
-**A list of hashes is not the history. For EVERY commit `-L` returns, read the commit, its PR and its issue.**
+- The per-item permission checks `Auth::can_move_task()`, `can_order_tasks()` and `can_order_stages()` came in `eb1e081` *misc* (no PR, no issue, no body). Before that, the routes only checked `edit_pages`, with no check on the item or status itself.
+- The guards in `Common\Init::order_terms()` (only full `WP_Term` objects are sorted, unsorted statuses go last) came in `2e8dc16` *reinit*.
+- `board.php` puts `data-nr-per-column` after `hidden` so the markup the tests match keeps its shape, and `NiroRoadmapPaging.reveal()` keeps a dropped card visible (`94ea24f`, PR #57).
+- `Getting_Started::show_help_notice()` marks the checklist done for sites that were already set up (`eb050b5`, no PR).
 
-```bash
-git log --oneline -L '/public static function cast/,+40:app/Model/Vote.php'
-git show <sha>                                                                 # full body + diff
-gh api repos/codexpertio/niroroadmap/commits/<sha>/pulls --jq '.[].number'     # commit → PR
-gh pr view <n> --json title,body,comments
-gh issue view <nn>
-```
+Treat existing code as accumulated fixes, not as arbitrary shape; the code IS the spec. Skipping this step is how a rewrite silently reverts an earlier fix and ships a new bug inside a bugfix.
 
-What you will find (110 commits):
+**A list of hashes is not the history. For EVERY commit `-L` returns, read three things: the commit, its PR, and its issue.** The one-line subject is a label, not a reason. The reason lives in the commit body, the PR description and the issue that prompted it, and that is where the constraint you are about to break is written down.
 
-- Up to `0fc93ea` *rename* (2026-09-10) the plugin was EasyRoadmap (`easycommercedev/easyroadmap`). 67 of those 73 commits have no body (`misc`, `reinit`, `re-re-init`): the diff is the only record.
-- The 1.0 feature set, `ac7defd` (Settings) through `1a2cda5` (onboarding), was pushed straight to master with **no PR and no issue**. Each commit has a long body that explains the why — read it; say "no PR, no issue" in your list.
-- Issue → PR flow starts with PR #57 (`99a3e6e`, `Closes #56`), merged as a merge commit. The only other commit naming an issue is `a6bac56` (`Closes #45`, Playground blueprint).
-
-**Follow moved code.** `c5eb080` split the old `views/shortcodes/roadmap.php` into `board.php`, `list.php` and `timeline.php`. `-L` on `board.php` reports almost nothing; re-run it on `roadmap.php` before that commit:
+If a 10-line function was built by 6 commits, that is **6 commit messages + 6 PR bodies + 6 issues to read before you touch it**: all six, not the newest one, not "the relevant-looking ones". A rule you did not read is a rule you will delete.
 
 ```bash
-git log --oneline -L '/nr-kanban-columns/,+60:views/shortcodes/roadmap.php' c5eb080^
+git log --oneline -L '/public static function get_roadmap/,+163:app/Model/Roadmap.php'   # the hashes
+git show <sha>                                                                            # full body + diff, per hash
+gh api repos/codexpertio/niroroadmap/commits/<sha>/pulls --jq '.[].number'                # commit → PR
+gh pr view <n> --json title,body,comments                                                 # why it was written that way
+gh issue view <nn>                                                                        # the report + repro it had to satisfy
 ```
 
-**List them in the PR body:** which prior fixes touch these lines and which the diff preserves. **Size gate:** more than ~20 changed lines inside an existing function → stop, justify, or split. **Never extract a shared helper inside a bugfix.**
+Where the PR and issue are in this repo:
+
+- **PRs #46–#54 (the 1.0 features) were rebase-merged.** There is no merge commit, and the `Closes #NN` is in the **PR body**, not the commit body. Use the API to go from commit to PR. A rebase can change the SHA: PR #51's `19ba64c` is `54cf40c` on master, so the API is the reliable route.
+- **PR #57 and later** are merge commits (`Merge pull request #NN from …`) and the fix commit carries `Closes #NN` in its body. Take the number from there; fall back to the API only when it is missing.
+- **PR #47** (`bed152e`, issue #18) was merged into `feature/19-settings-page`, not master. Its commit still reached master, and the API still maps it to #47.
+- Before `0fc93ea` *rename* (2026-09-10) the plugin was EasyRoadmap. The only PRs then were #1, #2, #11, #12, #16 and #17 (merge commits).
+
+**If a commit has no PR and no issue, say so** in your list. That is a real finding: the constraint is undocumented and the commit body is all there is. Here that is 67 of the 73 commits before the rename, with no body either (`misc`, `cs`, `reinit`, `re-re-init`, `More fixes`), so the diff read line by line is the only record. After 1.0 it is every commit outside PRs #54 and #57, including `1a2cda5` (onboarding) and `eb050b5` (a fix inside a changelog commit).
+
+**If the function was moved or extracted, follow it.** `git log -L` follows a file rename but does NOT track content across files, so it reports almost no history on exactly the code that has the most.
+
+- `Roadmap::get_roadmap()` began inside `Shortcode::callback_roadmap()`, moved to `Controller/Common/Roadmap.php` in `b1e66a8`, then to `Model/Roadmap.php` in `3d53269`. `-L` follows the rename back to `b1e66a8` and stops; the 5 commits before it are in `Shortcode.php`:
+  ```bash
+  git log --oneline -L '/public function callback_roadmap/,+45:app/Controller/Public/Shortcode.php' b1e66a8^
+  ```
+- `c5eb080` split `views/shortcodes/roadmap.php` into `board.php`, `list.php` and `timeline.php`. `-L` on `board.php` shows 3 commits; the board markup's earlier history is in `roadmap.php`:
+  ```bash
+  git log --oneline -L '/nr-kanban-columns/,+60:views/shortcodes/roadmap.php' c5eb080^
+  ```
+
+`git log --oneline --diff-filter=ADR -M -- <file>` lists where a file was added, deleted or renamed.
+
+**List them in the PR body:** which prior fixes touch these lines, and which the diff preserves. If the diff moves one, say why. No list means nobody looked.
+
+**Size gate:** more than ~20 changed lines inside an existing function in a bugfix → stop, justify, or split. A big bugfix diff is churn until proven otherwise. Reference points: `eb050b5` fixed the setup reminder for sites already set up with `+6` lines in `show_help_notice()`; the review fixes for PR #57 (`94ea24f`) changed one line of `board.php` and added a separate `reveal()` rather than rewriting `refresh()`.
+
+**Never extract a shared helper as part of a bugfix.** Several rules are hand-written in more than one place, and the copies have already drifted apart:
+
+- "Which items are public" is checked in three places: `Roadmap::get_public_item()` (REST), `Submission::similar()` (`has_password => false`) and the board query in `get_roadmap()`. The board query is missing the password check (#62).
+- "Every item, whatever its status" is written as `post_status => 'any'` in `uninstall.php` and twice in `Sample_Data`. All three miss trashed items (#60).
+- What a setting hides (vote counts, tags, target) is enforced separately in `Toolbar::config()`, `Views::config()`, `Task::can_see_count()`, `Fields::public_facts()` and each template.
+
+Say so when you notice it, but consolidation is its own scheduled PR with behaviour locked by tests first, never a side effect of fixing one instance.
 
 ---
 
