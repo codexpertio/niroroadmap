@@ -1,5 +1,5 @@
 <?php
-namespace NiroRoadmap\Controller\Public;
+namespace NiroRoadmap\Controller\Front;
 
 defined( 'ABSPATH' ) || exit;
 

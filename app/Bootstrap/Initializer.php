@@ -39,11 +39,11 @@ class Initializer {
 	 */
 	private function load_public_controllers() {
 		if ( ! is_admin() ) {
-			$controller_dir = NIROROADMAP_PLUGIN_DIR . 'app/Controller/Public/';
+			$controller_dir = NIROROADMAP_PLUGIN_DIR . 'app/Controller/Front/';
 
 			foreach ( glob( $controller_dir . '*.php' ) as $file ) {
 				$class_name = basename( $file, '.php' );
-				$controller = "\\NiroRoadmap\\Controller\\Public\\{$class_name}";
+				$controller = "\\NiroRoadmap\\Controller\\Front\\{$class_name}";
 
 				if ( class_exists( $controller ) ) {
 					new $controller();
