@@ -2,7 +2,7 @@
 
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
-$deletable_options = [ 'niroroadmap_activated', 'niroroadmap_db_version', 'niroroadmap_page_id', 'niroroadmap_statuses_seeded', 'niroroadmap_getting_started_done', 'niroroadmap_rewrite_version' ];
+$deletable_options = [ 'niroroadmap_activated', 'niroroadmap_db_version', 'niroroadmap_page_id', 'niroroadmap_statuses_seeded', 'niroroadmap_getting_started_done', 'niroroadmap_rewrite_version', 'niroroadmap_migration_version', 'niroroadmap_links_migrated' ];
 foreach ( $deletable_options as $option ) {
     delete_option( $option );
 }
