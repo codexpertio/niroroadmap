@@ -56,7 +56,7 @@ class Link_Migration {
 				<?php
 				printf(
 					/* translators: 1: number of menu links, 2: number of navigation menus and templates */
-					esc_html__( 'Updated automatically: %1$d menu links and %2$d navigation menus or templates.', 'niroroadmap' ),
+					esc_html__( 'Updated automatically: menu links %1$d, navigation menus and templates %2$d.', 'niroroadmap' ),
 					(int) $report['menus'],
 					(int) $report['navigation']
 				);
@@ -65,7 +65,7 @@ class Link_Migration {
 					echo ' ';
 					printf(
 						/* translators: %d: number of links */
-						esc_html__( '%d links to /product-tag/ were left alone because a shop tag uses the same address; check them by hand.', 'niroroadmap' ),
+						esc_html( _n( '%d link to /product-tag/ was left alone because a shop tag uses the same address; check it by hand.', '%d links to /product-tag/ were left alone because a shop tag uses the same address; check them by hand.', (int) $report['skipped'], 'niroroadmap' ) ),
 						(int) $report['skipped']
 					);
 				}
@@ -228,7 +228,7 @@ class Link_Migration {
 				<?php
 				printf(
 					/* translators: %d: number of posts and widgets */
-					esc_html__( 'Updated %d posts and widgets.', 'niroroadmap' ),
+					esc_html( _n( 'Updated %d post or widget.', 'Updated %d posts and widgets.', $changed, 'niroroadmap' ) ),
 					(int) $changed
 				);
 
@@ -236,7 +236,7 @@ class Link_Migration {
 					echo ' ';
 					printf(
 						/* translators: %d: number of links */
-						esc_html__( '%d links to /product-tag/ were left alone because a shop tag uses the same address.', 'niroroadmap' ),
+						esc_html( _n( '%d link to /product-tag/ was left alone because a shop tag uses the same address.', '%d links to /product-tag/ were left alone because a shop tag uses the same address.', $skipped, 'niroroadmap' ) ),
 						(int) $skipped
 					);
 				}
@@ -249,7 +249,7 @@ class Link_Migration {
 				<?php
 				printf(
 					/* translators: %d: number of posts */
-					esc_html__( '%d posts may still hold old links:', 'niroroadmap' ),
+					esc_html( _n( '%d post may still hold old links:', '%d posts may still hold old links:', $total, 'niroroadmap' ) ),
 					(int) $total
 				);
 				?>
