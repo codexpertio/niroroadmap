@@ -93,9 +93,8 @@ jQuery(
 			{
 				url: `${NIROROADMAP.api_base}${path}`,
 				method: method,
-				headers: {
-					'X-WP-Nonce': NIROROADMAP.nonce,
-				},
+				// Guests send no nonce: a cached page's nonce expires, and core then refuses even public routes.
+				headers: document.body.classList.contains( "logged-in" ) ? { 'X-WP-Nonce': NIROROADMAP.nonce } : {},
 				data: data,
 			}
 		);
