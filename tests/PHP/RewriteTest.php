@@ -84,7 +84,7 @@ class RewriteTest extends TestCase {
 	public function test_anything_else_is_not_redirected() {
 		$this->assertSame( '', Legacy_Urls::new_url( 'product-cat/no-such-status-' . wp_generate_password( 5, false ) ) );
 		$this->assertSame( '', Legacy_Urls::new_url( 'product-category/planned' ), 'WooCommerce\'s category base is not ours.' );
-		$this->assertSame( '', Legacy_Urls::new_url( 'product-cat/planned/page/2' ) );
+		$this->assertSame( '', Legacy_Urls::new_url( 'product-cat/planned/comments' ) );
 		$this->assertSame( '', Legacy_Urls::new_url( 'roadmap/' ) );
 	}
 

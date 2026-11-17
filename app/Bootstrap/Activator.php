@@ -25,6 +25,7 @@ class Activator {
 		$activator->register_taxonomies();
 		$activator->seed_statuses();
 		$activator->flush_rewrites();
+		$activator->migrate();
 
 		// Sites that update the plugin don't go through activation, so check the schema on load too.
 		Installer::maybe_upgrade();
@@ -51,6 +52,11 @@ class Activator {
 
 	public function flush_rewrites() {
 		$this->action( 'init', array( self::class, 'maybe_flush_rewrites' ), 99 );
+	}
+
+	public function migrate() {
+		$this->action( 'init', array( Migrator::class, 'maybe_run' ), 100 );
+		$this->action( Migrator::EVENT, array( Migrator::class, 'run_batch' ) );
 	}
 
 	/**
