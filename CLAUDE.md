@@ -229,7 +229,7 @@ so attribute order matters.
 ## Front-end JS
 
 - Globals: `NIROROADMAP` (`api_base`, `nonce`; `settings` with strings and flags added by `Front` through the `niroroadmap-localized_vars` filter, front end only), `NIROROADMAP_TOOLBAR.i18n`, `window.NiroRoadmapPaging` (`refresh( column )`, `reveal( card )`).
-- `script.js`: popup with zoom animation, `GET /tasks/{id}`, votes, comments (paged, one reply level), suggest dialog with focus trap and similar-item search, editor drag and drop, Load more. All requests send `X-WP-Nonce`.
+- `script.js`: popup with zoom animation, `GET /tasks/{id}`, votes, comments (paged, one reply level), suggest dialog with focus trap and similar-item search, editor drag and drop, Load more. Only logged-in visitors (body class `logged-in`) send `X-WP-Nonce`. Guests send none, because core refuses an expired nonce with 403 even on public routes, and a cached page's nonce expires.
 - Drag and drop: `.task-editor .nr-kanban-list` sortable; body class `task-editor` is added for `edit_pages` users. On drop it posts `/tasks/{id}/move` and `/tasks/order` (ids `nr-task-{id}` of that column). `toolbar.js` disables sorting while a search, filter or non-manual sort is active.
 - `toolbar.js`: client-side only. Accent-folded search over title + tags with `<mark>` highlighting, sort within each column (pinned first), tag/product filters. State in the URL: `nr_q`, `nr_sort`, `nr_tag`, `nr_product`, suffixed `_2`, `_3` … for later toolbar boards on the page. Emits `nr:sorted` on the board element.
 - `views.js`: shows one `[data-nr-view]` panel; `nr_view` (+ suffix) in the URL, `niroroadmap_view` in localStorage, list at ≤640 px when `data-nr-mobile-view`; list column sorting via `aria-sort` headers.
@@ -334,7 +334,6 @@ data change both. Never put issue or PR numbers in the changelog.
 ## Known gaps (verified in the code, not fixed)
 
 - Dead code: `niroroadmap_settings_menus()`, `niroroadmap_product_post_type()`, `niroroadmap_home_url()`; `Utility::format_date()`, `pri()`, `get_option()`; `Traits\Rest::register_route()`; traits `Cache` and `Limiter`; `Activator::set_cron()` is empty; `use NiroRoadmap\Model\Database` in Installer and Uninstaller names a class that doesn't exist; `assets/admin/js/init.js`, `settings.js`, `css/settings.css` and the `#niroroadmap-settings-*` rules in `admin/css/style.css` belong to an old settings UI.
-- `script.js` always sends `X-WP-Nonce`. Core's `rest_cookie_check_errors()` rejects an invalid nonce with 403 even for logged-out visitors, so a page served from a cache older than the nonce lifetime breaks votes, comments and suggestions, despite the "works on cached pages" comment in `API\Submission`.
 - The board query doesn't exclude password-protected items, but the popup API does (404 "Task not found").
 - The custom CSS description says it loads only on roadmap pages; `Front::add_assets()` loads it with `style.css` and `script.js` on every front-end page.
 - `script.js` has two untranslated strings: "Loading…" and "Could not load details.".
