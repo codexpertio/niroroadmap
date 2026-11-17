@@ -43,6 +43,8 @@ Where the PR and issue are in this repo:
   git log --oneline -L '/nr-kanban-columns/,+60:views/shortcodes/roadmap.php' c5eb080^
   ```
 
+- PHP 7.4 support renamed `app/Trait/` → `app/Traits/` and `app/Controller/Public/` → `app/Controller/Front/` (namespaces with them). `-L` follows those renames; `git log -- <old path>` does not.
+
 `git log --oneline --diff-filter=ADR -M -- <file>` lists where a file was added, deleted or renamed.
 
 **List them in the PR body:** which prior fixes touch these lines, and which the diff preserves. If the diff moves one, say why. No list means nobody looked.
@@ -72,9 +74,9 @@ vote, comment and suggest ideas; editors drag cards on the public board. Publish
 | Version | 1.2.0 — plugin header `Version`, `NIROROADMAP_VERSION` and readme.txt `Stable tag` must agree (the release workflow checks header and Stable tag against the tag; nothing checks the constant) |
 | PHP namespace | `NiroRoadmap\` → `app/` (PSR-4, Proper_Case files: `app/Model/Status_Log.php` = `NiroRoadmap\Model\Status_Log`) |
 | Autoload files | `app/Helper/functions.php`, `app/Config/autoload.php` (Composer `files`) |
-| Requires | PHP 8.0, WP 6.0, tested up to 7.1 |
+| Requires | PHP 7.4 (runs on 7.4 through 8.5), WP 6.0, tested up to 7.1 |
 | Text domain | `niroroadmap` (no `load_plugin_textdomain()` call) |
-| REST namespace | `niroroadmap/v1` (`Trait\Rest::$namespace`) |
+| REST namespace | `niroroadmap/v1` (`Traits\Rest::$namespace`) |
 | Prefixes | `niroroadmap_` options/hooks/meta, `NIROROADMAP_` constants, `niroroadmap-` script handles, `nr-` CSS classes and DOM ids, `data-nr-*` JS hooks |
 | Runtime deps | none (Composer is autoload only) |
 | License | GPLv2 or later |
@@ -84,7 +86,7 @@ vote, comment and suggest ideas; editors drag cards on the public board. Publish
 ## Commands
 
 ```bash
-composer install            # PHP deps (dev: phpunit 10.5, brain/monkey, phpcs + WPCS + PHPCompatibility)
+composer install            # PHP deps (dev: phpunit 9.6, brain/monkey, phpcs + WPCS + PHPCompatibility); platform pinned to PHP 7.4
 composer test               # php -d auto_prepend_file=tests/bootstrap.php vendor/bin/phpunit (see Tests)
 composer makepot            # wp i18n make-pot → languages/niroroadmap.pot (needs WP-CLI)
 composer release            # build blocks, makepot, --no-dev install, zip → release/niroroadmap.zip
@@ -108,11 +110,11 @@ app/
   Controller/
     Admin/                Asset, Getting_Started, Init (status color field), Item_Fields, Settings, Submissions
     Common/               API (REST routes), Blocks, Comments (auto-close), Fields (register meta), Init (assets, term order, vote cleanup), Status_History
-    Public/               Front (assets, body class, JS strings), Shortcode
+    Front/                Front (assets, body class, JS strings), Shortcode
   API/                    REST handlers: Task, Comment, Submission, Stage, Option
   Model/                  Roadmap (board data + render), Vote, Comment, Submission, Fields, Status_Log, Toolbar, Views
-  Helper/                 Settings (schema), Voter, Rate_Limit, Sample_Data, Utility, functions.php, Field/ (dead, see Known gaps)
-  Trait/                  Hook, Asset, Rest, Auth, Menu, Cleaner, Cache, Limiter
+  Helper/                 Settings (schema), Voter, Rate_Limit, Sample_Data, Utility, functions.php
+  Traits/                 Hook, Asset, Rest, Auth, Menu, Cleaner, Cache, Limiter
   Blocks/roadmap/         block.json, index.js, edit.js, render.php, editor.scss (source of build/roadmap/)
   Config/autoload.php     Requires every other app/Config/*.php (there are none)
 views/shortcodes/         roadmap.php (wrapper + popup), board.php, list.php, timeline.php, toolbar.php, switcher.php, suggest.php
@@ -131,7 +133,7 @@ svn-assets/               WordPress.org banners, icons, screenshots, blueprints/
 
 1. Activation → `Installer::install()` (see Lifecycle).
 2. `plugins_loaded` → `Activator::activate()`: CPT and taxonomies on `init`, `Installer::seed_statuses()` on `init` 20, `Installer::maybe_upgrade()` (creates the two tables when their schema option differs), `update_option( 'niroroadmap_activated', true )`.
-3. `plugins_loaded` → `Initializer::initialize()` instantiates every class in `Controller/Admin/` when `is_admin()`, `Controller/Public/` otherwise, and `Controller/Common/` always, by globbing the folder. **A new controller file is loaded automatically**; its constructor registers hooks through `Trait\Hook` (`action()`, `filter()`, `shortcode()`).
+3. `plugins_loaded` → `Initializer::initialize()` instantiates every class in `Controller/Admin/` when `is_admin()`, `Controller/Front/` otherwise, and `Controller/Common/` always, by globbing the folder. **A new controller file is loaded automatically**; its constructor registers hooks through `Traits\Hook` (`action()`, `filter()`, `shortcode()`).
 
 Admin controllers are constructed before Common ones, so on the same hook and priority their callbacks run first.
 
@@ -235,8 +237,8 @@ so attribute order matters.
 
 ## REST API (`niroroadmap/v1`)
 
-Routes live in `Controller\Common\API::register_endpoints()`; permission callbacks in `Trait\Auth`. Handlers answer
-with `Trait\Rest::response_success()` / `response_error()` — `status_header()` + `wp_send_json_*()`, which **exits**.
+Routes live in `Controller\Common\API::register_endpoints()`; permission callbacks in `Traits\Auth`. Handlers answer
+with `Traits\Rest::response_success()` / `response_error()` — `status_header()` + `wp_send_json_*()`, which **exits**.
 They never return a `WP_REST_Response`; the body is `{ "success": bool, "data": … }`. Tests therefore call
 models, not handlers.
 
@@ -292,8 +294,17 @@ Actions: `niroroadmap_comment_created`, `niroroadmap_submission_created`; intern
 
 - Integration tests against the WordPress install the plugin sits in (`tests/bootstrap.php` loads `../../../../wp-load.php`, or `WP_LOAD_PATH`) and **its real database**. Never point them at production. Each test creates and deletes its own posts, terms and users.
 - WordPress must load before Composer's autoloader (`functions.php` exits without `ABSPATH`), hence `auto_prepend_file` in the `test` script.
-- Classes in `tests/PHP/`: `CommentTest`, `FieldsTest`, `StatusHistoryTest`, `SubmissionTest`, `ToolbarTest`, `ViewsTest`, `VoteTest` (PR #57 reported 135 tests, 541 assertions).
+- Classes in `tests/PHP/`: `CommentTest`, `FieldsTest`, `StatusHistoryTest`, `SubmissionTest`, `ToolbarTest`, `ViewsTest`, `VoteTest` (136 tests, 539 assertions on PHP 7.4.30 and 8.5.4).
+- Run them on PHP 7.4 and the latest PHP: `php -d auto_prepend_file=tests/bootstrap.php vendor/bin/phpunit` with each binary. With Local, pass `-d mysqli.default_socket=~/.config/Local/run/<site id>/mysql/mysqld.sock`, and for 7.4 use Local's own PHP (`lightning-services/php-7.4*/bin/linux/bin/php` with its `shared-libs` on `LD_LIBRARY_PATH` and `-c` the site's `conf/php/php.ini`).
 - Tests pin every setting they depend on with `niroroadmap_setting_{$key}` filters, need the default status slugs to exist, and mark the block test incomplete when `build/` is missing.
+
+## PHP 7.4 compatibility
+
+- No reserved word may be a namespace segment (`Trait`, `Public`, `Abstract`, `List`, `Function`, …): PHP before 8.0 can't parse it, and the whole site goes down on activation.
+- No PHP 8-only syntax or functions: `match`, `?->`, named arguments, union/`mixed`/`static` types, constructor promotion, `str_contains()` / `str_starts_with()` / `str_ends_with()`.
+- Sorts are not stable before PHP 8.0. Any comparator whose ties must keep an order needs an explicit tie-break (see the pinned sort in `Roadmap::get_roadmap()`); 7.4 only keeps equal items in order below 17 elements, so test with more.
+- Dev packages must install on 7.4 (`config.platform.php` is `7.4`), because a site running 7.4 loads `vendor/autoload.php`, including the files of dev packages when they are installed.
+- Check with `php -l` on 7.4 and the latest PHP, and run the tests on both.
 
 ## Lifecycle
 
@@ -322,7 +333,7 @@ data change both. Never put issue or PR numbers in the changelog.
 
 ## Known gaps (verified in the code, not fixed)
 
-- Dead code: `app/Helper/Field/*` extend `NiroRoadmap\Abstract\Field`, which does not exist (fatal if ever used); `niroroadmap_settings_menus()`, `niroroadmap_get_field_factory()`, `niroroadmap_product_post_type()`, `niroroadmap_home_url()`; `Utility::format_date()`, `pri()`, `get_option()`; `Trait\Rest::register_route()`; traits `Cache` and `Limiter`; `Activator::set_cron()` is empty; `use NiroRoadmap\Model\Database` in Installer and Uninstaller names a class that doesn't exist; `assets/admin/js/init.js`, `settings.js`, `css/settings.css` and the `#niroroadmap-settings-*` rules in `admin/css/style.css` belong to an old settings UI.
+- Dead code: `niroroadmap_settings_menus()`, `niroroadmap_product_post_type()`, `niroroadmap_home_url()`; `Utility::format_date()`, `pri()`, `get_option()`; `Traits\Rest::register_route()`; traits `Cache` and `Limiter`; `Activator::set_cron()` is empty; `use NiroRoadmap\Model\Database` in Installer and Uninstaller names a class that doesn't exist; `assets/admin/js/init.js`, `settings.js`, `css/settings.css` and the `#niroroadmap-settings-*` rules in `admin/css/style.css` belong to an old settings UI.
 - The board query doesn't exclude password-protected items, but the popup API does (404 "Task not found").
 - The custom CSS description says it loads only on roadmap pages; `Front::add_assets()` loads it with `style.css` and `script.js` on every front-end page.
 - `script.js` has two untranslated strings: "Loading…" and "Could not load details.".

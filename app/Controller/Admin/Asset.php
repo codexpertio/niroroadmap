@@ -3,8 +3,8 @@ namespace NiroRoadmap\Controller\Admin;
 
 defined( 'ABSPATH' ) || exit;
 
-use NiroRoadmap\Trait\Hook;
-use NiroRoadmap\Trait\Asset as Asset_Trait;
+use NiroRoadmap\Traits\Hook;
+use NiroRoadmap\Traits\Asset as Asset_Trait;
 use NiroRoadmap\Helper\Utility;
 
 class Asset {

@@ -118,11 +118,13 @@ class Roadmap {
 				}
 			}
 
-			// Pinned items lead their column. The sort is stable, so each group keeps the team's manual order.
-			uasort(
+			// Pinned items lead their column; ties keep the manual order, which PHP 7.4's unstable sort would lose.
+			$column   = $tasks[ $stage->slug ]['tasks'];
+			$position = array_flip( array_keys( $column ) );
+			uksort(
 				$tasks[ $stage->slug ]['tasks'],
-				static function ( $a, $b ) {
-					return (int) $b['pinned'] <=> (int) $a['pinned'];
+				static function ( $a, $b ) use ( $column, $position ) {
+					return array( (int) $column[ $b ]['pinned'], $position[ $a ] ) <=> array( (int) $column[ $a ]['pinned'], $position[ $b ] );
 				}
 			);
 		}

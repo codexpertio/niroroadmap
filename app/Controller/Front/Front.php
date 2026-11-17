@@ -1,10 +1,10 @@
 <?php
-namespace NiroRoadmap\Controller\Public;
+namespace NiroRoadmap\Controller\Front;
 
 defined( 'ABSPATH' ) || exit;
 
-use NiroRoadmap\Trait\Hook;
-use NiroRoadmap\Trait\Asset;
+use NiroRoadmap\Traits\Hook;
+use NiroRoadmap\Traits\Asset;
 use NiroRoadmap\Helper\Settings;
 
 class Front {

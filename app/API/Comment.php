@@ -7,7 +7,7 @@ use NiroRoadmap\Helper\Rate_Limit;
 use NiroRoadmap\Helper\Voter;
 use NiroRoadmap\Model\Comment as Comment_Model;
 use NiroRoadmap\Model\Roadmap;
-use NiroRoadmap\Trait\Rest;
+use NiroRoadmap\Traits\Rest;
 
 class Comment {
 

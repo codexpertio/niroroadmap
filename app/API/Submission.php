@@ -6,7 +6,7 @@ defined( 'ABSPATH' ) || exit;
 use NiroRoadmap\Helper\Rate_Limit;
 use NiroRoadmap\Helper\Voter;
 use NiroRoadmap\Model\Submission as Submission_Model;
-use NiroRoadmap\Trait\Rest;
+use NiroRoadmap\Traits\Rest;
 
 class Submission {
 

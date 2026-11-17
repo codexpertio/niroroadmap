@@ -153,17 +153,6 @@ function niroroadmap_settings_menus() {
 	);
 }
 
-function niroroadmap_get_field_factory( $type ) {
-
-	if ( $type == 'switch' ) {
-		$type = 'switcher';
-	} elseif ( $type == 'wysiwyg' ) {
-		$type = 'WYSIWYG';
-	}
-
-	return '\\NiroRoadmap\\Helper\\Field\\' . ucfirst( $type );
-}
-
 function niroroadmap_product_post_type() {
 	return 'niroroadmap_item';
 }
