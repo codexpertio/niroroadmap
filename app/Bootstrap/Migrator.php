@@ -17,47 +17,142 @@ class Migrator {
 
 	const OPTION = 'niroroadmap_migration_version';
 
-	/**
-	 * Counts from the last link migration, shown once to the site owner.
-	 */
-	const REPORT = 'niroroadmap_links_migrated';
-
 	const NAV_TYPES = array( 'wp_navigation', 'wp_template', 'wp_template_part' );
 
+	const WIDGETS = array( 'widget_block', 'widget_text', 'widget_custom_html' );
+
 	/**
-	 * Links left alone because a shop term may own the same address.
-	 *
-	 * @var int
+	 * Last post ID the background link migration has handled.
 	 */
-	private static $skipped = 0;
+	const CURSOR = 'niroroadmap_links_cursor';
+
+	const EVENT = 'niroroadmap_migrate_links';
+
+	const BATCH = 100;
 
 	/**
 	 * Run the pending migrations once. Hooked on `init` after the taxonomies are registered.
 	 */
 	public static function maybe_run() {
-		if ( self::VERSION === get_option( self::OPTION ) || get_transient( 'niroroadmap_migrating' ) ) {
+		if ( self::VERSION === get_option( self::OPTION ) ) {
+			if ( false !== get_option( self::CURSOR ) && ! wp_next_scheduled( self::EVENT ) ) {
+				wp_schedule_single_event( time(), self::EVENT );
+			}
+			return;
+		}
+
+		if ( get_transient( 'niroroadmap_migrating' ) ) {
 			return;
 		}
 
 		set_transient( 'niroroadmap_migrating', 1, 5 * MINUTE_IN_SECONDS );
-		self::$skipped = 0;
 
-		$report = array(
-			'menus'      => self::migrate_menu_links(),
-			'navigation' => self::migrate_navigation(),
-			'skipped'    => self::$skipped,
-		);
+		self::migrate_menu_links();
+		self::migrate_navigation();
+		self::update_widgets();
 
-		update_option( self::REPORT, $report, false );
+		update_option( self::CURSOR, 0, false );
 		update_option( self::OPTION, self::VERSION );
 		delete_transient( 'niroroadmap_migrating' );
 
+		wp_schedule_single_event( time(), self::EVENT );
+	}
+
+	/**
+	 * One background batch of posts; reschedules itself until every post is done.
+	 */
+	public static function run_batch() {
+		$after = get_option( self::CURSOR );
+
+		if ( false === $after ) {
+			return;
+		}
+
+		foreach ( self::find_posts( (int) $after ) as $id ) {
+			$after   = (int) $id;
+			$content = get_post_field( 'post_content', $after, 'raw' );
+			$updated = Legacy_Urls::replace( $content );
+
+			if ( $updated !== $content ) {
+				self::update_content( $after, $updated );
+			}
+		}
+
+		if ( self::find_posts( (int) $after, 1 ) ) {
+			update_option( self::CURSOR, (int) $after, false );
+			wp_schedule_single_event( time(), self::EVENT );
+			return;
+		}
+
+		delete_option( self::CURSOR );
+
 		/**
-		 * Fires once after the roadmap archive URLs changed, so caches and SEO plugins can purge.
+		 * Fires once every stored link points at the new archive URLs, so caches and SEO plugins can purge.
 		 *
 		 * @param array $bases Old archive base => current base.
 		 */
 		do_action( 'niroroadmap_archive_urls_changed', Legacy_Urls::bases() );
+	}
+
+	/**
+	 * IDs of posts after `$after` whose content may hold an old roadmap archive URL.
+	 *
+	 * @param int $after Last post ID already handled.
+	 * @param int $limit Max IDs.
+	 * @return int[]
+	 */
+	public static function find_posts( $after = 0, $limit = self::BATCH ) {
+		global $wpdb;
+
+		$like  = array();
+		$where = array();
+
+		foreach ( array_keys( Legacy_Urls::SLUGS ) as $base ) {
+			$where[] = 'post_content LIKE %s';
+			$like[]  = '%' . $wpdb->esc_like( '/' . $base . '/' ) . '%';
+		}
+
+		$sql = "SELECT ID FROM {$wpdb->posts} WHERE post_type NOT IN ( 'revision', 'nav_menu_item' ) AND post_status NOT IN ( 'trash', 'auto-draft', 'inherit' ) AND ID > %d AND ( " . implode( ' OR ', $where ) . ' ) ORDER BY ID ASC LIMIT %d';
+
+		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( $sql, array_merge( array( (int) $after ), $like, array( (int) $limit ) ) ) ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- $sql holds only placeholders and the table name.
+	}
+
+	/**
+	 * Old roadmap links in text, block and custom HTML widgets.
+	 *
+	 * @return int Widgets changed.
+	 */
+	public static function update_widgets() {
+		$changed = 0;
+
+		foreach ( self::WIDGETS as $option ) {
+			$widgets = get_option( $option );
+
+			if ( ! is_array( $widgets ) ) {
+				continue;
+			}
+
+			$before = $changed;
+
+			foreach ( $widgets as $key => $widget ) {
+				foreach ( array( 'content', 'text' ) as $field ) {
+					if ( is_array( $widget ) && isset( $widget[ $field ] ) && is_string( $widget[ $field ] ) ) {
+						$new = Legacy_Urls::replace( $widget[ $field ] );
+
+						if ( $new !== $widget[ $field ] ) {
+							$widgets[ $key ][ $field ] = $new;
+							++$changed;
+						}
+					}
+				}
+			}
+
+			if ( $changed > $before ) {
+				update_option( $option, $widgets );
+			}
+		}
+
+		return $changed;
 	}
 
 	/**
@@ -75,7 +170,7 @@ class Migrator {
 		$changed = 0;
 
 		foreach ( $rows as $row ) {
-			$url = Legacy_Urls::replace( $row->meta_value, self::$skipped );
+			$url = Legacy_Urls::replace( $row->meta_value );
 
 			if ( $url !== $row->meta_value ) {
 				update_post_meta( (int) $row->post_id, '_menu_item_url', esc_url_raw( $url ) );
@@ -139,7 +234,7 @@ class Migrator {
 					$link = get_term_link( (int) $attrs['id'], $attrs['type'] );
 					$url  = is_string( $link ) ? $link : $url;
 				} else {
-					$url = Legacy_Urls::replace( $url, self::$skipped );
+					$url = Legacy_Urls::replace( $url );
 				}
 
 				if ( $url === $attrs['url'] ) {
