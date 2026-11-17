@@ -82,19 +82,19 @@ class MigrationTest extends TestCase {
 		$this->assertSame( 'no links here', Legacy_Urls::replace( 'no links here' ) );
 	}
 
-	public function test_a_product_tag_link_a_shop_term_may_own_is_left_alone() {
+	public function test_a_product_tag_link_follows_the_roadmap_tag_and_leaves_shop_only_tags_alone() {
 		$this->shop_tag_taxonomy();
 		$tag              = $this->term( 'niroroadmap_tag' );
 		$shop             = wp_insert_term( $tag->name, 'product_tag', array( 'slug' => $tag->slug ) );
 		$this->term_ids[] = array( $shop['term_id'], 'product_tag' );
-		$other            = $this->term( 'niroroadmap_tag' );
-		$skipped          = 0;
+		$only_shop        = wp_insert_term( 'Shop only ' . wp_generate_password( 6, false, false ), 'product_tag' );
+		$this->term_ids[] = array( $only_shop['term_id'], 'product_tag' );
+		$shop_slug        = get_term( $only_shop['term_id'], 'product_tag' )->slug;
 
-		$out = Legacy_Urls::replace( "/product-tag/{$tag->slug}/ /product-tag/{$other->slug}/", $skipped );
+		$out = Legacy_Urls::replace( "/product-tag/{$tag->slug}/ /product-tag/{$shop_slug}/" );
 
-		$this->assertStringContainsString( "/product-tag/{$tag->slug}/", $out );
-		$this->assertStringContainsString( get_term_link( $other ), $out );
-		$this->assertSame( 1, $skipped );
+		$this->assertStringContainsString( get_term_link( $tag ), $out, 'On 1.2.0 this address showed the roadmap tag.' );
+		$this->assertStringContainsString( "/product-tag/{$shop_slug}/", $out );
 	}
 
 	public function test_menu_custom_links_are_migrated() {
