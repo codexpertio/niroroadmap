@@ -1,6 +1,5 @@
 <?php
 use NiroRoadmap\Bootstrap\Migrator;
-use NiroRoadmap\Controller\Admin\Link_Migration;
 use NiroRoadmap\Controller\Front\Legacy_Urls;
 use PHPUnit\Framework\TestCase;
 
@@ -18,7 +17,7 @@ class MigrationTest extends TestCase {
 	private $listener = null;
 
 	protected function setUp(): void {
-		foreach ( array( Migrator::OPTION, Migrator::REPORT, 'widget_text' ) as $option ) {
+		foreach ( array( Migrator::OPTION, Migrator::CURSOR, 'widget_text' ) as $option ) {
 			$this->options[ $option ] = get_option( $option );
 		}
 	}
@@ -37,6 +36,7 @@ class MigrationTest extends TestCase {
 			remove_action( 'niroroadmap_archive_urls_changed', $this->listener );
 		}
 		delete_transient( 'niroroadmap_migrating' );
+		wp_clear_scheduled_hook( Migrator::EVENT );
 	}
 
 	private function term( $taxonomy ) {
@@ -145,24 +145,54 @@ class MigrationTest extends TestCase {
 		$this->assertSame( get_term_link( $tag ), $blocks[0]['attrs']['url'] );
 	}
 
-	public function test_the_migration_runs_once_reports_and_announces() {
+	public function test_the_migration_runs_once_and_hands_posts_to_the_background() {
+		update_option( 'widget_text', array( 2 => array( 'title' => 'T', 'text' => '<a href="/product-cat/planned/">P</a>' ), '_multiwidget' => 1 ) );
+		delete_option( Migrator::OPTION );
+		wp_clear_scheduled_hook( Migrator::EVENT );
+
+		Migrator::maybe_run();
+
+		$this->assertSame( Migrator::VERSION, get_option( Migrator::OPTION ) );
+		$this->assertSame( 0, (int) get_option( Migrator::CURSOR ) );
+		$this->assertNotFalse( wp_next_scheduled( Migrator::EVENT ) );
+		$this->assertStringContainsString( '/roadmap-status/planned', get_option( 'widget_text' )[2]['text'], 'Widgets are done on the first load.' );
+
+		wp_clear_scheduled_hook( Migrator::EVENT );
+		Migrator::maybe_run();
+
+		$this->assertNotFalse( wp_next_scheduled( Migrator::EVENT ), 'A lost batch event is scheduled again while posts remain.' );
+	}
+
+	public function test_the_background_batches_update_every_post_then_announce_once() {
+		$product = $this->term( 'niroroadmap_product' );
+		$ids     = array();
+		for ( $i = 0; $i < 3; $i++ ) {
+			$ids[] = $this->post( array( 'post_content' => '<p><a href="/product-brand/' . $product->slug . '/">Web</a></p>' ) );
+		}
 		$fired          = 0;
 		$this->listener = static function ( $bases ) use ( &$fired ) {
 			++$fired;
 		};
 		add_action( 'niroroadmap_archive_urls_changed', $this->listener );
-		delete_option( Migrator::OPTION );
+		update_option( Migrator::CURSOR, $ids[0] - 1 );
 
-		Migrator::maybe_run();
-		Migrator::maybe_run();
+		for ( $i = 0; $i < 50 && false !== get_option( Migrator::CURSOR ); $i++ ) {
+			Migrator::run_batch();
+		}
 
+		foreach ( $ids as $id ) {
+			$this->assertStringContainsString( get_term_link( $product ), get_post_field( 'post_content', $id, 'raw' ) );
+			$this->assertNotEmpty( wp_get_post_revisions( $id ), 'Each changed post keeps a revision.' );
+		}
+		$this->assertFalse( get_option( Migrator::CURSOR ) );
 		$this->assertSame( 1, $fired );
-		$this->assertSame( Migrator::VERSION, get_option( Migrator::OPTION ) );
-		$this->assertSame( array( 'menus', 'navigation', 'skipped' ), array_keys( get_option( Migrator::REPORT ) ) );
 		$this->assertSame(
 			array( 'product-cat' => 'roadmap-status', 'product-brand' => 'roadmap-product', 'product-tag' => 'roadmap-tag' ),
 			Legacy_Urls::bases()
 		);
+
+		Migrator::run_batch();
+		$this->assertSame( 1, $fired, 'Nothing runs once the cursor is gone.' );
 	}
 
 	public function test_a_fresh_install_skips_the_migration() {
@@ -176,21 +206,5 @@ class MigrationTest extends TestCase {
 		delete_transient( 'niroroadmap_activation_redirect' );
 
 		$this->assertSame( Migrator::VERSION, $marked );
-	}
-
-	public function test_posts_and_widgets_are_updated_and_keep_a_revision() {
-		$product = $this->term( 'niroroadmap_product' );
-		$id      = $this->post( array( 'post_content' => '<p><a href="/product-brand/' . $product->slug . '/">Web</a></p>' ) );
-		update_option( 'widget_text', array( 2 => array( 'title' => 'T', 'text' => '<a href="/product-cat/planned/">P</a>' ), '_multiwidget' => 1 ) );
-
-		$found = wp_list_pluck( Link_Migration::find_posts( $id - 1, 10 ), 'ID' );
-		Migrator::update_content( $id, Legacy_Urls::replace( get_post_field( 'post_content', $id, 'raw' ) ) );
-		$widgets = Link_Migration::update_widgets();
-
-		$this->assertContains( (string) $id, array_map( 'strval', $found ) );
-		$this->assertStringContainsString( get_term_link( $product ), get_post_field( 'post_content', $id, 'raw' ) );
-		$this->assertNotEmpty( wp_get_post_revisions( $id ) );
-		$this->assertSame( 1, $widgets );
-		$this->assertStringContainsString( '/roadmap-status/planned', get_option( 'widget_text' )[2]['text'] );
 	}
 }
