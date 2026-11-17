@@ -105,12 +105,12 @@ no build. There is no `phpcs.xml` and no lint script, although WPCS is a dev dep
 niroroadmap.php           Header, constants, activation/deactivation/plugins_loaded wiring, requires vendor/autoload.php
 uninstall.php             Option cleanup; full data removal only with the delete_on_uninstall setting
 app/
-  Bootstrap/              Installer (activation), Activator (every load), Initializer (controllers), Uninstaller (deactivation!)
+  Bootstrap/              Installer (activation), Activator (every load), Migrator (one-time data migrations), Initializer (controllers), Uninstaller (deactivation!)
     Activator/            Post_Type, Taxonomy (registered on init)
   Controller/
     Admin/                Asset, Getting_Started, Init (status color field), Item_Fields, Settings, Submissions
     Common/               API (REST routes), Blocks, Comments (auto-close), Fields (register meta), Init (assets, term order, vote cleanup), Status_History
-    Front/                Front (assets, body class, JS strings), Shortcode, Legacy_Urls (301 from the old archive slugs)
+    Front/                Front (assets, body class, JS strings), Shortcode, Legacy_Urls (301 from the old archive slugs, rewrites old links in text)
   API/                    REST handlers: Task, Comment, Submission, Stage, Option
   Model/                  Roadmap (board data + render), Vote, Comment, Submission, Fields, Status_Log, Toolbar, Views
   Helper/                 Settings (schema), Voter, Rate_Limit, Sample_Data, Utility, functions.php
@@ -152,7 +152,7 @@ Admin controllers are constructed before Common ones, so on the same hook and pr
 | `_niroroadmap_submitted`, `_submitter_name`, `_submitter_email` | post meta | Visitor submissions (`Model\Submission` constants) |
 | `_niroroadmap_sample` | post + term meta | Example content flag (`Sample_Data::FLAG`) |
 | `niroroadmap_settings` | option | All settings (see Settings) |
-| `niroroadmap_db_version`, `niroroadmap_activated`, `niroroadmap_page_id` (legacy roadmap page), `niroroadmap_statuses_seeded` (`pending`/`yes`), `niroroadmap_getting_started_done`, `niroroadmap_rewrite_version` (`Activator::REWRITE_VERSION`) | options | |
+| `niroroadmap_db_version`, `niroroadmap_activated`, `niroroadmap_page_id` (legacy roadmap page), `niroroadmap_statuses_seeded` (`pending`/`yes`), `niroroadmap_getting_started_done`, `niroroadmap_migration_version` (`Migrator::VERSION`; set on a fresh install so it never scans), `niroroadmap_links_cursor` (last post ID the background link migration handled; gone when done), `niroroadmap_rewrite_version` (`Activator::REWRITE_VERSION`) | options | |
 | `niroroadmap_activation_redirect` (60 s), `niroroadmap_field_errors_{user_id}` (5 min), `niroroadmap_rl_{md5}` | transients | Redirect to Getting Started; meta box errors; rate limit windows |
 | `niroroadmap_voter` | cookie | Anonymous voter token, 32 hex chars, 1 year, HttpOnly, SameSite=Lax |
 | `niroroadmap_votes`, `niroroadmap_view` | localStorage | UI cache of own votes; last chosen view |
@@ -287,14 +287,14 @@ Filters: `niroroadmap_setting_{$key}`, `niroroadmap-localized_vars` (hyphen), `n
 `niroroadmap_submission_max_description` (2000), `niroroadmap_submission_min_time` (2000 ms),
 `niroroadmap_submission_notify_to`, `niroroadmap_docs_url`, `niroroadmap_support_url`.
 
-Actions: `niroroadmap_comment_created`, `niroroadmap_submission_created`; internal once-per-page markers
+Actions: `niroroadmap_comment_created`, `niroroadmap_submission_created`, `niroroadmap_archive_urls_changed` (once, after the link migration, with old base => new base); internal once-per-page markers
 `niroroadmap_modal_rendered`, `niroroadmap_suggest_rendered`.
 
 ## Tests
 
 - Integration tests against the WordPress install the plugin sits in (`tests/bootstrap.php` loads `../../../../wp-load.php`, or `WP_LOAD_PATH`) and **its real database**. Never point them at production. Each test creates and deletes its own posts, terms and users.
 - WordPress must load before Composer's autoloader (`functions.php` exits without `ABSPATH`), hence `auto_prepend_file` in the `test` script.
-- Classes in `tests/PHP/`: `CommentTest`, `FieldsTest`, `StatusHistoryTest`, `SubmissionTest`, `RewriteTest`, `ToolbarTest`, `ViewsTest`, `VoteTest` (142 tests, 575 assertions on PHP 7.4.30 and 8.3.0).
+- Classes in `tests/PHP/`: `CommentTest`, `FieldsTest`, `StatusHistoryTest`, `SubmissionTest`, `MigrationTest`, `RewriteTest`, `ToolbarTest`, `ViewsTest`, `VoteTest` (151 tests, 610 assertions on PHP 7.4.30 and 8.3.0).
 - Run them on PHP 7.4 and the latest PHP: `php -d auto_prepend_file=tests/bootstrap.php vendor/bin/phpunit` with each binary. With Local, pass `-d mysqli.default_socket=~/.config/Local/run/<site id>/mysql/mysqld.sock`, and for 7.4 use Local's own PHP (`lightning-services/php-7.4*/bin/linux/bin/php` with its `shared-libs` on `LD_LIBRARY_PATH` and `-c` the site's `conf/php/php.ini`).
 - Tests pin every setting they depend on with `niroroadmap_setting_{$key}` filters, need the default status slugs to exist, and mark the block test incomplete when `build/` is missing.
 
@@ -310,12 +310,14 @@ Actions: `niroroadmap_comment_created`, `niroroadmap_submission_created`; intern
 
 | Event | Entry point | Does |
 |---|---|---|
-| Activation | `niroroadmap_install()` → `Installer::install()` | db version option; create both tables; find a page with `[niroroadmap]`, `[roadmap]` or the block (SQL + shortcode regex, `has_shortcode()` can't work yet) or create a published "Roadmap" page, store it in `roadmap_page`; set the redirect transient; flag statuses `pending` the first time only |
-| Every load | `Activator::activate()` | register CPT/taxonomies, seed statuses on `init` 20 when `pending` and none exist, flush rewrite rules on `init` 99 once per `REWRITE_VERSION`, `maybe_upgrade()` |
+| Activation | `niroroadmap_install()` → `Installer::install()` | db version option; create both tables; find a page with `[niroroadmap]`, `[roadmap]` or the block (SQL + shortcode regex, `has_shortcode()` can't work yet) or create a published "Roadmap" page, store it in `roadmap_page`; set the redirect transient; flag statuses `pending` the first time only; mark the migration done when `niroroadmap_activated` doesn't exist yet (fresh install — not `niroroadmap_db_version`, which deactivation deletes) |
+| Every load | `Activator::activate()` | register CPT/taxonomies, seed statuses on `init` 20 when `pending` and none exist, flush rewrite rules on `init` 99 once per `REWRITE_VERSION`, `Migrator::maybe_run()` on `init` 100, `maybe_upgrade()` |
 | Deactivation | `niroroadmap_uninstall()` → `Bootstrap\Uninstaller` (misleading names) | deletes `niroroadmap_db_version` only |
-| Uninstall | `uninstall.php` | always deletes the six internal options; with `delete_on_uninstall`: registers the taxonomies, force-deletes every item (meta and comments go with them), deletes all terms, drops both tables, deletes schema options and settings. The Roadmap page is always kept |
+| Uninstall | `uninstall.php` | always deletes the eight internal options and the `niroroadmap_migrate_links` cron event; with `delete_on_uninstall`: registers the taxonomies, force-deletes every item (meta and comments go with them), deletes all terms, drops both tables, deletes schema options and settings. The Roadmap page is always kept |
 
-The archive slugs are `roadmap-status`, `roadmap-product` and `roadmap-tag`. The old `product-cat`, `product-brand` and `product-tag` collided with shop plugins (`product-tag` is WooCommerce's tag base) and only 301 now, from `Controller\Front\Legacy_Urls`, when nothing else answers the URL. Changing a slug again: never reuse a shop plugin's base, bump `Activator::REWRITE_VERSION` so sites flush, and add the old base to `Legacy_Urls::SLUGS`.
+The archive slugs are `roadmap-status`, `roadmap-product` and `roadmap-tag`. The old `product-cat`, `product-brand` and `product-tag` collided with shop plugins (`product-tag` is WooCommerce's tag base) and only 301 now, from `Controller\Front\Legacy_Urls`, when nothing else answers the URL (a 404, or a feed with no queried object, since core answers any `<path>/feed/` with an empty comments feed); `/feed/`, `/feed/<type>/` and `/page/N/` keep their suffix. The redirect stays for links outside the site (search engines, bookmarks, other sites).
+
+Link migration (`Bootstrap\Migrator`), in the background, never asking the site owner: on the first load after an update it rewrites classic menu custom links (`_menu_item_url`), `core/navigation-link`/`navigation-submenu` in `wp_navigation`, `wp_template`, `wp_template_part` (taxonomy links from their term `id`), and text/block/custom HTML widgets; then WP-Cron event `niroroadmap_migrate_links` updates post content 100 posts at a time through `Migrator::update_content()` (keeps a revision, kses off for the write) and fires `niroroadmap_archive_urls_changed` at the end. A lost event is rescheduled on `init` while the cursor exists. `Legacy_Urls::replace()` touches only this site's URLs and skips `/product-tag/<slug>/` when another taxonomy with the `product-tag` base has that slug (WooCommerce may own it). Adding a migration: write it in `Migrator`, bump `Migrator::VERSION`. Changing a slug again: never reuse a shop plugin's base, bump `Activator::REWRITE_VERSION` so sites flush, and add the old base to `Legacy_Urls::SLUGS`.
 
 Deleting an item for good also deletes its vote rows and status log (`deleted_post` hooks in `Common\Init` and `Common\Status_History`).
 
