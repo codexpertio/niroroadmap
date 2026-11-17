@@ -195,16 +195,27 @@ class MigrationTest extends TestCase {
 		$this->assertSame( 1, $fired, 'Nothing runs once the cursor is gone.' );
 	}
 
-	public function test_a_fresh_install_skips_the_migration() {
-		$db = get_option( 'niroroadmap_db_version' );
+	public function test_a_fresh_install_skips_the_migration_and_a_reactivated_site_does_not() {
+		$activated = get_option( 'niroroadmap_activated' );
+		$db        = get_option( 'niroroadmap_db_version' );
+
+		delete_option( 'niroroadmap_activated' );
 		delete_option( 'niroroadmap_db_version' );
 		delete_option( Migrator::OPTION );
-
 		\NiroRoadmap\Bootstrap\Installer::install();
-		$marked = get_option( Migrator::OPTION );
+		$fresh = get_option( Migrator::OPTION );
+
+		update_option( 'niroroadmap_activated', true );
+		delete_option( 'niroroadmap_db_version' );
+		delete_option( Migrator::OPTION );
+		\NiroRoadmap\Bootstrap\Installer::install();
+		$reactivated = get_option( Migrator::OPTION );
+
+		update_option( 'niroroadmap_activated', $activated );
 		update_option( 'niroroadmap_db_version', $db );
 		delete_transient( 'niroroadmap_activation_redirect' );
 
-		$this->assertSame( Migrator::VERSION, $marked );
+		$this->assertSame( Migrator::VERSION, $fresh );
+		$this->assertFalse( $reactivated, 'Deactivation deletes the db version, so a reactivated site still migrates.' );
 	}
 }
