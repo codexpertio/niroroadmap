@@ -16,6 +16,11 @@ class Installer {
 	public static function install() {
 		$installer = new self();
 
+		// A fresh install has no old links to migrate.
+		if ( false === get_option( 'niroroadmap_db_version' ) ) {
+			update_option( Migrator::OPTION, Migrator::VERSION );
+		}
+
 		if ( ! $installer->is_database_up_to_date() ) {
 			$installer->update_db_version();
 		}
