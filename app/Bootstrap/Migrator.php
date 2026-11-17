@@ -31,6 +31,11 @@ class Migrator {
 	const BATCH = 100;
 
 	/**
+	 * Seconds one cron run keeps taking batches before it hands over to the next run.
+	 */
+	const TIME_LIMIT = 20;
+
+	/**
 	 * Run the pending migrations once. Hooked on `init` after the taxonomies are registered.
 	 */
 	public static function maybe_run() {
@@ -59,7 +64,7 @@ class Migrator {
 	}
 
 	/**
-	 * One background batch of posts; reschedules itself until every post is done.
+	 * Background batches of posts for up to TIME_LIMIT seconds; reschedules itself until every post is done.
 	 */
 	public static function run_batch() {
 		$after = get_option( self::CURSOR );
@@ -68,18 +73,26 @@ class Migrator {
 			return;
 		}
 
-		foreach ( self::find_posts( (int) $after ) as $id ) {
-			$after   = (int) $id;
-			$content = get_post_field( 'post_content', $after, 'raw' );
-			$updated = Legacy_Urls::replace( $content );
+		$after = (int) $after;
+		$start = microtime( true );
 
-			if ( $updated !== $content ) {
-				self::update_content( $after, $updated );
+		do {
+			$ids = self::find_posts( $after );
+
+			foreach ( $ids as $id ) {
+				$after   = $id;
+				$content = get_post_field( 'post_content', $after, 'raw' );
+				$updated = Legacy_Urls::replace( $content );
+
+				if ( $updated !== $content ) {
+					self::update_content( $after, $updated );
+				}
 			}
-		}
 
-		if ( self::find_posts( (int) $after, 1 ) ) {
-			update_option( self::CURSOR, (int) $after, false );
+			update_option( self::CURSOR, $after, false );
+		} while ( $ids && microtime( true ) - $start < self::TIME_LIMIT );
+
+		if ( self::find_posts( $after, 1 ) ) {
 			wp_schedule_single_event( time(), self::EVENT );
 			return;
 		}
