@@ -282,6 +282,27 @@ class FieldsTest extends TestCase {
 		$this->assertStringContainsString( 'nr-task-pin', $html );
 	}
 
+	public function test_pinned_items_lead_a_long_column_and_the_rest_keep_the_manual_order() {
+		// Over 16 items: below that PHP 7.4 keeps equal items in order by chance.
+		$product          = wp_insert_term( 'Pin order ' . wp_generate_password( 6, false ), 'niroroadmap_product' );
+		$this->term_ids[] = array( $product['term_id'], 'niroroadmap_product' );
+
+		$ids = array();
+		for ( $i = 0; $i < 20; $i++ ) {
+			$id = $this->item( "Long column {$i}" );
+			wp_update_post( array( 'ID' => $id, 'menu_order' => $i ) );
+			wp_set_object_terms( $id, array( (int) $product['term_id'] ), 'niroroadmap_product' );
+			$ids[] = $id;
+		}
+		Fields::save( $ids[7], array( Fields::PINNED => '1' ) );
+		Fields::save( $ids[15], array( Fields::PINNED => '1' ) );
+
+		preg_match_all( '/id="nr-task-(\d+)"/', Roadmap::get_roadmap( $product['term_id'], array( 'view' => 'board', 'per_column' => '0' ) ), $m );
+
+		$expected = array_merge( array( $ids[7], $ids[15] ), array_values( array_diff( $ids, array( $ids[7], $ids[15] ) ) ) );
+		$this->assertSame( $expected, array_map( 'intval', $m[1] ) );
+	}
+
 	public function test_an_item_can_hide_its_own_vote_counts() {
 		$shown  = $this->item( 'Votes shown' );
 		$hidden = $this->item( 'Votes hidden' );
