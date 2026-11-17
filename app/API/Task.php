@@ -9,7 +9,7 @@ use NiroRoadmap\Model\Fields;
 use NiroRoadmap\Model\Roadmap;
 use NiroRoadmap\Model\Status_Log;
 use NiroRoadmap\Model\Vote;
-use NiroRoadmap\Trait\Rest;
+use NiroRoadmap\Traits\Rest;
 
 class Task {
 

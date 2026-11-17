@@ -3,9 +3,9 @@ namespace NiroRoadmap\Controller\Admin;
 
 defined( 'ABSPATH' ) || exit;
 
-use NiroRoadmap\Trait\Hook;
-use NiroRoadmap\Trait\Asset;
-use NiroRoadmap\Trait\Cleaner;
+use NiroRoadmap\Traits\Hook;
+use NiroRoadmap\Traits\Asset;
+use NiroRoadmap\Traits\Cleaner;
 use NiroRoadmap\Helper\Utility;
 
 class Init {

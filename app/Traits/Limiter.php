@@ -1,5 +1,5 @@
 <?php
-namespace NiroRoadmap\Trait;
+namespace NiroRoadmap\Traits;
 
 defined( 'ABSPATH' ) || exit;
 

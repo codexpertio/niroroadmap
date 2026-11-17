@@ -292,12 +292,12 @@ class ToolbarTest extends TestCase {
 	public function test_the_shortcode_and_the_block_pass_their_options_through() {
 		$this->item( 'Pass through' );
 
-		$short = ( new \NiroRoadmap\Controller\Public\Shortcode() )->callback_roadmap( array( 'toolbar' => 'yes', 'sort' => 'oldest', 'filters' => 'search' ) );
+		$short = ( new \NiroRoadmap\Controller\Front\Shortcode() )->callback_roadmap( array( 'toolbar' => 'yes', 'sort' => 'oldest', 'filters' => 'search' ) );
 		$this->assertStringContainsString( 'data-nr-default-sort="oldest"', $short );
 		$this->assertStringContainsString( 'data-nr-search', $short );
 		$this->assertStringNotContainsString( 'data-nr-tag=', $short );
 
-		$off = ( new \NiroRoadmap\Controller\Public\Shortcode() )->callback_roadmap( array( 'toolbar' => 'no' ) );
+		$off = ( new \NiroRoadmap\Controller\Front\Shortcode() )->callback_roadmap( array( 'toolbar' => 'no' ) );
 		$this->assertStringNotContainsString( 'data-nr-toolbar', $off );
 
 		if ( ! WP_Block_Type_Registry::get_instance()->is_registered( 'niroroadmap/roadmap' ) ) {

@@ -3,7 +3,7 @@ namespace NiroRoadmap\Controller\Common;
 
 defined( 'ABSPATH' ) || exit;
 
-use NiroRoadmap\Trait\Hook;
+use NiroRoadmap\Traits\Hook;
 
 class Comments {
 

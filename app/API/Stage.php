@@ -3,8 +3,8 @@ namespace NiroRoadmap\API;
 
 defined( 'ABSPATH' ) || exit;
 
-use NiroRoadmap\Trait\Rest;
-use NiroRoadmap\Trait\Cleaner;
+use NiroRoadmap\Traits\Rest;
+use NiroRoadmap\Traits\Cleaner;
 
 class Stage {
 

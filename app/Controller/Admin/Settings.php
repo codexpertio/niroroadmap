@@ -3,8 +3,8 @@ namespace NiroRoadmap\Controller\Admin;
 
 defined( 'ABSPATH' ) || exit;
 
-use NiroRoadmap\Trait\Hook;
-use NiroRoadmap\Trait\Menu;
+use NiroRoadmap\Traits\Hook;
+use NiroRoadmap\Traits\Menu;
 use NiroRoadmap\Helper\Settings as Settings_Helper;
 
 class Settings {

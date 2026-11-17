@@ -3,8 +3,8 @@ namespace NiroRoadmap\Controller\Common;
 
 defined( 'ABSPATH' ) || exit;
 
-use NiroRoadmap\Trait\Hook;
-use NiroRoadmap\Trait\Asset;
+use NiroRoadmap\Traits\Hook;
+use NiroRoadmap\Traits\Asset;
 use NiroRoadmap\Model\Vote;
 
 class Init {

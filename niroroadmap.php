@@ -7,7 +7,7 @@
  * Description: Build and share your product roadmap with a visual, drag-and-drop Kanban board.
  * Version: 1.2.0
  * Requires at least: 6.0
- * Requires PHP: 8.0
+ * Requires PHP: 7.4
  * Text Domain: niroroadmap
  * Domain Path: /languages
  * License:     GPLv2 or later

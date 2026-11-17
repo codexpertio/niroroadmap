@@ -4,7 +4,7 @@ namespace NiroRoadmap\Controller\Common;
 defined( 'ABSPATH' ) || exit;
 
 use NiroRoadmap\Model\Fields as Item_Fields;
-use NiroRoadmap\Trait\Hook;
+use NiroRoadmap\Traits\Hook;
 
 class Fields {
 
