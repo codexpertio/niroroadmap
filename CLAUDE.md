@@ -248,7 +248,7 @@ models, not handlers.
 | `POST /tasks/{id}/vote` | public | `Task::vote`: `type` upvote/downvote; 401 when `vote_who` = logged_in, 403 downvote off, 429 rate limit (30/10 min), 409 duplicate (with the recorded `vote`) |
 | `GET /tasks/{id}/comments` | public | `Comment::get`: 404 when comments are off or the item isn't public; `page`, `per_page` 1–50 (20) |
 | `POST /tasks/{id}/comments` | public | `Comment::create`: honeypot `website`, 5/10 min per IP except `moderate_comments`, then core `wp_handle_comment_submission()` |
-| `POST /tasks/submit` | public | `Submission::create`: honeypot, login setting (401), `elapsed` ≥ min time (400), 3/hour except `edit_others_posts`, `niroroadmap_submission_verify` (403); a refused idea gives its rate-limit slot back. Response never contains the new id |
+| `POST /tasks/submit` | public | `Submission::create`: `product` optional (an empty value from "— Choose —" means none; a non-integer is 400), honeypot, login setting (401), `elapsed` ≥ min time (400), 3/hour except `edit_others_posts`, `niroroadmap_submission_verify` (403); a refused idea gives its rate-limit slot back. Response never contains the new id |
 | `GET /tasks/search?q=` | public | `Submission::search`: 30/min, ≤5 published non-password items `{ id, title }` |
 | `POST /tasks/{id}/move` | `can_move_task` | `edit_post` on the item + `assign_term` on the status → `wp_set_post_terms()` |
 | `POST /tasks/order` | `can_order_tasks` | every `nr-task-{id}` must be an item the user can edit → `menu_order` |
@@ -294,7 +294,7 @@ Actions: `niroroadmap_comment_created`, `niroroadmap_submission_created`, `niror
 
 - Integration tests against the WordPress install the plugin sits in (`tests/bootstrap.php` loads `../../../../wp-load.php`, or `WP_LOAD_PATH`) and **its real database**. Never point them at production. Each test creates and deletes its own posts, terms and users.
 - WordPress must load before Composer's autoloader (`functions.php` exits without `ABSPATH`), hence `auto_prepend_file` in the `test` script.
-- Classes in `tests/PHP/`: `CommentTest`, `FieldsTest`, `StatusHistoryTest`, `SubmissionTest`, `MigrationTest`, `RewriteTest`, `SampleDataTest`, `ToolbarTest`, `ViewsTest`, `VoteTest` (153 tests, 617 assertions on PHP 7.4.30 and 8.3.0). `SampleDataTest` calls `item_ids()` and `term_in_use()` only: `remove()` and `uninstall.php` would delete this site's real example content and data.
+- Classes in `tests/PHP/`: `CommentTest`, `FieldsTest`, `StatusHistoryTest`, `SubmissionTest`, `MigrationTest`, `RewriteTest`, `SampleDataTest`, `ToolbarTest`, `ViewsTest`, `VoteTest` (154 tests, 626 assertions on PHP 7.4.30 and 8.3.0). `SampleDataTest` calls `item_ids()` and `term_in_use()` only: `remove()` and `uninstall.php` would delete this site's real example content and data.
 - Run them on PHP 7.4 and the latest PHP: `php -d auto_prepend_file=tests/bootstrap.php vendor/bin/phpunit` with each binary. With Local, pass `-d mysqli.default_socket=~/.config/Local/run/<site id>/mysql/mysqld.sock`, and for 7.4 use Local's own PHP (`lightning-services/php-7.4*/bin/linux/bin/php` with its `shared-libs` on `LD_LIBRARY_PATH` and `-c` the site's `conf/php/php.ini`).
 - Tests pin every setting they depend on with `niroroadmap_setting_{$key}` filters, need the default status slugs to exist, and mark the block test incomplete when `build/` is missing.
 
