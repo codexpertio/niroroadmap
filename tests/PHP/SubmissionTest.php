@@ -423,4 +423,27 @@ class SubmissionTest extends TestCase {
 		$this->item_ids[] = $own;
 		$this->assertArrayNotHasKey( 'niroroadmap_approve', $admin->add_approve_action( array(), get_post( $own ) ) );
 	}
+
+	private function submit_request( $product ) {
+		$route   = rest_get_server()->get_routes()['/niroroadmap/v1/tasks/submit'][0];
+		$request = new WP_REST_Request( 'POST', '/niroroadmap/v1/tasks/submit' );
+		$request->set_attributes( $route );
+		$request->set_body_params( array( 'title' => 'An idea', 'product' => $product ) );
+
+		return $request;
+	}
+
+	public function test_the_product_is_optional_on_the_submit_route() {
+		$none = $this->submit_request( '' );
+		$this->assertTrue( $none->has_valid_params(), '"— Choose —" sends an empty product.' );
+		$this->assertTrue( $none->sanitize_params() );
+		$this->assertSame( 0, $none->get_param( 'product' ) );
+
+		$chosen = $this->submit_request( '14' );
+		$this->assertTrue( $chosen->has_valid_params() );
+		$chosen->sanitize_params();
+		$this->assertSame( 14, $chosen->get_param( 'product' ) );
+
+		$this->assertInstanceOf( WP_Error::class, $this->submit_request( 'abc' )->has_valid_params(), 'A product that is not a number is still refused.' );
+	}
 }
