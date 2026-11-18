@@ -111,7 +111,7 @@ Roadmap data is a regular custom post type, `niroroadmap_item`, with the taxonom
 
 - `niroroadmap_get_setting( $key )` returns a plugin setting. The `niroroadmap_setting_{$key}` filter has the last word on any of them.
 - Filters include `niroroadmap_get_posts`, `niroroadmap_show_stage_links`, `niroroadmap_vote_fingerprint`, `niroroadmap_vote_rate_limit`, `niroroadmap_comment_rate_limit`, `niroroadmap_submission_verify` (add a CAPTCHA), `niroroadmap_submission_notify_to`, `niroroadmap_docs_url` and `niroroadmap_support_url`.
-- Actions: `niroroadmap_comment_created` and `niroroadmap_submission_created`.
+- Actions: `niroroadmap_comment_created`, `niroroadmap_submission_created` and `niroroadmap_archive_urls_changed` (once, after an update has moved stored links to the new archive addresses).
 - Restyle the board by overriding `--nr-bg`, `--nr-card`, `--nr-border`, `--nr-text`, `--nr-muted`, `--nr-accent` and `--nr-radius` on `.nr-kanban-columns` and `.nr-modal-overlay`.
 
 The full list, with what each one does, is in [readme.txt](readme.txt).
