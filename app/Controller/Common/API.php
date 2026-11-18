@@ -169,8 +169,13 @@ class API {
 						'type'        => 'string',
 					),
 					'product'     => array(
-						'description' => __( 'The product (term ID)', 'niroroadmap' ),
-						'type'        => 'integer',
+						'description'       => __( 'The product (term ID)', 'niroroadmap' ),
+						'type'              => 'integer',
+						// "— Choose —" sends an empty string, which means no product.
+						'validate_callback' => static function ( $value ) {
+							return '' === $value || rest_is_integer( $value );
+						},
+						'sanitize_callback' => 'absint',
 					),
 					'name'        => array(
 						'description' => __( 'The submitter name', 'niroroadmap' ),
