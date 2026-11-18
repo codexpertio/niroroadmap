@@ -54,7 +54,7 @@ Where the PR and issue are in this repo:
 **Never extract a shared helper as part of a bugfix.** Several rules are hand-written in more than one place, and the copies have already drifted apart:
 
 - "Which items are public" is checked in three places: `Roadmap::get_public_item()` (REST), `Submission::similar()` (`has_password => false`) and the board query in `get_roadmap()`. The board query is missing the password check (#62).
-- "Every item, whatever its status" is written as `post_status => 'any'` in `uninstall.php` and twice in `Sample_Data`. All three miss trashed items (#60).
+- "Every item, whatever its status" is written as `post_status => array( 'any', 'trash', 'auto-draft' )` in `uninstall.php` and twice in `Sample_Data` (`'any'` alone skips trash and auto-draft).
 - What a setting hides (vote counts, tags, target) is enforced separately in `Toolbar::config()`, `Views::config()`, `Task::can_see_count()`, `Fields::public_facts()` and each template.
 
 Say so when you notice it, but consolidation is its own scheduled PR with behaviour locked by tests first, never a side effect of fixing one instance.
@@ -294,7 +294,7 @@ Actions: `niroroadmap_comment_created`, `niroroadmap_submission_created`, `niror
 
 - Integration tests against the WordPress install the plugin sits in (`tests/bootstrap.php` loads `../../../../wp-load.php`, or `WP_LOAD_PATH`) and **its real database**. Never point them at production. Each test creates and deletes its own posts, terms and users.
 - WordPress must load before Composer's autoloader (`functions.php` exits without `ABSPATH`), hence `auto_prepend_file` in the `test` script.
-- Classes in `tests/PHP/`: `CommentTest`, `FieldsTest`, `StatusHistoryTest`, `SubmissionTest`, `MigrationTest`, `RewriteTest`, `ToolbarTest`, `ViewsTest`, `VoteTest` (151 tests, 609 assertions on PHP 7.4.30 and 8.3.0).
+- Classes in `tests/PHP/`: `CommentTest`, `FieldsTest`, `StatusHistoryTest`, `SubmissionTest`, `MigrationTest`, `RewriteTest`, `SampleDataTest`, `ToolbarTest`, `ViewsTest`, `VoteTest` (153 tests, 617 assertions on PHP 7.4.30 and 8.3.0). `SampleDataTest` calls `item_ids()` and `term_in_use()` only: `remove()` and `uninstall.php` would delete this site's real example content and data.
 - Run them on PHP 7.4 and the latest PHP: `php -d auto_prepend_file=tests/bootstrap.php vendor/bin/phpunit` with each binary. With Local, pass `-d mysqli.default_socket=~/.config/Local/run/<site id>/mysql/mysqld.sock`, and for 7.4 use Local's own PHP (`lightning-services/php-7.4*/bin/linux/bin/php` with its `shared-libs` on `LD_LIBRARY_PATH` and `-c` the site's `conf/php/php.ini`).
 - Tests pin every setting they depend on with `niroroadmap_setting_{$key}` filters, need the default status slugs to exist, and mark the block test incomplete when `build/` is missing.
 

@@ -145,7 +145,7 @@ class Sample_Data {
 		return get_posts(
 			array(
 				'post_type'      => 'niroroadmap_item',
-				'post_status'    => 'any',
+				'post_status'    => array( 'any', 'trash', 'auto-draft' ),
 				'posts_per_page' => -1,
 				'fields'         => 'ids',
 				'meta_key'       => self::FLAG, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Small, admin-only lookup.
@@ -204,7 +204,7 @@ class Sample_Data {
 		$posts = get_posts(
 			array(
 				'post_type'      => 'niroroadmap_item',
-				'post_status'    => 'any',
+				'post_status'    => array( 'any', 'trash', 'auto-draft' ),
 				'posts_per_page' => 1,
 				'fields'         => 'ids',
 				'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- One-off, admin-only.

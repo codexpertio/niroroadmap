@@ -26,7 +26,7 @@ foreach ( $taxonomies as $taxonomy ) {
 $item_ids = get_posts(
     [
         'post_type'      => 'niroroadmap_item',
-        'post_status'    => 'any',
+        'post_status'    => [ 'any', 'trash', 'auto-draft' ], // 'any' alone skips both.
         'posts_per_page' => -1,
         'fields'         => 'ids',
     ]
