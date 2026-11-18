@@ -4,7 +4,7 @@ Tags: roadmap, kanban, feedback, voting, feature requests
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -113,6 +113,7 @@ Actions:
 
 * `niroroadmap_comment_created`: fires after a visitor's comment is saved.
 * `niroroadmap_submission_created`: fires after an idea is submitted.
+* `niroroadmap_archive_urls_changed`: fires once after an update has moved stored links to the new archive addresses, with the old and new address bases.
 
 REST API (namespace `niroroadmap/v1`): `GET /tasks/{id}`, `POST /tasks/{id}/vote`, `GET` and `POST /tasks/{id}/comments`, `POST /tasks/submit` and `GET /tasks/search` are public and rate limited. Moving and ordering items and statuses (`/tasks/{id}/move`, `/tasks/order`, `/stages/order`) need an editor or administrator.
 
@@ -348,6 +349,29 @@ By default, nothing but a few internal options is removed: your roadmap items (w
 
 == Changelog ==
 
+= 1.3.0 - 2026-11-18 =
+Works on PHP 7.4 again, plays nicely with WooCommerce and other shop plugins, and fixes votes, comments and ideas on cached pages.
+
+**Archive pages and links**
+* Changed: status, product and tag pages now live at /roadmap-status/, /roadmap-product/ and /roadmap-tag/. The old /product-cat/, /product-brand/ and /product-tag/ addresses clashed with shop plugins: on sites with WooCommerce, product tag pages opened the roadmap or showed "Page not found".
+* New: old addresses redirect to the new ones, including their feeds and page 2, 3 and so on, so links in search results, bookmarks and other sites keep working.
+* New: after updating, links to the old addresses in menus, navigation blocks, templates, widgets, posts and pages are updated automatically in the background. Every changed post keeps a revision. Nothing needs to be done by hand.
+* Fixed: status, product and tag pages no longer show "Page not found" until Permalinks are saved. The plugin refreshes the site's links itself once after updating.
+
+**Fixes**
+* Fixed: visitors can vote, comment and suggest ideas on pages served from a page cache. Before, these failed once the cached page was more than a day old.
+* Fixed: a suggested idea is accepted when Product is left at "— Choose —". Before, it failed with "Your idea could not be sent".
+* Fixed: "Delete all data" on uninstall also removes items in the Trash, with their votes, comments and submitter details.
+* Fixed: Remove example content also removes example items in the Trash, and keeps a product or tag that a trashed item still uses.
+* Fixed: on PHP 7.4, unpinned items keep their manual order on the board.
+
+**Compatibility**
+* NiroRoadmap now requires PHP 7.4 or later (was 8.0) and runs on PHP 7.4 through 8.5.
+
+**Developers**
+* New: action `niroroadmap_archive_urls_changed`, fired once after the old links are updated, with the old and new address bases, so cache and SEO plugins can purge.
+* Removed: `niroroadmap_get_field_factory()` and the unused `Helper\Field` classes, which could not be used.
+
 = 1.2.0 - 2026-10-18 =
 Long boards are easier to scan: each Board column now shows its first items, with a Load more button for the rest.
 
@@ -447,6 +471,9 @@ A big release: three ways to view the roadmap, a settings page, comments, visito
 * Initial release with Kanban board, task voting, shortcode support, REST API integration, and customizable taxonomy columns.
 
 == Upgrade Notice ==
+
+= 1.3.0 =
+Status, product and tag pages move to /roadmap-status/, /roadmap-product/ and /roadmap-tag/ so they no longer clash with WooCommerce. Old addresses redirect, and links in your menus, posts and widgets are updated automatically after the update. Clear your page cache or CDN afterwards. Now also runs on PHP 7.4.
 
 = 1.2.0 =
 Board columns now show 10 items before a Load more button, so boards with more than 10 items in a column look different after updating. Change it under NiroRoadmap > Settings > Views, or set it to 0 to show every item. No data changes.
