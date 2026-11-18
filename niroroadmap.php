@@ -5,7 +5,7 @@
  * Author: NiroSuite
  * Author URI: https://nirosuite.com
  * Description: Build and share your product roadmap with a visual, drag-and-drop Kanban board.
- * Version: 1.2.0
+ * Version: 1.3.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Text Domain: niroroadmap
@@ -29,7 +29,7 @@ namespace NiroRoadmap;
 defined( 'ABSPATH' ) || exit;
 
 define( 'NIROROADMAP_FILE', __FILE__ );
-define( 'NIROROADMAP_VERSION', '1.2.0' );
+define( 'NIROROADMAP_VERSION', '1.3.0' );
 define( 'NIROROADMAP_PLUGIN_DIR', plugin_dir_path( NIROROADMAP_FILE ) );
 define( 'NIROROADMAP_PLUGIN_URL', plugin_dir_url( NIROROADMAP_FILE ) );
 define( 'NIROROADMAP_ASSETS_URL', NIROROADMAP_PLUGIN_URL . 'assets/' );
