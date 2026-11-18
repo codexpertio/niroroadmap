@@ -71,7 +71,7 @@ vote, comment and suggest ideas; editors drag cards on the public board. Publish
 
 | Item | Value |
 |---|---|
-| Version | 1.2.0 — plugin header `Version`, `NIROROADMAP_VERSION` and readme.txt `Stable tag` must agree (the release workflow checks header and Stable tag against the tag; nothing checks the constant) |
+| Version | 1.3.0 — plugin header `Version`, `NIROROADMAP_VERSION` and readme.txt `Stable tag` must agree (the release workflow checks header and Stable tag against the tag; nothing checks the constant) |
 | PHP namespace | `NiroRoadmap\` → `app/` (PSR-4, Proper_Case files: `app/Model/Status_Log.php` = `NiroRoadmap\Model\Status_Log`) |
 | Autoload files | `app/Helper/functions.php`, `app/Config/autoload.php` (Composer `files`) |
 | Requires | PHP 7.4 (runs on 7.4 through 8.5), WP 6.0, tested up to 7.1 |
